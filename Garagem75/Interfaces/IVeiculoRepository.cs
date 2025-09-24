@@ -1,6 +1,7 @@
-﻿namespace Garagem75.Interfaces
-{
+﻿namespace Garagem75.Interfaces;
+
     public interface IVeiculoRepository
     {
+
     }
-}
+
