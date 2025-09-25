@@ -12,7 +12,5 @@ namespace Garagem75.Interfaces;
     Task UpdateAsync(Veiculo veiculo);
     Task DeleteAsync(int id);
 
-
-
 }
 
