@@ -9,6 +9,10 @@ public class Veiculo
     [Key]
     public int IdVeiculo { get; set; }
 
+    [Required(ErrorMessage = "Campo Obrigatório!")]
+    [StringLength(30)]
+    public string Fabricante { get; set; }
+
     [Required(ErrorMessage ="Campo Obrigatório!")]
     [StringLength(75)]
     public string Modelo { get; set; }
@@ -20,11 +24,9 @@ public class Veiculo
     [StringLength(7)]
     public string Placa { get; set; }
 
+    [StringLength(30)]
     public string Cor { get; set; }
 
-    [Required(ErrorMessage = "Campo Obrigatório!")]
-    [StringLength(30)]
-    public string Fabricante { get; set; }
 
     public virtual Cliente? Cliente { get; set; }
 }

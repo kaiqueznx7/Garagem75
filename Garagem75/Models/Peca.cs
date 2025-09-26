@@ -15,6 +15,10 @@ public class Peca
     [StringLength(50)]
     public string Marca { get; set; }
 
+    [Required(ErrorMessage = "O nome da peça é obrigatório")]
+    [StringLength(100)]
+    public string Nome { get; set; }
+
     [Required]
     public decimal Preco { get; set; }
     [Required(ErrorMessage ="O Fornecedor é obrigatório.")]
