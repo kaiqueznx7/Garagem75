@@ -20,6 +20,8 @@ public class Peca
     public string Nome { get; set; }
 
     [Required]
+
+    [Column(TypeName = "decimal(18,2)")]
     public decimal Preco { get; set; }
     [Required(ErrorMessage ="O Fornecedor é obrigatório.")]
     [StringLength(100)]
