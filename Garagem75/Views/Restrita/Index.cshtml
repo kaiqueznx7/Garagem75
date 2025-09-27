@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Área Restrita";
+}
+
+<h2>Área Restrita</h2>
+
+<p>Bem-vindo, @User.Identity?.Name!</p>
+
+<ul>
+    @if (User.IsInRole("Administrador"))
+    {
+        <li><strong>Administrador:</strong> acesso total</li>
+    }
+    else if (User.IsInRole("Gerente"))
+    {
+        <li><strong>Gerente:</strong> acesso limitado (sem deletar)</li>
+    }
+    else
+    {
+        <li><strong>Outros:</strong> acesso somente à listagem</li>
+    }
+</ul>
+
+<a asp-controller="Usuario" asp-action="Index" class="btn btn-secondary">Voltar</a>
+
