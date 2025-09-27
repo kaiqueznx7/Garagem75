@@ -19,6 +19,51 @@ namespace Garagem75.Controllers
             _context = context;
         }
 
+
+
+        // GET: Usuario/Login
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        // POST: Usuario/Login
+        [HttpPost]
+        public async Task<IActionResult> Login(string email, string senha)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
+            {
+                ViewBag.Error = "Preencha todos os campos.";
+                return View();
+            }
+
+            var usuario = await _context.Usuarios
+                .Include(u => u.TipoUsuario)
+                .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+
+            if (usuario == null)
+            {
+                ViewBag.Error = "Email ou senha inválidos.";
+                return View();
+            }
+
+            // Armazena dados do usuário na sessão
+            HttpContext.Session.SetInt32("UsuarioId", usuario.IdUsuario);
+            HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+            HttpContext.Session.SetString("TipoUsuario", usuario.TipoUsuario.DescricaoTipoUsuario);
+
+            // Redireciona para a Home
+            return RedirectToAction("Index", "Home");
+        }
+
+        // GET: Usuario/Logout
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
         // GET: Usuario
         public async Task<IActionResult> Index()
         {
