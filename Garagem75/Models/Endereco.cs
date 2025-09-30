@@ -41,6 +41,8 @@ public class Endereco
     [Display(Name = "Endereço Principal")]
     public bool Principal { get; set; }
 
+    public int? ClienteId { get; set; }
+
     public virtual Cliente? Cliente { get; set; }
 }
 

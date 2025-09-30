@@ -20,10 +20,38 @@ namespace Garagem75.Controllers
         }
 
         // GET: Peca
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string marca, string searchString)
         {
-            return View(await _context.Pecas.ToListAsync());
+            // Buscar marcas distintas no banco
+            var marcas = await _context.Pecas
+                                       .Select(p => p.Marca)
+                                       .Distinct()
+                                       .OrderBy(m => m)
+                                       .ToListAsync();
+
+            ViewBag.Marcas = new SelectList(marcas);
+
+            // Query base
+            var pecas = from p in _context.Pecas
+                        select p;
+
+            // Filtro por marca
+            if (!string.IsNullOrEmpty(marca))
+            {
+                pecas = pecas.Where(p => p.Marca == marca);
+            }
+
+            // Filtro por nome da peça
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                pecas = pecas.Where(p => p.Nome.Contains(searchString)
+                                      || p.Fornecedor.Contains(searchString));
+            }
+
+            return View(await pecas.ToListAsync());
         }
+
+
 
         // GET: Peca/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -54,7 +82,7 @@ namespace Garagem75.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdPeca,CodPeca,Marca,Preco,Fornecedor,QuantidadeEstoque,DataCadastro,DataUltimaAtualizacao")] Peca peca)
+        public async Task<IActionResult> Create([Bind("IdPeca,CodPeca,Marca,Nome,Preco,Fornecedor,QuantidadeEstoque,DataCadastro,DataUltimaAtualizacao")] Peca peca)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +114,7 @@ namespace Garagem75.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdPeca,CodPeca,Marca,Preco,Fornecedor,QuantidadeEstoque,DataCadastro,DataUltimaAtualizacao")] Peca peca)
+        public async Task<IActionResult> Edit(int id, [Bind("IdPeca,CodPeca,Marca,Nome,Preco,Fornecedor,QuantidadeEstoque,DataCadastro,DataUltimaAtualizacao")] Peca peca)
         {
             if (id != peca.IdPeca)
             {

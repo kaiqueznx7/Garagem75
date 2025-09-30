@@ -29,6 +29,8 @@ namespace Garagem75.Models;
     [Required]
     public DateTime DataEntrega { get; set; }
 
+    public int VeiculoId { get; set; }
+
     public virtual Veiculo? Veiculo { get; set; }
 
 

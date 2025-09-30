@@ -16,7 +16,7 @@ public class Veiculo
     [Required(ErrorMessage ="Campo Obrigatório!")]
     [StringLength(75)]
     public string Modelo { get; set; }
-
+    
     [Required(ErrorMessage = "Campo Obrigatório!")]
     public DateTime Ano { get; set; }
 
@@ -27,7 +27,7 @@ public class Veiculo
     [StringLength(30)]
     public string Cor { get; set; }
 
-
+    public int ClienteId { get; set; }
     public virtual Cliente? Cliente { get; set; }
 }
 

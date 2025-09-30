@@ -18,9 +18,10 @@ namespace Garagem75.ViewModels
         public string Placa { get; set; }
 
         public string Cor { get; set; }
+        public int ClienteId { get; set; }
 
-        
 
-        
+
+
     }
 }
