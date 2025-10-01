@@ -27,7 +27,7 @@ public class Veiculo
     [StringLength(30)]
     public string Cor { get; set; }
 
-    public int ClienteId { get; set; }
+    public int? ClienteId { get; set; }
     public virtual Cliente? Cliente { get; set; }
 }
 

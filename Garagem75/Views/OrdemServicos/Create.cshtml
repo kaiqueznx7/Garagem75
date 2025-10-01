@@ -1,7 +1,7 @@
 ﻿@model Garagem75.Models.OrdemServico
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Criar nova ordem de serviço";
 }
 
 <h1>Create</h1>
@@ -46,6 +46,11 @@
                 <label asp-for="DataEntrega" class="control-label"></label>
                 <input asp-for="DataEntrega" class="form-control" />
                 <span asp-validation-for="DataEntrega" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VeiculoId" class="control-label"></label>
+                <input asp-for="VeiculoId" class="form-control" />
+                <span asp-validation-for="VeiculoId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
