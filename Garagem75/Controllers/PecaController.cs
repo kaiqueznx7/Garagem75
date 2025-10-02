@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garagem75.Data;
 using Garagem75.Models;
+using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 
 namespace Garagem75.Controllers
 {
@@ -82,16 +83,41 @@ namespace Garagem75.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdPeca,CodPeca,Marca,Nome,Preco,Fornecedor,QuantidadeEstoque,DataCadastro,DataUltimaAtualizacao")] Peca peca)
+        public async Task<IActionResult> Create(Peca peca, IFormFile? ImagemUpload)
         {
+            // Log para conferir se o arquivo chegou
+            Console.WriteLine($"Arquivo recebido: {ImagemUpload?.FileName ?? "NENHUM"}");
+
             if (ModelState.IsValid)
             {
+                if (ImagemUpload != null && ImagemUpload.Length > 0)
+                {
+                    // Pasta wwwroot/img
+                    var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img");
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    var fileName = Path.GetFileName(ImagemUpload.FileName);
+                    var filePath = Path.Combine(dir, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImagemUpload.CopyToAsync(stream);
+                    }
+
+                    // Salva o caminho relativo no banco
+                    peca.Imagem = "/img/" + fileName;
+                }
+
+                // Salva no banco
                 _context.Add(peca);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(peca);
         }
+
 
         // GET: Peca/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -114,35 +140,64 @@ namespace Garagem75.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdPeca,CodPeca,Marca,Nome,Preco,Fornecedor,QuantidadeEstoque,DataCadastro,DataUltimaAtualizacao")] Peca peca)
+        public async Task<IActionResult> Edit(int id, Peca peca, IFormFile? ImagemUpload)
         {
             if (id != peca.IdPeca)
-            {
                 return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                var erros = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                Console.WriteLine("Erros de validação: " + string.Join(", ", erros));
+                return View(peca);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var pecaDb = await _context.Pecas.FindAsync(id);
+                if (pecaDb == null) return NotFound();
+
+                // Atualiza campos básicos
+                pecaDb.CodPeca = peca.CodPeca;
+                pecaDb.Marca = peca.Marca;
+                pecaDb.Nome = peca.Nome;
+                pecaDb.Preco = peca.Preco;
+                pecaDb.Fornecedor = peca.Fornecedor;
+                pecaDb.QuantidadeEstoque = peca.QuantidadeEstoque;
+                pecaDb.DataUltimaAtualizacao = DateTime.Now;
+
+                // Se enviou nova imagem, salva
+                if (ImagemUpload != null && ImagemUpload.Length > 0)
                 {
-                    _context.Update(peca);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PecaExists(peca.IdPeca))
+                    var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img");
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    var fileName = Path.GetFileName(ImagemUpload.FileName);
+                    var filePath = Path.Combine(dir, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        return NotFound();
+                        await ImagemUpload.CopyToAsync(stream);
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    pecaDb.Imagem = "/img/" + fileName;
                 }
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(peca);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Pecas.Any(e => e.IdPeca == peca.IdPeca))
+                    return NotFound();
+                else
+                    throw;
+            }
         }
+
+
+
 
         // GET: Peca/Delete/5
         public async Task<IActionResult> Delete(int? id)

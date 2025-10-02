@@ -1,69 +1,83 @@
 ﻿@model Garagem75.Models.Peca
 
 @{
-    ViewData["Title"] = "Editar  peça";
+    ViewData["Title"] = "Editar Peça";
 }
 
-<h1>Edit</h1>
+<h1>Editar Peça</h1>
 
-<h4>Peca</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IdPeca" />
-            <div class="form-group">
-                <label asp-for="CodPeca" class="control-label"></label>
-                <input asp-for="CodPeca" class="form-control" />
-                <span asp-validation-for="CodPeca" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Marca" class="control-label"></label>
-                <input asp-for="Marca" class="form-control" />
-                <span asp-validation-for="Marca" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Preco" class="control-label"></label>
-                <input asp-for="Preco" class="form-control" />
-                <span asp-validation-for="Preco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Fornecedor" class="control-label"></label>
-                <input asp-for="Fornecedor" class="form-control" />
-                <span asp-validation-for="Fornecedor" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="QuantidadeEstoque" class="control-label"></label>
-                <input asp-for="QuantidadeEstoque" class="form-control" />
-                <span asp-validation-for="QuantidadeEstoque" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataCadastro" class="control-label"></label>
-                <input asp-for="DataCadastro" class="form-control" />
-                <span asp-validation-for="DataCadastro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataUltimaAtualizacao" class="control-label"></label>
-                <input asp-for="DataUltimaAtualizacao" class="form-control" />
-                <span asp-validation-for="DataUltimaAtualizacao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Edit" asp-route-id="@Model.IdPeca" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input type="hidden" asp-for="IdPeca" />
+
+    <div class="form-group">
+        <label asp-for="CodPeca"></label>
+        <input asp-for="CodPeca" class="form-control" />
+        <span asp-validation-for="CodPeca" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="form-group">
+        <label asp-for="Marca"></label>
+        <input asp-for="Marca" class="form-control" />
+        <span asp-validation-for="Marca" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Nome"></label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Preco"></label>
+        <input asp-for="Preco" class="form-control" />
+        <span asp-validation-for="Preco" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Fornecedor"></label>
+        <input asp-for="Fornecedor" class="form-control" />
+        <span asp-validation-for="Fornecedor" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="QuantidadeEstoque"></label>
+        <input asp-for="QuantidadeEstoque" class="form-control" />
+        <span asp-validation-for="QuantidadeEstoque" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DataCadastro"></label>
+        <input asp-for="DataCadastro" class="form-control" readonly />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DataUltimaAtualizacao"></label>
+        <input asp-for="DataUltimaAtualizacao" class="form-control" readonly />
+    </div>
+
+    <!-- IMAGEM -->
+    <div class="form-group">
+        <label for="ImagemUpload">Imagem</label><br />
+        @if (!string.IsNullOrEmpty(Model.Imagem))
+        {
+            <img src="@Model.Imagem" alt="Imagem da peça" width="150" class="mb-2" />
+        }
+        <input type="file" name="ImagemUpload" id="ImagemUpload" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
-<script src="~/js/site.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>

@@ -36,5 +36,8 @@ public class Peca
     [Required]
     public DateTime DataUltimaAtualizacao { get; set; }
 
+    // Novo campo para imagem
+    public string? Imagem { get; set; }
+
 }
 
