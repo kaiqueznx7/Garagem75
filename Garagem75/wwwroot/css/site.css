@@ -1,4 +1,4 @@
-body {
+/*body {
     margin: 0;
     padding: 0;
     background-color: #121212;
@@ -11,27 +11,27 @@ body {
     min-height: 100vh;
     background-color: #1a1a1a;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.6);
-}
+}*/
 
 /* Conteúdo */
-.main-content {
+/*.main-content {
     background-color: #121212;
     color: #f8f8f8;
     overflow-y: auto;
-}
+}*/
 
 /* Tabela escura */
-.table th, .table td {
+/*.table th, .table td {
     color: #f8f8f8;
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) {
     background-color: #262626;
-}
+}*/
 
 
 /* Oculta sidebar no mobile */
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {
     .sidebar {
         display: none;
         position: absolute;
@@ -42,4 +42,357 @@ body {
         .sidebar.show {
             display: block;
         }
+}*/
+/*#region global*/
+
+:root {
+    --yellow: #FFD700;
+    --dark: #040404;
+    --light: #f8f9fa;
+    --fundo-card: #ffda4b;
+    --borda-titulo: #ccc;
+    --cor-texto-card: #333;
+    --cor-check: #008000;
+    --top-spacing: 40px;
 }
+
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #000;
+    color: var(--light);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* evita rolagem horizontal */
+}
+
+/*#endregion*/
+
+
+
+/*#region página inicial - home*/
+
+.main-container {
+    background-image: url('img/img (1).png');
+    background-size: cover;
+    background-position: center top;
+    min-height: 100vh;
+    padding-top: var(--top-spacing);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.navbar {
+    background-color: var(--yellow);
+    border-bottom: 2px solid var(--yellow);
+    width: 100%;
+}
+
+.navbar-brand span {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.5rem;
+    color: var(--dark);
+    margin-left: 60px;
+}
+
+.nav-link {
+    color: var(--dark) !important;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+    .nav-link:hover {
+        color: var(--light) !important;
+    }
+
+/* Estilo para a logo do gato sobreposta */
+.logo-gato-overlay {
+    position: absolute; /* Posição absoluta em relação ao .main-container */
+    top: 50px; /* Coloca no topo do main-container */
+    left: 10px; /* Alinha à esquerda do main-container */
+    height: 150px; /* Tamanho da logo, ajuste conforme necessário */
+    z-index: 1030; /* Garante que a logo fique sobreposta ao navbar (o z-index do navbar é 1020) */
+    transform: translateY(-50px); /* Move a logo 50px para cima, metade do tamanho dela, para o efeito de sobreposição */
+}
+
+@media (max-width: 768px) {
+    .logo-gato-overlay {
+        display: none;
+    }
+}
+
+.hero-section {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.hero-content h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3.5rem;
+    color: var(--yellow);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    max-width: 600px;
+    text-align: center;
+}
+
+.btn-orcamento {
+    background-color: var(--yellow);
+    color: var(--dark);
+    font-weight: bold;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: transform 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+}
+
+    .btn-orcamento:hover {
+        transform: scale(1.05);
+        color: var(--dark);
+        background-color: var(--light);
+    }
+/*#endregion*/
+
+
+
+
+/*#region primeira tela - quem somos*/
+.titulo-quem-somos {
+    font-family: sans-serif;
+    font-weight: 400;
+    margin-bottom: 3rem;
+    padding-bottom: 0.5rem;
+    /* linha branca */
+    border-bottom: 1px solid #fff;
+    display: inline-block;
+}
+
+.texto-historia {
+    font-size: 1.25rem;
+    line-height: 1.8;
+}
+
+
+/*#endregion*/
+
+
+
+
+/*#region segunda tela */
+.titulo-servicos {
+    font-family: sans-serif;
+    font-weight: 500;
+    margin-bottom: 3rem;
+    padding-bottom: 0.5rem;
+    /* linha branca */
+    border-bottom: 2px solid var(--borda-titulo);
+    display: inline-block;
+}
+
+
+.card-servico {
+    background-color: var(--fundo-card);
+    border: none;
+    border-radius: 5px;
+    /* pra logo não cubrir o card */
+    position: relative;
+    z-index: 2;
+}
+
+    .card-servico:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card-servico .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #000;
+        background-color: #333;
+        color: #fff;
+        margin-bottom: 0;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+
+    .card-servico .card-img-top {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-top: 2px solid #333;
+    }
+
+    .card-servico ul {
+        color: var(--cor-texto-card);
+        font-size: 1rem;
+        padding-left: 1.5rem !important;
+    }
+
+    .card-servico li {
+        margin-bottom: 0.5rem;
+    }
+
+.icone-check {
+    color: var(--cor-check);
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+
+/* logo no card */
+.mascote-sylvester{
+    position: absolute;
+    /* posiciona no topo e à direita */
+    top: 1105px;
+    right: 110px;
+    width: 250px; /* ajuste o tamanho conforme desejar */
+    height: auto;
+    /* a logo fique acima dos cards */
+    z-index: 3;
+} 
+
+
+    .mascote-sylvester:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
+    }
+
+
+@media (max-width: 992px) {
+    /* esconde a logo em telas menores para não atrapalhar o layout */
+    .mascote-sylvester {
+        display: none;
+    }
+}
+
+/*#endregion*/
+
+
+
+/*#region botao-fixo*/
+html {
+    scroll-behavior: smooth;
+}
+
+#backToTopBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    background-color: var(--yellow);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 24px;
+    line-height: 1;
+    z-index: 1000;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+    #backToTopBtn:hover {
+        opacity: 1;
+        background-color: #e09700;
+    }
+
+/*#endregion*/
+
+
+
+
+/*#region area-restrita*/
+
+.login-card {
+    max-width: 800px;
+    width: 90%;
+}
+
+.h2 {
+    border-bottom: 1px solid #fff;
+    display: inline-block;
+}
+
+.form-control-lg {
+    height: 55px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .form-control-lg::placeholder {
+        color: #999;
+    }
+
+.form-label {
+    color: #333 !important;
+    margin-bottom: 0.25rem;
+}
+
+.btn-dark {
+    background-color: #000 !important;
+    border-color: #212529 !important;
+    font-weight: bold;
+    border-radius: 50px;
+}
+
+/*#endregion*/
+
+
+
+/* #region footer */
+.footer-link {
+    color: #000;
+    text-decoration: none;
+    transition: color 0.3s;
+    line-height: 2.2;
+    font-weight: 500;
+}
+
+    .footer-link:hover {
+        color: #333;
+        text-decoration: underline;
+    }
+
+.social-icons a {
+    color: #000;
+    margin-right: 15px;
+    transition: color 0.3s;
+}
+
+    .social-icons a:hover {
+        color: #fff;
+    }
+
+.footer p {
+    color: #000;
+}
+
+/*#endregion*/
+
+
