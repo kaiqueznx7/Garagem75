@@ -39,6 +39,7 @@
             <th>@Html.DisplayNameFor(model => model.QuantidadeEstoque)</th>
             <th>@Html.DisplayNameFor(model => model.DataCadastro)</th>
             <th>@Html.DisplayNameFor(model => model.DataUltimaAtualizacao)</th>
+            <th>@Html.DisplayNameFor(model => model.Imagem)</th>
             <th></th>
         </tr>
     </thead>
@@ -54,6 +55,15 @@
                 <td>@Html.DisplayFor(modelItem => item.QuantidadeEstoque)</td>
                 <td>@Html.DisplayFor(modelItem => item.DataCadastro)</td>
                 <td>@Html.DisplayFor(modelItem => item.DataUltimaAtualizacao)</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Imagem))
+                    {
+                        <img src="@item.Imagem" alt="Imagem da peça" width="100" />
+                    }
+                    else
+                    {
+                        <span>Nenhuma imagem</span>
+                    }
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.IdPeca" class="btn btn-primary">Editar</a> |
                     <a asp-action="Details" asp-route-id="@item.IdPeca" class="btn btn-secondary">Detalhes</a> |
