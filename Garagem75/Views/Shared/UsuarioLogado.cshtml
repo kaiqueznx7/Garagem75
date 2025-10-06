@@ -1,0 +1,10 @@
+﻿@using System.Security.Claims
+@* // Importa ClaimTypes para ler as Claims do usuário autenticado. *@
+
+@{
+    var nome = User.Identity?.Name;
+    // Nome do usuário logado (vem da Claim Name, definida no login).
+
+    var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Outros";
+    // Busca a Claim do tipo Role. Se não houver, usa "Outros" como padrão.
+}

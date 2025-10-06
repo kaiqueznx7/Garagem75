@@ -7,54 +7,80 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garagem75.Data;
 using Garagem75.Models;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Garagem75.Interfaces;
+using Garagem75.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Garagem75.Controllers
 {
+    
     public class UsuarioController : Controller
     {
         private readonly Garagem75DBContext _context;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ITipoUsuarioRepository _tipoUsuarioRepository;
 
-        public UsuarioController(Garagem75DBContext context)
+
+        public UsuarioController(Garagem75DBContext context, IUsuarioRepository usuarioRepository,
+            ITipoUsuarioRepository tipoUsuarioRepository)
         {
             _context = context;
+            _usuarioRepository = usuarioRepository;
+            _tipoUsuarioRepository = tipoUsuarioRepository;
         }
 
 
 
         // GET: Usuario/Login
         [HttpGet]
-        public IActionResult Login()
+        [AllowAnonymous]
+        public IActionResult Login(string? returnUrl = null)
         {
+            if (User?.Identity?.IsAuthenticated == true)
+                return RedirectToAction("Index", "Usuario"); // se já logado, vai para a lista
+
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         // POST: Usuario/Login
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string senha)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
+            var usuario = await _usuarioRepository.ValidarLoginAsync(email, senha);
+            if (usuario == null || !usuario.Ativo)
             {
-                ViewBag.Error = "Preencha todos os campos.";
+                ModelState.AddModelError(string.Empty, "Usuário ou senha inválidos.");
                 return View();
             }
 
-            var usuario = await _context.Usuarios
-                .Include(u => u.TipoUsuario)
-                .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+            string role = NormalizeRole(usuario?.TipoUsuario?.DescricaoTipoUsuario);
 
-            if (usuario == null)
-            {
-                ViewBag.Error = "Email ou senha inválidos.";
-                return View();
-            }
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name,  usuario.Nome ?? usuario.Email ?? "Usuário"),
+        new Claim(ClaimTypes.Email, usuario.Email ?? string.Empty),
+        new Claim(ClaimTypes.Role,  role)
+    };
 
-            // Armazena dados do usuário na sessão
-            HttpContext.Session.SetInt32("UsuarioId", usuario.IdUsuario);
-            HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
-            HttpContext.Session.SetString("TipoUsuario", usuario.TipoUsuario.DescricaoTipoUsuario);
+            var identity = new ClaimsIdentity(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+            identity.AddClaims(claims);
 
-            // Redireciona para a Home
-            return RedirectToAction("Index", "Home");
+            await HttpContext.SignInAsync(
+                Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(identity),
+                new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+                });
+
+            // 🔧 HOTFIX: todo mundo pós-login cai na mesma tela protegida
+            return RedirectToAction("Index", "Usuario");
         }
 
         // GET: Usuario/Logout
@@ -204,6 +230,16 @@ namespace Garagem75.Controllers
         private bool UsuarioExists(int id)
         {
             return _context.Usuarios.Any(e => e.IdUsuario == id);
+        }
+        private static string NormalizeRole(string? raw)
+        {
+            var r = (raw ?? "").Trim().ToLowerInvariant();
+            return r switch
+            {
+                "Administrador" or "admin" => "Administrador",
+                "Mecânico" or "mecanico" => "Mêcanico",
+                _ => "Outros"
+            };
         }
     }
 }

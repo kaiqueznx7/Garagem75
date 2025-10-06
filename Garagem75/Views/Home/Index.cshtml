@@ -181,19 +181,23 @@
 
                 <div class="p-4 p-md-5 rounded shadow-lg" style="background-color: #FFD700;">
 
-                    <form method="post" asp-controller="Usuario" asp-action="Index">
+                    <form method="post" asp-controller="Usuario" asp-action="Login">
+                        @Html.AntiForgeryToken()
                         <div class="mb-4">
-                            <label for="inputEmail" class="form-label text-dark fw-bold">Email</label>
+                            <label for="Email" class="form-label text-dark fw-bold">Email</label>
                             <input type="email" class="form-control form-control-lg" id="inputEmail" placeholder="email@Garagem75.com">
                         </div>
 
                         <div class="mb-5">
-                            <label for="inputSenha" class="form-label text-dark fw-bold">Senha</label>
+                            <label for="Senha" class="form-label text-dark fw-bold">Senha</label>
                             <input type="password" class="form-control form-control-lg" id="inputSenha" placeholder="******">
                         </div>
 
                         <div class="text-center">
                             <button type="submit" class="btn btn-dark btn-lg px-5">Entrar</button>
+                        </div>
+                        <div class="text-danger mt-2">
+                            @Html.ValidationSummary(excludePropertyErrors: true)
                         </div>
                     </form>
 
