@@ -54,7 +54,7 @@ namespace Garagem75.Controllers
             HttpContext.Session.SetString("TipoUsuario", usuario.TipoUsuario.DescricaoTipoUsuario);
 
             // Redireciona para a Home
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Usuario");
         }
 
         // GET: Usuario/Logout
