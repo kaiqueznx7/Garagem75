@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garagem75.Data;
 using Garagem75.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Garagem75.Controllers
 {
+    //[Authorize(Roles = "Administrador")]
     public class TipoUsuarioController : Controller
     {
         private readonly Garagem75DBContext _context;

@@ -62,7 +62,7 @@ namespace Garagem75.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Usuario?> ValidarLoginAsync(string email, string senha)
+        public async Task<Usuario>? ValidarLoginAsync(string email, string senha)
         {
             return await _context.Usuarios.Include(u => u.TipoUsuario)
                 .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
