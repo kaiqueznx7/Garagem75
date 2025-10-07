@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Garagem75.Controllers
 {
-    //[Authorize(Roles = "Administrador, Mêcanico")]
+    [Authorize(Roles = "Administrador, Mêcanico")]
     public class PecaController : Controller
     {
         private readonly Garagem75DBContext _context;

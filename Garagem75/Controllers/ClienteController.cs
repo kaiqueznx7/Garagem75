@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Garagem75.Data;
 using Garagem75.Models;
 using Microsoft.AspNetCore.Authorization;
+using Garagem75.ViewModels;
 
 namespace Garagem75.Controllers
 {
-    //[Authorize(Roles = "Administrador, Mêcanico")]
+    [Authorize(Roles = "Administrador, Mêcanico")]
     public class ClienteController : Controller
     {
         private readonly Garagem75DBContext _context;
@@ -45,26 +46,36 @@ namespace Garagem75.Controllers
             return View(cliente);
         }
 
-        // GET: Cliente/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Cliente/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdCliente,Nome,Cpf,Telefone,Email")] Cliente cliente)
+        public async Task<IActionResult> Create(ClienteCadastroViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(cliente);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            return View(cliente);
+
+            // Salvar Cliente
+            _context.Clientes.Add(model.Cliente);
+            await _context.SaveChangesAsync();
+
+            // Vincular Endereco ao Cliente
+            model.Endereco.ClienteId = model.Cliente.IdCliente;
+            _context.Enderecos.Add(model.Endereco);
+
+            // Vincular Veiculo ao Cliente
+            model.Veiculo.ClienteId = model.Cliente.IdCliente;
+            _context.Veiculos.Add(model.Veiculo);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Cliente/Edit/5

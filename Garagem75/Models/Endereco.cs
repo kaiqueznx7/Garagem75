@@ -29,7 +29,11 @@ public class Endereco
 
     [Required(ErrorMessage = "Cidade é Obrigatório")]
     [Display(Name = "Cidade")]
-    [StringLength(2)]
+    [StringLength(50)]
+    public string Cidade { get; set; }
+
+    [Required(ErrorMessage = "UF é Obrigatório")]
+    [Display(Name = "UF")]
     public string Uf { get; set; }
 
     [Required(ErrorMessage = "CEP é Obrigatório")]

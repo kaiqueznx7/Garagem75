@@ -1,53 +1,163 @@
-﻿@model Garagem75.Models.Cliente
+﻿@model Garagem75.ViewModels.ClienteCadastroViewModel
 
 @{
-    ViewData["Title"] = "Criar Cliente";
+    ViewData["Title"] = "Cadastrar Cliente Completo";
 }
 
-<h1>Create</h1>
+<h2 class="mb-4 text-center">Cadastrar Cliente Completo</h2>
 
-<h4>Cliente</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
+<form asp-action="Create" method="post">
+    <ul class="nav nav-tabs" id="clienteTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="cliente-tab" data-bs-toggle="tab" data-bs-target="#cliente" type="button" role="tab">
+                Cliente
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="endereco-tab" data-bs-toggle="tab" data-bs-target="#endereco" type="button" role="tab">
+                Endereço
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="veiculo-tab" data-bs-toggle="tab" data-bs-target="#veiculo" type="button" role="tab">
+                Veículo
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content border border-top-0 p-4 rounded-bottom bg-light" id="clienteTabsContent">
+
+        <!-- Aba Cliente -->
+        <div class="tab-pane fade show active" id="cliente" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Cliente.Nome" class="form-label"></label>
+                    <input asp-for="Cliente.Nome" class="form-control" />
+                    <span asp-validation-for="Cliente.Nome" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Cliente.Cpf" class="form-label"></label>
+                    <input asp-for="Cliente.Cpf" class="form-control" />
+                    <span asp-validation-for="Cliente.Cpf" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Cliente.Telefone" class="form-label"></label>
+                    <input asp-for="Cliente.Telefone" class="form-control" />
+                    <span asp-validation-for="Cliente.Telefone" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Cliente.Email" class="form-label"></label>
+                    <input asp-for="Cliente.Email" class="form-control" />
+                    <span asp-validation-for="Cliente.Email" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Cpf" class="control-label"></label>
-                <input asp-for="Cpf" class="form-control" />
-                <span asp-validation-for="Cpf" class="text-danger"></span>
+
+            <div class="text-end">
+                <button type="button" class="btn btn-primary next-tab">Próximo <i class="bi bi-arrow-right"></i></button>
             </div>
-            <div class="form-group">
-                <label asp-for="Telefone" class="control-label"></label>
-                <input asp-for="Telefone" class="form-control" />
-                <span asp-validation-for="Telefone" class="text-danger"></span>
+        </div>
+
+        <!-- Aba Endereço -->
+        <div class="tab-pane fade" id="endereco" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Endereco.Rua" class="form-label"></label>
+                    <input asp-for="Endereco.Rua" class="form-control" />
+                    <span asp-validation-for="Endereco.Rua" class="text-danger"></span>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label asp-for="Endereco.Numero" class="form-label"></label>
+                    <input asp-for="Endereco.Numero" class="form-control" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Endereco.Complemento" class="form-label"></label>
+                    <input asp-for="Endereco.Complemento" class="form-control" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Endereco.Bairro" class="form-label"></label>
+                    <input asp-for="Endereco.Bairro" class="form-control" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Endereco.Cidade" class="form-label"></label>
+                    <input asp-for="Endereco.Cidade" class="form-control" maxlength="2" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Endereco.Uf" class="form-label"></label>
+                    <input asp-for="Endereco.Uf" class="form-control" maxlength="2" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Endereco.Cep" class="form-label"></label>
+                    <input asp-for="Endereco.Cep" class="form-control" />
+                </div>
+                <div class="col-md-3 d-flex align-items-center">
+                    <div class="form-check mt-4">
+                        <input asp-for="Endereco.Principal" type="checkbox" class="form-check-input" />
+                        <label asp-for="Endereco.Principal" class="form-check-label"></label>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary prev-tab"><i class="bi bi-arrow-left"></i> Voltar</button>
+                <button type="button" class="btn btn-primary next-tab">Próximo <i class="bi bi-arrow-right"></i></button>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+
+        <!-- Aba Veículo -->
+        <div class="tab-pane fade" id="veiculo" role="tabpanel">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Veiculo.Fabricante" class="form-label"></label>
+                    <input asp-for="Veiculo.Fabricante" class="form-control" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Veiculo.Modelo" class="form-label"></label>
+                    <input asp-for="Veiculo.Modelo" class="form-control" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Veiculo.Ano" class="form-label"></label>
+                    <input asp-for="Veiculo.Ano" type="date" class="form-control" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Veiculo.Placa" class="form-label"></label>
+                    <input asp-for="Veiculo.Placa" class="form-control" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Veiculo.Cor" class="form-label"></label>
+                    <input asp-for="Veiculo.Cor" class="form-control" />
+                </div>
             </div>
-        </form>
+
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary prev-tab"><i class="bi bi-arrow-left"></i> Voltar</button>
+                <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Salvar</button>
+            </div>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.querySelectorAll('.next-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const currentTab = document.querySelector('.nav-tabs .nav-link.active');
+                const nextTab = currentTab.parentElement.nextElementSibling?.querySelector('.nav-link');
+                if (nextTab) nextTab.click();
+            });
+        });
+
+        document.querySelectorAll('.prev-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const currentTab = document.querySelector('.nav-tabs .nav-link.active');
+                const prevTab = currentTab.parentElement.previousElementSibling?.querySelector('.nav-link');
+                if (prevTab) prevTab.click();
+            });
+        });
+    </script>
 }
 
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
-<script src="~/js/site.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>

@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Garagem75.Interfaces;
 using Garagem75.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Garagem75.Controllers
 {
@@ -46,47 +47,47 @@ namespace Garagem75.Controllers
         }
 
         // POST: Usuario/Login
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string email, string senha)
-        {
-            var usuario = await _usuarioRepository.ValidarLoginAsync(email, senha);
-            if (usuario == null || !usuario.Ativo)
-            {
-                ModelState.AddModelError(string.Empty, "Usuário ou senha inválidos.");
-                return View();
-            }
-
-            string role = NormalizeRole(usuario?.TipoUsuario?.DescricaoTipoUsuario);
-
-            var claims = new List<Claim>
+    [HttpPost]
+    public async Task<IActionResult> Login(string email, string senha)
     {
-        new Claim(ClaimTypes.Name,  usuario.Nome ?? usuario.Email ?? "Usuário"),
-        new Claim(ClaimTypes.Email, usuario.Email ?? string.Empty),
-        new Claim(ClaimTypes.Role,  role)
-    };
-
-            var identity = new ClaimsIdentity(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
-            identity.AddClaims(claims);
-
-            await HttpContext.SignInAsync(
-                Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity),
-                new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
-                });
-
-            // 🔧 HOTFIX: todo mundo pós-login cai na mesma tela protegida
-            return RedirectToAction("Index", "Usuario");
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
+        {
+            ViewBag.Error = "Preencha todos os campos.";
+            return View();
         }
 
-        // GET: Usuario/Logout
-        public IActionResult Logout()
+        var usuario = await _context.Usuarios
+            .Include(u => u.TipoUsuario)
+            .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+
+        if (usuario == null)
         {
-            HttpContext.Session.Clear();
+            ViewBag.Error = "Email ou senha inválidos.";
+            return View();
+        }
+
+        // Cria as claims
+        var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, usuario.Nome),
+        new Claim(ClaimTypes.Email, usuario.Email),
+        new Claim(ClaimTypes.Role, usuario.TipoUsuario.DescricaoTipoUsuario)
+    };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+        return RedirectToAction("Index", "Usuario");
+    }
+
+
+        // GET: Usuario/Logout
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
 
