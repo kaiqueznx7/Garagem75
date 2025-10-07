@@ -260,10 +260,8 @@ namespace Garagem75.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdVeiculo"));
 
-                    b.Property<string>("Ano")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
+                    b.Property<DateTime>("Ano")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ClienteId")
                         .HasColumnType("int");

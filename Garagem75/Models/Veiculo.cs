@@ -18,8 +18,7 @@ public class Veiculo
     public string Modelo { get; set; }
     
     [Required(ErrorMessage = "Campo Obrigatório!")]
-    [StringLength(4)]
-    public string Ano { get; set; }
+    public DateTime Ano { get; set; }
 
     [Required(ErrorMessage = "Campo Obrigatório!")]
     [StringLength(7)]
