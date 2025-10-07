@@ -14,6 +14,9 @@
         <div class="bg-dark text-white vh-100 p-3 shadow" style="width: 250px;">
             <h4 class="mb-4">Menu</h4>
             <ul class="nav flex-column">
+
+                <li><a class="nav-link text-light" asp-controller="Home" asp-action="Index">🏠 Início</a></li>
+
                 @if (User.IsInRole("Administrador") || User.IsInRole("Mecânico"))
                 {
                     <li class="nav-item mb-2">
@@ -47,6 +50,29 @@
                     <a class="nav-link text-white" asp-controller="TipoUsuario" asp-action="Index">
                         <i class="bi bi-person-badge"></i> Tipos de Usuário
                     </a>
+                </li>
+
+                <li class="mt-4">
+                    @* <a class="nav-link text-danger" asp-controller="Home" asp-action="Index">🚪 Sair</a> *@
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                    <li class="nav-item">
+                        <span class="nav-link disabled">Olá, @User.Identity!.Name!</span>
+                    </li>
+                    <li class="nav-item">
+                        <form asp-controller="Usuario" asp-action="Logout" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-link nav-link p-0">🚪 Sair</button>
+                        </form>
+                    </li>
+                    }
+                    else
+                    {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Usuario" asp-action="Login">Área Restrita</a>
+                    </li>
+                    }
+
                 </li>
             </ul>
         </div>

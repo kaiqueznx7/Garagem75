@@ -85,10 +85,24 @@ namespace Garagem75.Controllers
 
         // GET: Usuario/Logout
         [HttpGet]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> LogoutGet()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // 🔧 apaga o cookie de antiforgery (nome deve bater com o Program.cs)
+            Response.Cookies.Delete("Garagem75.AntiCsrf");
+
+            // 🔧 volta pra Home com um cache-buster pra forçar HTML/JS novos
+            return RedirectToAction("Index", "Home", new { _ts = DateTimeOffset.UtcNow.ToUnixTimeSeconds() });
         }
 
         // GET: Usuario
