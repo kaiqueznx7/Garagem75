@@ -12,7 +12,7 @@ namespace Garagem75.ViewModels
         public string Modelo { get; set; }
 
         
-        public DateTime Ano { get; set; }
+        public int Ano { get; set; }
 
         
         public string Placa { get; set; }
