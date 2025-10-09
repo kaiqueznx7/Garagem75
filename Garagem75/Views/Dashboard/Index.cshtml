@@ -1,0 +1,100 @@
+﻿@model Garagem75.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<style>
+    .chart-card .card-body {
+        background: #121212;
+        color: #fff;
+        min-height: 320px;
+    }
+
+    .chart-card canvas {
+        width: 100% !important;
+        height: 260px !important;
+    }
+</style>
+
+<div class="container-fluid py-3">
+    <h2 class="mb-4">📊 Dashboard</h2>
+
+
+    <!-- Cards de KPIs movidos para baixo -->
+    <div class="row g-3 mt-3">
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body bg-dark text-light">
+                    <div class="fs-1 fw-bold">@Model.TotalPecas</div>
+                    <div class="text-light">Peças</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body bg-dark text-light">
+                    <div class="fs-1 fw-bold">@Model.TotalClientes</div>
+                    <div class="text-light">Clientes</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body bg-dark text-light">
+                    <div class="fs-1 fw-bold">@Model.TotalOrdensServico</div>
+                    <div class="text-light">Ordens de Serviço</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body bg-dark text-light">
+                    <div class="fs-1 fw-bold">@Model.TotalUsuarios</div>
+                    <div class="text-light">Usuários</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm h-100 chart-card">
+            <div class="card-header fw-semibold bg-dark text-light">🏆 Top 5 Clientes mais antigos</div>
+            <div class="card-body bg-dark text-light">
+                @if (Model.ClientesMaisAntigos?.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle table-dark">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>Telefone</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.ClientesMaisAntigos.Take(5))
+                                {
+                                    <tr>
+                                        <td>@c.IdCliente</td>
+                                        <td>@c.Nome</td>
+                                        <td>@c.Telefone</td>
+                                        <td>@c.Email</td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted m-0">Sem Clientes cadastrados.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
