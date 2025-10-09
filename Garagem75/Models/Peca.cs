@@ -39,5 +39,8 @@ public class Peca
     // Novo campo para imagem
     public string? Imagem { get; set; }
 
+    // relação inversa com OrdemServico
+    public ICollection<OrdemServicoPeca> PecasAssociadas { get; set; } = new List<OrdemServicoPeca>();
+
 }
 

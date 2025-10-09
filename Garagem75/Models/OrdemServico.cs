@@ -18,7 +18,7 @@ namespace Garagem75.Models;
     public decimal MaoDeObra { get; set; }
 
     [Column(TypeName = "decimal(18,2)")]
-    public decimal? ValorDesconto { get; set; }
+    public decimal ValorDesconto { get; set; }
 
     [Required]
     [Column(TypeName = "decimal(18,2)")]
@@ -29,9 +29,14 @@ namespace Garagem75.Models;
     [Required]
     public DateTime DataEntrega { get; set; }
 
+    // relação muitos-para-muitos com Peca
+    public ICollection<OrdemServicoPeca> PecasAssociadas { get; set; } = new List<OrdemServicoPeca>();
+
     public int VeiculoId { get; set; }
 
     public virtual Veiculo? Veiculo { get; set; }
+
+
 
 
 }

@@ -32,11 +32,11 @@
                 <input asp-for="ValorDesconto" class="form-control" />
                 <span asp-validation-for="ValorDesconto" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ValorTotal" class="control-label"></label>
-                <input asp-for="ValorTotal" class="form-control" />
-                <span asp-validation-for="ValorTotal" class="text-danger"></span>
-            </div>
+            @* <div class="form-group"> *@
+            @*     <label asp-for="ValorTotal" class="control-label"></label> *@
+            @*     <input asp-for="ValorTotal" class="form-control" /> *@
+            @*     <span asp-validation-for="ValorTotal" class="text-danger"></span> *@
+            @* </div> *@
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
                 <input asp-for="Status" class="form-control" />
@@ -54,6 +54,39 @@
                 </select>
                 <span asp-validation-for="VeiculoId" class="text-danger"></span>
             </div>
+            <h4>Peças utilizadas</h4>
+            <div class="form-group">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Peça</th>
+                            <th>Preço Unitário</th>
+                            <th>Quantidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var peca in (List<Garagem75.Models.Peca>)ViewBag.Pecas)
+                        {
+                            <tr>
+                                <td>@peca.Nome</td>
+                                <td>R$ @peca.Preco.ToString("N2")</td>
+                                <td>
+                                    @* CAMPO HIDDEN: Este campo só será ativado via JS se a quantidade for > 0 *@
+                                    <input type="hidden" class="peca-id-input" name="pecaIds" value="@peca.IdPeca" disabled />
+
+                                    @* CAMPO DE QUANTIDADE: Este campo envia o array "quantidades" *@
+                                    <input type="number"
+                                           class="form-control form-control-sm peca-quantidade-input"
+                                           data-peca-id="@peca.IdPeca"
+                                           value="0"
+                                           min="0"
+                                           style="width: 80px;" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -67,6 +100,44 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // Ação disparada ao submeter o formulário
+            $('form').submit(function (e) {
+                // Remove todos os campos pecaIds existentes (para evitar duplicatas)
+                $('input[name="pecaIds"]').remove();
+
+                // Para cada campo de quantidade
+                $('.peca-quantidade-input').each(function () {
+                    var quantidade = parseInt($(this).val());
+                    var pecaId = $(this).data('peca-id');
+
+                    if (quantidade > 0) {
+                        // 1. Adiciona o campo pecaIds: garante que o ID será enviado
+                        // O nome deve ser 'pecaIds' para ser mapeado no Controller
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'pecaIds',
+                            value: pecaId
+                        }).appendTo('form');
+
+                        // 2. Renomeia o campo de Quantidade para 'quantidades':
+                        // O nome deve ser 'quantidades' para ser mapeado no Controller
+                        // Importante: A ordem de 'pecaIds' e 'quantidades' deve ser a mesma
+                        $(this).attr('name', 'quantidades');
+
+                    } else {
+                        // Se a quantidade for zero ou negativa, remove o atributo 'name'
+                        // para que o campo NÃO seja submetido
+                        $(this).removeAttr('name');
+                    }
+                });
+
+                // Permite que o formulário continue a submissão
+                return true;
+            });
+        });
+    </script>
 }
 
 <script src="~/lib/jquery/dist/jquery.js"></script>

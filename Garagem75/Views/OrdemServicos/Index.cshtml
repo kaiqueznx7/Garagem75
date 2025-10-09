@@ -22,6 +22,10 @@
                 @Html.DisplayNameFor(model => model.MaoDeObra)
             </th>
             <th>
+                @* CORREÇÃO: Remove a referência direta a 'Pecas' no cabeçalho *@
+                Peças Utilizadas
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.ValorDesconto)
             </th>
             <th>
@@ -33,39 +37,66 @@
             <th>
                 @Html.DisplayNameFor(model => model.DataEntrega)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Veiculo)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataServico)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaoDeObra)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorDesconto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorTotal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataEntrega)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdOrdemServico" class="btn btn-primary">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdOrdemServico" class="btn btn-secondary">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdOrdemServico" class="btn btn-danger">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descricao)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataServico)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MaoDeObra)
+                </td>
+                <td>
+                    @* CORREÇÃO: Usa PecasAssociadas (ICollection<OrdemServicoPeca>) *@
+                    @if (item.PecasAssociadas != null && item.PecasAssociadas.Any())
+                    {
+                        <ul>
+                            @* Itera sobre a nova tabela de junção *@
+                            @foreach (var associacao in item.PecasAssociadas)
+                            {
+                                @* Acessa a Peça real (associacao.Peca) e a Quantidade (associacao.Quantidade) *@
+                                <li>
+                                    @associacao.Peca.Nome (x@associacao.Quantidade) - R$ @associacao.Subtotal.ToString("N2")
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <em>Sem peças</em>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValorDesconto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValorTotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataEntrega)
+                </td>
+                <td>
+                    @(item.Veiculo != null ? $"{item.Veiculo.Modelo} - {item.Veiculo.Placa}" : "")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdOrdemServico" class="btn btn-primary">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.IdOrdemServico" class="btn btn-secondary">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdOrdemServico" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -33,11 +33,11 @@
                 <input asp-for="ValorDesconto" class="form-control" />
                 <span asp-validation-for="ValorDesconto" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ValorTotal" class="control-label"></label>
-                <input asp-for="ValorTotal" class="form-control" />
-                <span asp-validation-for="ValorTotal" class="text-danger"></span>
-            </div>
+            @* <div class="form-group"> *@
+            @*     <label asp-for="ValorTotal" class="control-label"></label> *@
+            @*     <input asp-for="ValorTotal" class="form-control" /> *@
+            @*     <span asp-validation-for="ValorTotal" class="text-danger"></span> *@
+            @* </div> *@
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
                 <input asp-for="Status" class="form-control" />
@@ -47,6 +47,56 @@
                 <label asp-for="DataEntrega" class="control-label"></label>
                 <input asp-for="DataEntrega" class="form-control" />
                 <span asp-validation-for="DataEntrega" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VeiculoId" class="control-label"></label>
+                <select asp-for="VeiculoId" class="form-control" asp-items="ViewBag.VeiculoId">
+                    <option value="">Selecione um veículo</option>
+                </select>
+                <span asp-validation-for="VeiculoId" class="text-danger"></span>
+            </div>
+            <h4>Peças utilizadas</h4>
+            <div class="form-group">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Peça</th>
+                            <th>Preço Unitário</th>
+                            <th>Quantidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            // Cria um dicionário para busca rápida das quantidades existentes
+                            // O controller Edit(GET) deve incluir PecasAssociadas.
+                            var pecasAssociadasDict = Model.PecasAssociadas.ToDictionary(pa => pa.PecaId, pa => pa.Quantidade);
+                        }
+
+                        @foreach (var peca in (List<Garagem75.Models.Peca>)ViewBag.Pecas)
+                        {
+                            // Verifica se esta peça está associada e pega a quantidade, caso contrário, é zero.
+                            var quantidadeExistente = pecasAssociadasDict.GetValueOrDefault(peca.IdPeca, 0);
+
+                            <tr>
+                                <td>@peca.Nome</td>
+                                <td>R$ @peca.Preco.ToString("N2")</td>
+                                <td>
+                                    @* CAMPO HIDDEN (pecaIds): Usado para mapear o ID no Controller *@
+                                    @* Ele será populado via JS SOMENTE se a quantidade for > 0 *@
+                                    <input type="hidden" class="peca-id-input" value="@peca.IdPeca" disabled />
+
+                                    @* CAMPO DE QUANTIDADE: Pré-preenchido com a quantidade existente *@
+                                    <input type="number"
+                                           class="form-control form-control-sm peca-quantidade-input"
+                                           data-peca-id="@peca.IdPeca"
+                                           value="@quantidadeExistente"
+                                           min="0"
+                                           style="width: 80px;" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -60,10 +110,53 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
-<script src="~/js/site.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
+    <script src="~/js/site.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Ação disparada ao submeter o formulário de EDIÇÃO
+            $('form').submit(function (e) {
+
+                // Remove quaisquer campos pecaIds que possam ter sido adicionados anteriormente
+                // (Para evitar problemas se o usuário clicar duas vezes rapidamente)
+                $('input[name="pecaIds"]').remove();
+
+                // Para cada campo de quantidade
+                $('.peca-quantidade-input').each(function () {
+                    var quantidade = parseInt($(this).val());
+                    var pecaId = $(this).data('peca-id');
+
+                    // Se a quantidade for válida (maior que zero)
+                    if (quantidade > 0) {
+
+                        // 1. Adiciona o campo HIDDEN 'pecaIds' para mapear o ID
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'pecaIds',
+                            value: pecaId
+                        }).appendTo('form');
+
+                        // 2. Renomeia o campo de Quantidade para 'quantidades':
+                        // Isso garante que o valor correto da quantidade seja submetido
+                        $(this).attr('name', 'quantidades');
+
+                    } else {
+                        // Se a quantidade for zero, remove o atributo 'name' do campo de quantidade
+                        // para que ele NÃO seja enviado ao Controller.
+                        $(this).removeAttr('name');
+                    }
+                });
+
+                // Permite que o formulário continue a submissão
+                return true;
+            });
+        });
+    </script>
+}

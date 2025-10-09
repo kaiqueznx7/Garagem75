@@ -24,7 +24,12 @@ namespace Garagem75.Controllers
         // GET: OrdemServicos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.OrdemServicos.ToListAsync());
+            // CORREÇÃO: Uso de PecasAssociadas
+            return View(await _context.OrdemServicos
+                .Include(o => o.Veiculo)
+                .Include(o => o.PecasAssociadas)
+                    .ThenInclude(op => op.Peca)
+                .ToListAsync());
         }
 
         // GET: OrdemServicos/Details/5
@@ -35,8 +40,12 @@ namespace Garagem75.Controllers
                 return NotFound();
             }
 
+            // CORREÇÃO: Uso de PecasAssociadas
             var ordemServico = await _context.OrdemServicos
+                .Include(o => o.PecasAssociadas)
+                    .ThenInclude(op => op.Peca)
                 .FirstOrDefaultAsync(m => m.IdOrdemServico == id);
+
             if (ordemServico == null)
             {
                 return NotFound();
@@ -48,25 +57,82 @@ namespace Garagem75.Controllers
         // GET: OrdemServicos/Create
         public IActionResult Create()
         {
-            ViewData["VeiculoId"] = new SelectList(_context.Veiculos, "IdVeiculo", "Modelo");
+            var veiculos = _context.Veiculos
+                .Select(v => new
+                {
+                    v.IdVeiculo,
+                    NomeCompleto = v.Modelo + " - " + v.Placa
+                })
+                .ToList();
+
+            ViewData["VeiculoId"] = new SelectList(veiculos, "IdVeiculo", "NomeCompleto");
+            ViewData["Pecas"] = _context.Pecas.ToList();
             return View();
         }
 
-
         // POST: OrdemServicos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdOrdemServico,Descricao,DataServico,MaoDeObra,ValorDesconto,ValorTotal,Status,DataEntrega,VeiculoId")] OrdemServico ordemServico)
+        public async Task<IActionResult> Create(
+            [Bind("IdOrdemServico,Descricao,DataServico,MaoDeObra,ValorDesconto,ValorTotal,Status,DataEntrega,VeiculoId")] OrdemServico ordemServico,
+            int[] pecaIds, // IDs das peças selecionadas
+            int[] quantidades) // Quantidades correspondentes
         {
             if (ModelState.IsValid)
             {
+                if (pecaIds.Length != quantidades.Length)
+                {
+                    ModelState.AddModelError("", "A lista de peças e quantidades não corresponde.");
+                    // Não precisa do `return View(ordemServico);` aqui, pois o retorno está no final do método.
+                }
+
+                // 1. Inicializa e calcula o total
+                decimal totalPecas = 0;
+                ordemServico.PecasAssociadas = new List<OrdemServicoPeca>();
+
+                for (int i = 0; i < pecaIds.Length; i++)
+                {
+                    var pecaId = pecaIds[i];
+                    var quantidade = quantidades[i];
+
+                    if (quantidade > 0)
+                    {
+                        // Encontra a peça SEM rastreamento, ou usa FindAsync, mas usaremos apenas a PecaId
+                        var peca = await _context.Pecas.AsNoTracking().FirstOrDefaultAsync(p => p.IdPeca == pecaId);
+
+                        if (peca != null)
+                        {
+                            var novaAssociacao = new OrdemServicoPeca
+                            {
+                                PecaId = pecaId, // Usa a chave estrangeira em vez do objeto de navegação
+                                Quantidade = quantidade,
+                                PrecoUnitario = peca.Preco
+                            };
+                            ordemServico.PecasAssociadas.Add(novaAssociacao);
+                            totalPecas += novaAssociacao.Subtotal;
+                        }
+                    }
+                }
+
+                // 2. Calcula o ValorTotal
+                ordemServico.ValorTotal = ordemServico.MaoDeObra + totalPecas - ordemServico.ValorDesconto;
+
                 _context.Add(ordemServico);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["VeiculoId"] = new SelectList(_context.Veiculos, "IdVeiculo", "Modelo", ordemServico.VeiculoId);
+
+            // Código de retorno em caso de falha de validação
+            var veiculos = _context.Veiculos
+                .Select(v => new
+                {
+                    v.IdVeiculo,
+                    NomeCompleto = v.Modelo + " - " + v.Placa
+                })
+                .ToList();
+
+            ViewData["VeiculoId"] = new SelectList(veiculos, "IdVeiculo", "NomeCompleto", ordemServico.VeiculoId);
+            ViewData["Pecas"] = _context.Pecas.ToList();
             return View(ordemServico);
         }
 
@@ -78,20 +144,38 @@ namespace Garagem75.Controllers
                 return NotFound();
             }
 
-            var ordemServico = await _context.OrdemServicos.FindAsync(id);
+            // CORREÇÃO: Incluir PecasAssociadas e a Peca
+            var ordemServico = await _context.OrdemServicos
+                .Include(o => o.PecasAssociadas)
+                    .ThenInclude(op => op.Peca)
+                .FirstOrDefaultAsync(m => m.IdOrdemServico == id);
+
             if (ordemServico == null)
             {
                 return NotFound();
             }
+
+            var veiculos = _context.Veiculos
+                .Select(v => new
+                {
+                    v.IdVeiculo,
+                    NomeCompleto = v.Modelo + " - " + v.Placa
+                })
+                .ToList();
+
+            ViewData["VeiculoId"] = new SelectList(veiculos, "IdVeiculo", "NomeCompleto", ordemServico.VeiculoId);
+            ViewData["Pecas"] = _context.Pecas.ToList();
             return View(ordemServico);
         }
 
         // POST: OrdemServicos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdOrdemServico,Descricao,DataServico,MaoDeObra,ValorDesconto,ValorTotal,Status,DataEntrega,VeiculoId")] OrdemServico ordemServico)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("IdOrdemServico,Descricao,DataServico,MaoDeObra,ValorDesconto,ValorTotal,Status,DataEntrega,VeiculoId")] OrdemServico ordemServico,
+            int[] pecaIds,
+            int[] quantidades)
         {
             if (id != ordemServico.IdOrdemServico)
             {
@@ -100,14 +184,67 @@ namespace Garagem75.Controllers
 
             if (ModelState.IsValid)
             {
+                // Verifica inconsistência de dados
+                if (pecaIds.Length != quantidades.Length)
+                {
+                    ModelState.AddModelError("", "A lista de peças e quantidades não corresponde.");
+                    // Não retorna aqui, cai no bloco de retorno da View no final do método.
+                }
+
+                // 1. Carrega a Ordem de Serviço do banco, incluindo AS ASSOCIAÇÕES
+                var ordemServicoAtual = await _context.OrdemServicos
+                    .Include(o => o.PecasAssociadas)
+                    .FirstOrDefaultAsync(o => o.IdOrdemServico == id);
+
+                if (ordemServicoAtual == null)
+                {
+                    return NotFound();
+                }
+
+                // 2. Atualiza as propriedades simples
+                _context.Entry(ordemServicoAtual).CurrentValues.SetValues(ordemServico);
+
+                // 3. Limpa a coleção existente de associações (remove todas as peças existentes)
+                ordemServicoAtual.PecasAssociadas.Clear();
+
+                // 4. Reconstroi as peças associadas com a quantidade e preço
+                decimal totalPecas = 0;
+
+                for (int i = 0; i < pecaIds.Length; i++)
+                {
+                    var pecaId = pecaIds[i];
+                    var quantidade = quantidades[i];
+
+                    if (quantidade > 0)
+                    {
+                        var peca = await _context.Pecas.AsNoTracking().FirstOrDefaultAsync(p => p.IdPeca == pecaId);
+
+                        if (peca != null)
+                        {
+                            var novaAssociacao = new OrdemServicoPeca
+                            {
+                                PecaId = pecaId, // Usa a chave estrangeira em vez do objeto de navegação
+                                Quantidade = quantidade,
+                                PrecoUnitario = peca.Preco
+                            };
+
+                            ordemServicoAtual.PecasAssociadas.Add(novaAssociacao);
+                            totalPecas += novaAssociacao.Subtotal;
+                        }
+                    }
+                }
+
+                // 5. Calcula o novo ValorTotal
+                ordemServicoAtual.ValorTotal = ordemServicoAtual.MaoDeObra + totalPecas - ordemServicoAtual.ValorDesconto;
+
                 try
                 {
-                    _context.Update(ordemServico);
                     await _context.SaveChangesAsync();
                 }
+                // CORREÇÃO: Bloco Catch obrigatório para o Try
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrdemServicoExists(ordemServico.IdOrdemServico))
+                    if (!OrdemServicoExists(ordemServicoAtual.IdOrdemServico))
                     {
                         return NotFound();
                     }
@@ -118,6 +255,18 @@ namespace Garagem75.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            // Código de retorno em caso de falha de validação ou ID mismatch
+            var veiculos = _context.Veiculos
+                .Select(v => new
+                {
+                    v.IdVeiculo,
+                    NomeCompleto = v.Modelo + " - " + v.Placa
+                })
+                .ToList();
+
+            ViewData["VeiculoId"] = new SelectList(veiculos, "IdVeiculo", "NomeCompleto", ordemServico.VeiculoId);
+            ViewData["Pecas"] = _context.Pecas.ToList();
             return View(ordemServico);
         }
 
@@ -144,6 +293,10 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Nota: Se a OrdemServico for excluída, o EF Core
+            // deve remover automaticamente as entradas em OrdemServicoPeca
+            // devido à configuração em cascata (cascading delete) que é 
+            // padrão para relacionamentos necessários.
             var ordemServico = await _context.OrdemServicos.FindAsync(id);
             if (ordemServico != null)
             {

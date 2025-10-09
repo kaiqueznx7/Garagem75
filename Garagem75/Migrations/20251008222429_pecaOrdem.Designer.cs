@@ -4,6 +4,7 @@ using Garagem75.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garagem75.Migrations
 {
     [DbContext(typeof(Garagem75DBContext))]
-    partial class Garagem75DBContextModelSnapshot : ModelSnapshot
+    [Migration("20251008222429_pecaOrdem")]
+    partial class pecaOrdem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,7 +136,7 @@ namespace Garagem75.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("ValorDesconto")
+                    b.Property<decimal?>("ValorDesconto")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("ValorTotal")
@@ -147,32 +150,6 @@ namespace Garagem75.Migrations
                     b.HasIndex("VeiculoId");
 
                     b.ToTable("OrdemServicos");
-                });
-
-            modelBuilder.Entity("Garagem75.Models.OrdemServicoPeca", b =>
-                {
-                    b.Property<int>("OrdemServicoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PecaId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PecaIdPeca")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PrecoUnitario")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrdemServicoId", "PecaId");
-
-                    b.HasIndex("PecaId");
-
-                    b.HasIndex("PecaIdPeca");
-
-                    b.ToTable("OrdemServicoPecas");
                 });
 
             modelBuilder.Entity("Garagem75.Models.Peca", b =>
@@ -319,6 +296,21 @@ namespace Garagem75.Migrations
                     b.ToTable("Veiculo");
                 });
 
+            modelBuilder.Entity("OrdemServicoPeca", b =>
+                {
+                    b.Property<int>("OrdemServicosIdOrdemServico")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PecasIdPeca")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrdemServicosIdOrdemServico", "PecasIdPeca");
+
+                    b.HasIndex("PecasIdPeca");
+
+                    b.ToTable("OrdemServicoPeca");
+                });
+
             modelBuilder.Entity("Garagem75.Models.Endereco", b =>
                 {
                     b.HasOne("Garagem75.Models.Cliente", "Cliente")
@@ -337,29 +329,6 @@ namespace Garagem75.Migrations
                         .IsRequired();
 
                     b.Navigation("Veiculo");
-                });
-
-            modelBuilder.Entity("Garagem75.Models.OrdemServicoPeca", b =>
-                {
-                    b.HasOne("Garagem75.Models.OrdemServico", "OrdemServico")
-                        .WithMany("PecasAssociadas")
-                        .HasForeignKey("OrdemServicoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Garagem75.Models.Peca", "Peca")
-                        .WithMany()
-                        .HasForeignKey("PecaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Garagem75.Models.Peca", null)
-                        .WithMany("PecasAssociadas")
-                        .HasForeignKey("PecaIdPeca");
-
-                    b.Navigation("OrdemServico");
-
-                    b.Navigation("Peca");
                 });
 
             modelBuilder.Entity("Garagem75.Models.Usuario", b =>
@@ -382,14 +351,19 @@ namespace Garagem75.Migrations
                     b.Navigation("Cliente");
                 });
 
-            modelBuilder.Entity("Garagem75.Models.OrdemServico", b =>
+            modelBuilder.Entity("OrdemServicoPeca", b =>
                 {
-                    b.Navigation("PecasAssociadas");
-                });
+                    b.HasOne("Garagem75.Models.OrdemServico", null)
+                        .WithMany()
+                        .HasForeignKey("OrdemServicosIdOrdemServico")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("Garagem75.Models.Peca", b =>
-                {
-                    b.Navigation("PecasAssociadas");
+                    b.HasOne("Garagem75.Models.Peca", null)
+                        .WithMany()
+                        .HasForeignKey("PecasIdPeca")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Garagem75.Models.TipoUsuario", b =>
