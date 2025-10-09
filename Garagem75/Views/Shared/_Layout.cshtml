@@ -15,21 +15,7 @@
             <h4 class="mb-4">Menu</h4>
             <ul class="nav flex-column">
 
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" asp-controller="Home" asp-action="Index">
-                        <i class="bi bi-house"></i>  Inicio
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" asp-controller="Usuario" asp-action="Index">
-                        <i class="bi bi-person-circle"></i> Usuários
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" asp-controller="TipoUsuario" asp-action="Index">
-                        <i class="bi bi-person-badge"></i> Tipos de Usuário
-                    </a>
-                </li>
+                <li><a class="nav-link text-light" asp-controller="Home" asp-action="Index">🏠 Início</a></li>
 
                 @if (User.IsInRole("Administrador") || User.IsInRole("Mecânico"))
                 {
@@ -53,14 +39,20 @@
                             <i class="bi bi-car-front"></i> Veículos
                         </a>
                     </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link text-white" asp-controller="Dashboard" asp-action="Index">
-                            <i class="bi bi-card-checklist"></i> Dashboard
-                        </a>
-                    </li>
                 }
                 
-  
+               
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" asp-controller="Usuario" asp-action="Index">
+                        <i class="bi bi-person-circle"></i> Usuários
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" asp-controller="TipoUsuario" asp-action="Index">
+                        <i class="bi bi-person-badge"></i> Tipos de Usuário
+                    </a>
+                </li>
+
                 <li class="mt-4">
                     @* <a class="nav-link text-danger" asp-controller="Home" asp-action="Index">🚪 Sair</a> *@
                     @if (User?.Identity?.IsAuthenticated ?? false)

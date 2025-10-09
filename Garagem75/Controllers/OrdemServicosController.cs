@@ -48,15 +48,17 @@ namespace Garagem75.Controllers
         // GET: OrdemServicos/Create
         public IActionResult Create()
         {
+            ViewData["VeiculoId"] = new SelectList(_context.Veiculos, "IdVeiculo", "Modelo");
             return View();
         }
+
 
         // POST: OrdemServicos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdOrdemServico,Descricao,DataServico,MaoDeObra,ValorDesconto,ValorTotal,Status,DataEntrega")] OrdemServico ordemServico)
+        public async Task<IActionResult> Create([Bind("IdOrdemServico,Descricao,DataServico,MaoDeObra,ValorDesconto,ValorTotal,Status,DataEntrega,VeiculoId")] OrdemServico ordemServico)
         {
             if (ModelState.IsValid)
             {
@@ -64,6 +66,7 @@ namespace Garagem75.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["VeiculoId"] = new SelectList(_context.Veiculos, "IdVeiculo", "Modelo", ordemServico.VeiculoId);
             return View(ordemServico);
         }
 
@@ -88,7 +91,7 @@ namespace Garagem75.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdOrdemServico,Descricao,DataServico,MaoDeObra,ValorDesconto,ValorTotal,Status,DataEntrega")] OrdemServico ordemServico)
+        public async Task<IActionResult> Edit(int id, [Bind("IdOrdemServico,Descricao,DataServico,MaoDeObra,ValorDesconto,ValorTotal,Status,DataEntrega,VeiculoId")] OrdemServico ordemServico)
         {
             if (id != ordemServico.IdOrdemServico)
             {
