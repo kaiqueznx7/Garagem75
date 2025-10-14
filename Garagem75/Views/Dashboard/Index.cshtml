@@ -56,6 +56,7 @@
         </div>
     </div>
 
+    <div class="row g-3 mt-1">
     <div class="col-12 col-lg-6">
         <div class="card shadow-sm h-100 chart-card">
             <div class="card-header fw-semibold bg-dark text-light">🏆 Top 5 Clientes mais antigos</div>
@@ -94,7 +95,49 @@
             </div>
         </div>
     </div>
+
+    <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100 chart-card">
+                <div class="card-header fw-semibold bg-dark text-light"> 🚗 Últimos 5 Veiculos Trabalhados</div>
+        <div class="card-body bg-dark text-light">
+            @if (Model.UltimosVeiculosAtendidos?.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle table-dark">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fabricante</th>
+                                <th>Modelo</th>
+                                <th>Placa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.UltimosVeiculosAtendidos.Take(5))
+                            {
+                                <tr>
+                                    <td>@c.IdVeiculo</td>
+                                    <td>@c.Fabricante</td>
+                                    <td>@c.Modelo</td>
+                                    <td>@c.Placa</td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted m-0">Sem  cadastrados.</p>
+            }
+        </div>
+    </div>
+ </div>
 </div>
+
+
+
 
 
 

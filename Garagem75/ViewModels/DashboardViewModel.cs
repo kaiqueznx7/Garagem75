@@ -13,12 +13,12 @@ namespace Garagem75.ViewModels;
 
     // Listas
     public List<PecaItem> UltimasPecas { get; set; } = new();
-    public List<PecaItem> MarcasMaisUsadas { get; set; } = new();
+    public List<ModeloVeiculos> UltimosVeiculosAtendidos { get; set; } = new();
     public List<ClienteCount> ClientesMaisAntigos { get; set; } = new();
 
     // Gráficos
     public List<ClienteCount> ClientePorOrdemServico { get; set; } = new();
-    public List<OrdensServicoCount> OrdemServico { get; set; } = new();
+   
 }
 
 
@@ -40,11 +40,11 @@ public class ClienteCount
     public string Email { get; set; } = "";
 }
 
-public class OrdensServicoCount
+public class ModeloVeiculos
 {
-    public int IdOrdemServico { get; set; }
-    public string DataServico { get; set; } = "";
-    public int ValorTotal { get; set; }
-    public int QtdOrdemServico { get; set; } 
+  public int IdVeiculo { get; set; }
+  public string Fabricante { get; set; } = "";
+  public string Modelo { get; set; } = "";
+  public string Placa { get; set; } = "";
 }
 
