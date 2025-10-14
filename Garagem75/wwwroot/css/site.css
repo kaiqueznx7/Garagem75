@@ -1,55 +1,11 @@
-/*body {
-    margin: 0;
-    padding: 0;
-    background-color: #121212;
-    color: #f8f8f8;
-}
-
-
-.sidebar {
-    width: 240px;
-    min-height: 100vh;
-    background-color: #1a1a1a;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.6);
-}*/
-
-/* Conteúdo */
-/*.main-content {
-    background-color: #121212;
-    color: #f8f8f8;
-    overflow-y: auto;
-}*/
-
-/* Tabela escura */
-/*.table th, .table td {
-    color: #f8f8f8;
-}
-
-.table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: #262626;
-}*/
-
-
-/* Oculta sidebar no mobile */
-/*@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-        position: absolute;
-        z-index: 9999;
-        height: 100vh;
-    }
-
-        .sidebar.show {
-            display: block;
-        }
-}*/
 /*#region global*/
 
 :root {
     --yellow: #FFD700;
     --dark: #040404;
     --light: #f8f9fa;
-    --fundo-card: #ffda4b;
+    --fundo-principal: #1a1a1a;
+    --fundo-card: #FFD700;
     --borda-titulo: #ccc;
     --cor-texto-card: #333;
     --cor-check: #008000;
@@ -63,7 +19,7 @@ body {
     color: var(--light);
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* evita rolagem horizontal */
+    overflow-x: hidden; /* Evita rolagem horizontal */
 }
 
 /*#endregion*/
@@ -73,10 +29,11 @@ body {
 /*#region página inicial - home*/
 
 .main-container {
-    background-image: url('img/img (1).png');
-    background-size: cover;
-    background-position: center top;
-    min-height: 100vh;
+    background-image: url('/img/backgroung.png');
+    background-size: 100%; /* menor “zoom”, mais área visível */
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    min-height: 110vh;
     padding-top: var(--top-spacing);
     display: flex;
     flex-direction: column;
@@ -87,11 +44,12 @@ body {
     background-color: var(--yellow);
     border-bottom: 2px solid var(--yellow);
     width: 100%;
+    margin-top: 9vh;
 }
 
 .navbar-brand span {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2.5rem;
+    src: url('../Garagem75-main/fonts/Haulage-Commercial-W00-Striped.ttf');
+    font-size: 1.5rem;
     color: var(--dark);
     margin-left: 60px;
 }
@@ -100,20 +58,27 @@ body {
     color: var(--dark) !important;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
+    font-size: 20px;
 }
 
-    .nav-link:hover {
-        color: var(--light) !important;
-    }
+.navbar .navbar-nav {
+    width: 70%;
+    justify-content: space-between;
+}
+
+.nav-link:hover {
+    color: var(--light) !important;
+}
 
 /* Estilo para a logo do gato sobreposta */
 .logo-gato-overlay {
     position: absolute; /* Posição absoluta em relação ao .main-container */
-    top: 50px; /* Coloca no topo do main-container */
-    left: 10px; /* Alinha à esquerda do main-container */
-    height: 150px; /* Tamanho da logo, ajuste conforme necessário */
-    z-index: 1030; /* Garante que a logo fique sobreposta ao navbar (o z-index do navbar é 1020) */
-    transform: translateY(-50px); /* Move a logo 50px para cima, metade do tamanho dela, para o efeito de sobreposição */
+    top: -53px; /* Coloca no topo do main-container */
+    left: 200px; /* Alinha à esquerda do main-container */
+    height: 400px; /* Tamanho da logo, ajuste conforme necessário */
+    z-index: 1000 !important; /* Garante que a logo fique sobreposta ao navbar (o z-index do navbar é 1020) */
+
+    transform: translateY(-40px); /* Move a logo 50px para cima, metade do tamanho dela, para o efeito de sobreposição */
 }
 
 @media (max-width: 768px) {
@@ -126,10 +91,10 @@ body {
     position: relative;
     flex-grow: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-end; /* empurra o conteúdo para baixo */
     justify-content: center;
     text-align: center;
-    padding: 20px;
+    padding-bottom: 20px; /* controla o espaçamento do chão */
 }
 
 .hero-overlay {
@@ -158,6 +123,7 @@ body {
     font-size: 1.25rem;
     max-width: 600px;
     text-align: center;
+    margin: auto;
 }
 
 .btn-orcamento {
@@ -186,7 +152,7 @@ body {
 /*#region primeira tela - quem somos*/
 .titulo-quem-somos {
     font-family: sans-serif;
-    font-weight: 400;
+    font-size: 40px;
     margin-bottom: 3rem;
     padding-bottom: 0.5rem;
     /* linha branca */
@@ -195,10 +161,14 @@ body {
 }
 
 .texto-historia {
-    font-size: 1.25rem;
-    line-height: 1.8;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    color: #f0f0f0;
+    line-height: 1.7;
+    letter-spacing: 0.3px;
+    max-width: 70ch;
+    text-align: left !important;
 }
-
 
 /*#endregion*/
 
@@ -208,7 +178,7 @@ body {
 /*#region segunda tela */
 .titulo-servicos {
     font-family: sans-serif;
-    font-weight: 500;
+    font-size: 40px;
     margin-bottom: 3rem;
     padding-bottom: 0.5rem;
     /* linha branca */
@@ -220,7 +190,7 @@ body {
 .card-servico {
     background-color: var(--fundo-card);
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     /* pra logo não cubrir o card */
     position: relative;
     z-index: 2;
@@ -235,8 +205,6 @@ body {
         font-size: 1.5rem;
         font-weight: bold;
         color: #000;
-        background-color: #333;
-        color: #fff;
         margin-bottom: 0;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
@@ -247,6 +215,7 @@ body {
         height: auto;
         display: block;
         border-top: 2px solid #333;
+        padding: 15px;
     }
 
     .card-servico ul {
@@ -267,17 +236,16 @@ body {
 
 
 /* logo no card */
-.mascote-sylvester{
+.mascote-sylvester {
     position: absolute;
     /* posiciona no topo e à direita */
-    top: 1105px;
-    right: 110px;
+    top: 1250px;
+    right: 230px;
     width: 250px; /* ajuste o tamanho conforme desejar */
     height: auto;
     /* a logo fique acima dos cards */
     z-index: 3;
-} 
-
+}
 
     .mascote-sylvester:hover {
         transform: scale(1.05);
@@ -329,6 +297,7 @@ html {
 
 /*#region area-restrita*/
 
+
 .login-card {
     max-width: 800px;
     width: 90%;
@@ -355,11 +324,19 @@ html {
 }
 
 .btn-dark {
-    background-color: #000 !important;
+    background-color: #000;
     border-color: #212529 !important;
     font-weight: bold;
     border-radius: 50px;
 }
+
+    .btn-dark:hover {
+        color: var(--dark);
+        background-color: var(--light);
+        scale: 1.1;
+        transition: ease 0.5s;
+    }
+
 
 /*#endregion*/
 
@@ -374,10 +351,51 @@ html {
     font-weight: 500;
 }
 
-    .footer-link:hover {
-        color: #333;
-        text-decoration: underline;
+
+/* ====== SEÇÃO CONTINUE NAVEGANDO ====== */
+.footer .list-unstyled li a {
+    color: #000;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+    .footer .list-unstyled li a:hover {
+        color: #ffffff; /* muda a cor ao passar o mouse */
+        transform: translateX(5px); /* move levemente para a direita */
     }
+
+/* Estilo para o contêiner dos ícones */
+.social-icons {
+    margin-top: 1rem; /* Adiciona um espaço acima do grupo de ícones */
+}
+
+    /* Estilo para cada link (<a>) que envolve o ícone */
+    .social-icons a {
+        color: #000; /* Cor inicial do ícone: preto */
+        margin: 5 5 5px; /* Espaçamento de 15px nas laterais de cada ícone */
+        text-decoration: none; /* Remove o sublinhado padrão dos links */
+        display: inline-block; /* Necessário para que a animação de 'transform' funcione bem */
+    }
+
+    /* Estilo para o elemento do ícone (<i>) */
+    .social-icons i {
+        font-size: 25px; /* Tamanho do ícone */
+        transition: transform 0.3s ease, color 0.3s ease; /* Animação suave para cor e tamanho */
+    }
+
+        /* Efeito ao passar o mouse sobre o ícone */
+        .social-icons i:hover {
+            color: #000000; /* Muda a cor para um cinza escuro */
+            transform: scale(1.2); /* Aumenta o tamanho do ícone em 20% */
+        }
+
+
+
+.footer-link:hover {
+    color: #333;
+    text-decoration: underline;
+}
 
 .social-icons a {
     color: #000;
@@ -393,6 +411,5 @@ html {
     color: #000;
 }
 
+
 /*#endregion*/
-
-

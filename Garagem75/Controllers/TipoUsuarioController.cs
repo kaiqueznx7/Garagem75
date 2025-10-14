@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Garagem75.Controllers
 {
-    [Authorize(Roles = "Administrador")]
+    //[Authorize(Roles = "Administrador")]
     public class TipoUsuarioController : Controller
     {
         private readonly Garagem75DBContext _context;
