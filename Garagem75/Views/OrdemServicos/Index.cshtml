@@ -66,8 +66,9 @@
                             {
                                 @* Acessa a Peça real (associacao.Peca) e a Quantidade (associacao.Quantidade) *@
                                 <li>
-                                    @associacao.Peca.Nome (x@associacao.Quantidade) - R$ @associacao.Subtotal.ToString("N2")
+                                    @($"{associacao.Peca.Nome} (x{associacao.Quantidade}) - R$ {associacao.Subtotal:N2}")
                                 </li>
+
                             }
                         </ul>
                     }
@@ -92,9 +93,9 @@
                     @(item.Veiculo != null ? $"{item.Veiculo.Modelo} - {item.Veiculo.Placa}" : "")
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdOrdemServico" class="btn btn-primary">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.IdOrdemServico" class="btn btn-secondary">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdOrdemServico" class="btn btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdOrdemServico" class="btn btn-primary">Editar</a> 
+                    <a asp-action="Details" asp-route-id="@item.IdOrdemServico" class="btn btn-secondary">Detalhes</a>
+                    <a asp-action="Delete" asp-route-id="@item.IdOrdemServico" class="btn btn-danger">Deletar</a>
                 </td>
             </tr>
         }
