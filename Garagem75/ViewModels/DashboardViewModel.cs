@@ -9,12 +9,16 @@ namespace Garagem75.ViewModels;
     public int TotalClientes { get; set; }
     public int TotalOrdensServico { get; set; }
     public int TotalUsuarios { get; set; }
+    public int PecasPorMarca { get; set; }
 
 
     // Listas
     public List<PecaItem> UltimasPecas { get; set; } = new();
     public List<ModeloVeiculos> UltimosVeiculosAtendidos { get; set; } = new();
     public List<ClienteCount> ClientesMaisAntigos { get; set; } = new();
+    
+    public List<MarcaQuantidadeViewModel> MarcasPecasMaisUsadas { get; set; }
+    public List<MarcaQuantidadeViewModel> MarcasVeiculosMaisUsadas { get; set; }
 
     // Gráficos
     public List<ClienteCount> ClientePorOrdemServico { get; set; } = new();
@@ -23,6 +27,12 @@ namespace Garagem75.ViewModels;
 
 
 // ====== TIPOS DE APOIO (no MESMO namespace) ======
+
+public class MarcaQuantidadeViewModel
+{
+    public string NomeMarca { get; set; }
+    public int Quantidade { get; set; }
+}
 public class PecaItem
 {
     public int IdPeca { get; set; }
@@ -47,4 +57,6 @@ public class ModeloVeiculos
   public string Modelo { get; set; } = "";
   public string Placa { get; set; } = "";
 }
+
+
 

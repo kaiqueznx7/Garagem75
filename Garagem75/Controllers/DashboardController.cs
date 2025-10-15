@@ -41,7 +41,7 @@ namespace Garagem75.Controllers
                 .Take(2)
                 .ToListAsync();
 
-            //Marcas de Peças Mais Usadas
+            //Ultimos veiculos  
             vm.UltimosVeiculosAtendidos = await _context.Veiculos
                 .AsNoTracking()
                 .OrderByDescending(v => v.IdVeiculo)
@@ -52,6 +52,30 @@ namespace Garagem75.Controllers
                     Modelo = v.Modelo,
                     Placa = v.Placa
                 })
+                .Take(5)
+                .ToListAsync();
+
+            // 👇 Top 5 marcas de peças
+            vm.MarcasPecasMaisUsadas = await _context.Pecas
+                .GroupBy(p => p.Marca)
+                .Select(g => new MarcaQuantidadeViewModel
+                {
+                    NomeMarca = g.Key,
+                    Quantidade = g.Count()
+                })
+                .OrderByDescending(x => x.Quantidade)
+                .Take(5)
+                .ToListAsync();
+
+            // 👇 Top 5 marcas de veículos
+            vm.MarcasVeiculosMaisUsadas = await _context.Veiculos
+                .GroupBy(v => v.Fabricante)
+                .Select(g => new MarcaQuantidadeViewModel
+                {
+                    NomeMarca = g.Key,
+                    Quantidade = g.Count()
+                })
+                .OrderByDescending(x => x.Quantidade)
                 .Take(5)
                 .ToListAsync();
 

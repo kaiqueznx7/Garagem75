@@ -62,9 +62,9 @@ namespace Garagem75.Controllers
 
         if (usuario == null)
         {
-            ViewBag.Error = "Email ou senha inválidos.";
-            return View();
-        }
+                ModelState.AddModelError(string.Empty, "Email ou senha inválidos.");
+                return View();
+            }
 
         // Cria as claims
         var claims = new List<Claim>
@@ -78,8 +78,10 @@ namespace Garagem75.Controllers
         var principal = new ClaimsPrincipal(identity);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        ViewBag.Success = "Login realizado com sucesso!";
 
-        return RedirectToAction("Index", "Usuario");
+
+            return RedirectToAction("Index", "Usuario");
     }
 
 
