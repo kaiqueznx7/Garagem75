@@ -73,7 +73,7 @@ body {
 /* Estilo para a logo do gato sobreposta */
 .logo-gato-overlay {
     position: absolute; /* Posição absoluta em relação ao .main-container */
-    top: -53px; /* Coloca no topo do main-container */
+    top: -60px; /* Coloca no topo do main-container */
     left: 200px; /* Alinha à esquerda do main-container */
     height: 400px; /* Tamanho da logo, ajuste conforme necessário */
     z-index: 1000 !important; /* Garante que a logo fique sobreposta ao navbar (o z-index do navbar é 1020) */
