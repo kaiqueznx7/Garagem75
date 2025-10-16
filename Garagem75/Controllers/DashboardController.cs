@@ -38,7 +38,7 @@ namespace Garagem75.Controllers
                     Email = c.Email
 
                 })
-                .Take(2)
+                .Take(5)
                 .ToListAsync();
 
             //Ultimos veiculos  
@@ -76,6 +76,18 @@ namespace Garagem75.Controllers
                     Quantidade = g.Count()
                 })
                 .OrderByDescending(x => x.Quantidade)
+                .Take(5)
+                .ToListAsync();
+            //Peças por veiculo
+            vm.PecasPorVeiculo = await _context.OrdemServicos
+                .AsNoTracking()
+                .Select(o => new PecasPorVeiculo
+                {
+                    IdOrdemServico = o.IdOrdemServico,
+                    Fabricante = o.Veiculo.Fabricante,
+                    QuantidadePecas = o.PecasAssociadas.Count
+                }) 
+                .OrderByDescending(o => o.QuantidadePecas)
                 .Take(5)
                 .ToListAsync();
 

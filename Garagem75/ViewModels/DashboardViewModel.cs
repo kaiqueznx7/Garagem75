@@ -16,13 +16,14 @@ namespace Garagem75.ViewModels;
     public List<PecaItem> UltimasPecas { get; set; } = new();
     public List<ModeloVeiculos> UltimosVeiculosAtendidos { get; set; } = new();
     public List<ClienteCount> ClientesMaisAntigos { get; set; } = new();
-    
-    public List<MarcaQuantidadeViewModel> MarcasPecasMaisUsadas { get; set; }
-    public List<MarcaQuantidadeViewModel> MarcasVeiculosMaisUsadas { get; set; }
+ 
+    public List<PecasPorVeiculo> PecasPorVeiculo { get; set; } = new();
 
     // Gráficos
     public List<ClienteCount> ClientePorOrdemServico { get; set; } = new();
-   
+    public List<MarcaQuantidadeViewModel> MarcasPecasMaisUsadas { get; set; }
+    public List<MarcaQuantidadeViewModel> MarcasVeiculosMaisUsadas { get; set; }
+
 }
 
 
@@ -56,6 +57,13 @@ public class ModeloVeiculos
   public string Fabricante { get; set; } = "";
   public string Modelo { get; set; } = "";
   public string Placa { get; set; } = "";
+}
+
+public class PecasPorVeiculo
+{
+    public int IdOrdemServico { get; set; }
+    public string Fabricante { get; set; } = "";
+    public int QuantidadePecas { get; set; }
 }
 
 
