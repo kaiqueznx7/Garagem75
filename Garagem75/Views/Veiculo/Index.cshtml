@@ -27,6 +27,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Fabricante)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cliente)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -48,10 +51,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Fabricante)
             </td>
+                <td>@(item.Cliente != null ? item.Cliente.Nome : "— sem proprietário —")</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdVeiculo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdVeiculo">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdVeiculo">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.IdVeiculo" class="btn btn-outline-primary">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdVeiculo" class="btn btn-outline-secondary">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdVeiculo" class="btn btn-outline-danger">Delete</a>
             </td>
         </tr>
 }
