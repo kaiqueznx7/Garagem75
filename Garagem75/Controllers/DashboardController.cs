@@ -23,8 +23,9 @@ namespace Garagem75.Controllers
             vm.TotalClientes = await _context.Clientes.CountAsync();
             vm.TotalOrdensServico = await _context.OrdemServicos.CountAsync();
             vm.TotalUsuarios = await _context.Usuarios.CountAsync();
+            vm.ValorTotalOrdensServico = await _context.OrdemServicos.SumAsync(o => o.ValorTotal);
 
-        
+
 
             //Clientes Mais Antigos
             vm.ClientesMaisAntigos = await _context.Clientes
