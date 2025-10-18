@@ -7,11 +7,37 @@
     <title>@ViewData["Title"] - GARAGEM 75</title>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min-slate.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        @@media print {
+            /* Oculta a sidebar e elementos que não devem aparecer na impressão */
+            .sidebar, .bg-dark, nav, header, footer
+
+        {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        /* Faz o conteúdo principal ocupar a largura total */
+        .main-content, main, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        /* Remove cores de fundo para impressão mais limpa */
+        body {
+            background: white !important;
+            color: black !important;
+        }
+
+        }
+    </style>
 </head>
 <body>
     <div class="d-flex">
         <!-- SIDEBAR -->
-        <div class="bg-dark text-white vh-100 p-3 shadow" style="width: 250px;">
+        <div class="bg-dark text-white vh-100 p-3 shadow sidebar" style="width: 250px;">
             <h4 class="mb-4">Menu</h4>
             <ul class="nav flex-column">
 

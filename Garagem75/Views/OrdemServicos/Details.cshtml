@@ -106,7 +106,7 @@
 
     /* Ocultar botões ao imprimir */
     @@media print {
-        .btn-print, .btn-voltar
+        .btn-print, .btn-voltar, .relatorio
 
     {
         display: none;
@@ -208,7 +208,7 @@
 <!-- Botões -->
 <div style="text-align:center; margin-bottom: 30px;">
     <button class="btn btn-success btn-print" onclick="window.print()">🖨️ Imprimir Cupom</button>
-    <a asp-action="Relatorio" asp-route-id="@Model.IdOrdemServico" class="btn btn-info">📋 Relatório Completo</a>
+    <a asp-action="Relatorio" asp-route-id="@Model.IdOrdemServico" class="btn btn-info relatorio">📋 Relatório Completo</a>
     <a asp-action="Index" class="btn btn-secondary btn-voltar">⬅️ Voltar</a>
 
 </div>

@@ -58,16 +58,16 @@
                 <td>
                     @if (!string.IsNullOrEmpty(item.Imagem))
                     {
-                        <img src="@item.Imagem" alt="Imagem da peça" width="100" />
+                        <img src="@item.Imagem" alt="Imagem da peça" width="100" height="100" />
                     }
                     else
                     {
                         <span>Nenhuma imagem</span>
                     }
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdPeca" class="btn btn-primary">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.IdPeca" class="btn btn-secondary">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdPeca" class="btn btn-danger">Excluir</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdPeca" class="btn btn-outline-primary">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.IdPeca" class="btn btn-outline-secondary">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdPeca" class="btn btn-outline-danger">Excluir</a>
                 </td>
             </tr>
         }
