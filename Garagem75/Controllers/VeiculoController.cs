@@ -24,7 +24,8 @@ namespace Garagem75.Controllers
         // GET: Veiculo
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Veiculos.ToListAsync());
+            return View(await _context.Veiculos.
+                Include(v =>v.Cliente).ToListAsync());
         }
 
         // GET: Veiculo/Details/5
@@ -36,6 +37,7 @@ namespace Garagem75.Controllers
             }
 
             var veiculo = await _context.Veiculos
+                .Include(v=>v.Cliente)
                 .FirstOrDefaultAsync(m => m.IdVeiculo == id);
             if (veiculo == null)
             {
@@ -48,6 +50,7 @@ namespace Garagem75.Controllers
         // GET: Veiculo/Create
         public IActionResult Create()
         {
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome");
             return View();
         }
 
@@ -56,7 +59,7 @@ namespace Garagem75.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdVeiculo,Modelo,Ano,Placa,Cor,Fabricante")] Veiculo veiculo)
+        public async Task<IActionResult> Create([Bind("IdVeiculo,Modelo,Ano,Placa,Cor,Fabricante,ClienteId")] Veiculo veiculo)
         {
             if (ModelState.IsValid)
             {
@@ -64,6 +67,8 @@ namespace Garagem75.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+
             return View(veiculo);
         }
 
@@ -80,6 +85,8 @@ namespace Garagem75.Controllers
             {
                 return NotFound();
             }
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+
             return View(veiculo);
         }
 
@@ -88,7 +95,7 @@ namespace Garagem75.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdVeiculo,Modelo,Ano,Placa,Cor,Fabricante")] Veiculo veiculo)
+        public async Task<IActionResult> Edit(int id, [Bind("IdVeiculo,Modelo,Ano,Placa,Cor,Fabricante,ClienteId")] Veiculo veiculo)
         {
             if (id != veiculo.IdVeiculo)
             {
@@ -115,6 +122,8 @@ namespace Garagem75.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+
             return View(veiculo);
         }
 

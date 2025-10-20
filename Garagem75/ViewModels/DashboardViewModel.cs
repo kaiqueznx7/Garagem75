@@ -10,6 +10,7 @@ namespace Garagem75.ViewModels;
     public int TotalOrdensServico { get; set; }
     public int TotalUsuarios { get; set; }
     public int PecasPorMarca { get; set; }
+    public decimal ValorTotalOrdensServico { get; set; }
 
 
     // Listas
@@ -66,5 +67,10 @@ public class PecasPorVeiculo
     public int QuantidadePecas { get; set; }
 }
 
+public class ValoresOrdensServico
+{
+    public int IdOrdemServico { get; set; }
+    public decimal ValorTotal { get; set; }
+}
 
 

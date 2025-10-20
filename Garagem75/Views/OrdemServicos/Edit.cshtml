@@ -25,12 +25,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="MaoDeObra" class="control-label"></label>
-                <input asp-for="MaoDeObra" class="form-control" />
+                <input asp-for="MaoDeObra" type="text" class="form-control" />
                 <span asp-validation-for="MaoDeObra" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ValorDesconto" class="control-label"></label>
-                <input asp-for="ValorDesconto" class="form-control" />
+                <input asp-for="ValorDesconto" type="text" class="form-control" />
                 <span asp-validation-for="ValorDesconto" class="text-danger"></span>
             </div>
             @* <div class="form-group"> *@
@@ -109,10 +109,30 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        // Esta função sobrescreve o método 'number' do jQuery Validation
+        // para aceitar a vírgula (',') como separador decimal.
+        $.validator.methods.number = function (value, element) {
+            // Se o campo for opcional e vazio, retorna true
+            if (this.optional(element)) {
+                return true;
+            }
+
+            // 1. Substitui a vírgula por ponto no valor (para que o JS entenda como float)
+            var val_ajustado = value.replace(/,/g, '.');
+
+            // 2. Tenta converter para um número
+            // isNaN(parseFloat(val_ajustado)) é a validação de que é um número
+            return !isNaN(parseFloat(val_ajustado));
+        };
+    </script>
 
     
 

@@ -23,8 +23,19 @@ namespace Garagem75.Controllers
             vm.TotalClientes = await _context.Clientes.CountAsync();
             vm.TotalOrdensServico = await _context.OrdemServicos.CountAsync();
             vm.TotalUsuarios = await _context.Usuarios.CountAsync();
+           // vm.ValorTotalOrdensServico = await _context.OrdemServicos.SumAsync(o => o.ValorTotal);
 
-        
+            //// 1. Encontra a data da última segunda-feira
+            // DayOfWeek.Monday é 1, Tuesday é 2, ..., Sunday é 0.
+            int diff = (7 + (int)DateTime.Now.DayOfWeek - (int)DayOfWeek.Monday) % 7;
+            var inicioDaSemana = DateTime.Now.Date.AddDays(-1 * diff);
+
+            //// 2. Filtra as ordens de serviço a partir de segunda-feira e soma o valor
+            vm.ValorTotalOrdensServico = await _context.OrdemServicos
+                                                 .Where(o => o.DataServico >= inicioDaSemana)
+                                                 .SumAsync(o => o.ValorTotal);
+
+
 
             //Clientes Mais Antigos
             vm.ClientesMaisAntigos = await _context.Clientes
