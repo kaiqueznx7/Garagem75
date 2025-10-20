@@ -40,9 +40,15 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Fabricante)
         </dd>
+        <dt class="col-sm-2">
+            Cliente
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Cliente?.Nome
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdVeiculo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.IdVeiculo" class="btn btn-outline-primary">Editar</a> |
+    <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
 </div>

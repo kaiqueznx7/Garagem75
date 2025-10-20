@@ -37,6 +37,7 @@ namespace Garagem75.Controllers
             }
 
             var veiculo = await _context.Veiculos
+                .Include(v=>v.Cliente)
                 .FirstOrDefaultAsync(m => m.IdVeiculo == id);
             if (veiculo == null)
             {
@@ -49,6 +50,7 @@ namespace Garagem75.Controllers
         // GET: Veiculo/Create
         public IActionResult Create()
         {
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome");
             return View();
         }
 
@@ -65,7 +67,8 @@ namespace Garagem75.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+
             return View(veiculo);
         }
 
@@ -82,6 +85,8 @@ namespace Garagem75.Controllers
             {
                 return NotFound();
             }
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+
             return View(veiculo);
         }
 
@@ -117,6 +122,8 @@ namespace Garagem75.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+
             return View(veiculo);
         }
 
