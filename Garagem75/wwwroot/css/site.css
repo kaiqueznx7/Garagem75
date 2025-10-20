@@ -341,6 +341,17 @@ html {
 /*#endregion*/
 
 
+.titulo-avaliacoes {
+    font-family: sans-serif;
+    font-size: 40px;
+    margin-left: 20rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    /* linha branca */
+    border-bottom: 2px solid var(--borda-titulo);
+    display: inline-block;
+}
+
 
 /* #region footer */
 .footer-link {
