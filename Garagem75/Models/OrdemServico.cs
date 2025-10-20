@@ -32,8 +32,10 @@ namespace Garagem75.Models;
     // relação muitos-para-muitos com Peca
     public ICollection<OrdemServicoPeca> PecasAssociadas { get; set; } = new List<OrdemServicoPeca>();
 
+    [Column("VeiculoIdVeiculo")]
     public int VeiculoId { get; set; }
 
+    [ForeignKey("VeiculoId")]
     public virtual Veiculo? Veiculo { get; set; }
 
 

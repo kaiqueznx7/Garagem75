@@ -4,8 +4,26 @@ using Garagem75.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// --- 2. Configuração da Cultura para pt-BR ---
+var defaultCulture = "pt-BR";
+var cultureInfo = new CultureInfo(defaultCulture);
+
+// Define a cultura para formatação e parsing (números, datas, moedas)
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+// Configura o Model Binding para usar a cultura pt-BR
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture(defaultCulture);
+    options.SupportedCultures = new List<CultureInfo> { cultureInfo };
+    options.SupportedUICultures = new List<CultureInfo> { cultureInfo };
+});
 
 builder.Services.AddDbContext<Garagem75DBContext>(options => 
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -58,7 +76,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 
+
 var app = builder.Build();
+app.UseRequestLocalization();
 
 
 

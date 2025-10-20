@@ -1,60 +1,214 @@
 ﻿@model Garagem75.Models.OrdemServico
 
 @{
-    ViewData["Title"] = "Detalhes da ordem de serviço";
+    ViewData["Title"] = "Cupom da Ordem de Serviço";
+    string urlQrCode = $"https://www.garagem75.com.br/ordemservico/detalhes/{Model.IdOrdemServico}";
 }
 
-<h1>Details</h1>
+<style>
+    body {
+        background-color: #f4f4f4;
+        font-family: "Courier New", monospace;
+    }
 
-<div>
-    <h4>OrdemServico</h4>
+    .cupom-container {
+        width: 340px;
+        background: #fff;
+        margin: 40px auto;
+        padding: 20px;
+        border: 1px dashed #000;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+
+    .cupom-header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+        .cupom-header img {
+            width: 80px;
+            margin-bottom: 5px;
+        }
+
+        .cupom-header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .cupom-header small {
+            font-size: 12px;
+            color: #555;
+        }
+
+    .cupom-info {
+        font-size: 12px;
+        margin-top: 10px;
+    }
+
+        .cupom-info strong {
+            display: inline-block;
+            width: 110px;
+        }
+
+    hr {
+        border: 0;
+        border-top: 1px dashed #000;
+        margin: 8px 0;
+    }
+
+    .pecas-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+        .pecas-table th, .pecas-table td {
+            padding: 4px 2px;
+        }
+
+        .pecas-table th {
+            border-bottom: 1px dashed #000;
+            text-align: left;
+        }
+
+        .pecas-table td:last-child {
+            text-align: right;
+        }
+
+    .total-section {
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+        .total-section strong {
+            display: inline-block;
+            width: 150px;
+        }
+
+    .observacoes {
+        margin-top: 10px;
+        font-size: 12px;
+        white-space: pre-wrap;
+    }
+
+    .cupom-footer {
+        text-align: center;
+        font-size: 12px;
+        margin-top: 15px;
+        color: #333;
+    }
+
+    .qrcode {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    /* Ocultar botões ao imprimir */
+    @@media print {
+        .btn-print, .btn-voltar
+
+    {
+        display: none;
+    }
+
+    body {
+        background: white;
+    }
+
+    .cupom-container {
+        box-shadow: none;
+        border: none;
+        width: 100%;
+    }
+
+    }
+</style>
+
+<div class="cupom-container">
+    <!-- Cabeçalho -->
+    <div class="cupom-header">
+        <img src="~/img/logo.png" alt="Garagem 75" />
+        <h2>GARAGEM 75</h2>
+        <small>Travessa Particular 1, 57 - Itaim Paulista<br />CNPJ: 00.000.000/0001-00<br />Tel: 11964749052</small>
+    </div>
+
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataServico)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataServico)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MaoDeObra)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MaoDeObra)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ValorDesconto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValorDesconto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ValorTotal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValorTotal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataEntrega)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataEntrega)
-        </dd>
-    </dl>
+
+    <!-- Dados da OS -->
+    <div class="cupom-info">
+        <strong>Nº OS:</strong> @Model.IdOrdemServico<br />
+        <strong>Data:</strong> @Model.DataServico.ToString("dd/MM/yyyy")<br />
+        <strong>Status:</strong> @Model.Status<br />
+        <strong>Entrega:</strong> @(Model.DataEntrega.ToString("dd/MM/yyyy") ?? "-")<br />
+    </div>
+
+    <hr />
+
+    <div class="cupom-info">
+        <strong>Serviço:</strong> @Model.Descricao
+    </div>
+
+    <hr />
+
+    <!-- Peças utilizadas -->
+    @if (Model.PecasAssociadas != null && Model.PecasAssociadas.Any())
+    {
+        <h6 style="text-align:center;">PEÇAS UTILIZADAS</h6>
+        <table class="pecas-table">
+            <thead>
+                <tr>
+                    <th>Peça</th>
+                    <th>Marca</th>
+                    <th>Qtd</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PecasAssociadas)
+                {
+                    <tr>
+                        <td>@item.Peca.Nome</td>
+                        <td>@item.Peca.Marca</td>
+                        <td>@item.Quantidade</td>
+                        <td>R$ @(item.Quantidade * item.PrecoUnitario)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <hr />
+
+    <!-- Totais -->
+    <div class="total-section">
+        <strong>Total Peças:</strong> R$ @Model.PecasAssociadas?.Sum(p => p.Quantidade * p.PrecoUnitario).ToString("F2")<br />
+        <strong>Mão de Obra:</strong> R$ @Model.MaoDeObra.ToString("F2")<br />
+        <strong>Desconto:</strong> R$ @Model.ValorDesconto.ToString("F2")<br />
+        <strong style="font-size:14px;">TOTAL GERAL:</strong> <strong style="float:right;">R$ @Model.ValorTotal.ToString("F2")</strong>
+    </div>
+
+    <hr />
+
+   
+    <!-- QR Code -->
+    <div class="qrcode">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=@urlQrCode" alt="QR Code" />
+        <div><small>Verifique esta OS online</small></div>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="cupom-footer">
+        <p>Obrigado pela preferência!</p>
+        <p>www.garagem75.com.br</p>
+        <p>Emitido em: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdOrdemServico">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<!-- Botões -->
+<div style="text-align:center; margin-bottom: 30px;">
+    <button class="btn btn-success btn-print" onclick="window.print()">🖨️ Imprimir Cupom</button>
+    <a asp-action="Relatorio" asp-route-id="@Model.IdOrdemServico" class="btn btn-info">📋 Relatório Completo</a>
+    <a asp-action="Index" class="btn btn-secondary btn-voltar">⬅️ Voltar</a>
+
 </div>

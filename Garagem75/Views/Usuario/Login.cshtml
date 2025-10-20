@@ -31,8 +31,29 @@
 
 @if (!ViewData.ModelState.IsValid)
 {
-    <div class="alert alert-danger mt-3">
-        @Html.ValidationSummary()
-        <!-- exibe os erros de ModelState retornados pelo Controller (ex.: credenciais inválidas) -->
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
+
+@if (ViewBag.Success != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        @ViewBag.Success
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Fecha automaticamente qualquer alerta após 3 segundos
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+            bsAlert.close();
+        });
+    }, 3000);
+</script>
+
+

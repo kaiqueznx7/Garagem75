@@ -288,6 +288,23 @@ namespace Garagem75.Controllers
             return View(ordemServico);
         }
 
+        public async Task<IActionResult> Relatorio(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var ordemServico = await _context.OrdemServicos              
+                .Include(o => o.PecasAssociadas)
+                    .ThenInclude(op => op.Peca)
+                .FirstOrDefaultAsync(o => o.IdOrdemServico == id);
+
+            if (ordemServico == null)
+                return NotFound();
+
+            return View(ordemServico);
+        }
+
+
         // POST: OrdemServicos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

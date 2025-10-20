@@ -9,20 +9,31 @@ namespace Garagem75.ViewModels;
     public int TotalClientes { get; set; }
     public int TotalOrdensServico { get; set; }
     public int TotalUsuarios { get; set; }
+    public int PecasPorMarca { get; set; }
 
 
     // Listas
     public List<PecaItem> UltimasPecas { get; set; } = new();
-    public List<PecaItem> MarcasMaisUsadas { get; set; } = new();
+    public List<ModeloVeiculos> UltimosVeiculosAtendidos { get; set; } = new();
     public List<ClienteCount> ClientesMaisAntigos { get; set; } = new();
+ 
+    public List<PecasPorVeiculo> PecasPorVeiculo { get; set; } = new();
 
     // Gráficos
     public List<ClienteCount> ClientePorOrdemServico { get; set; } = new();
-    public List<OrdensServicoCount> OrdemServico { get; set; } = new();
+    public List<MarcaQuantidadeViewModel> MarcasPecasMaisUsadas { get; set; }
+    public List<MarcaQuantidadeViewModel> MarcasVeiculosMaisUsadas { get; set; }
+
 }
 
 
 // ====== TIPOS DE APOIO (no MESMO namespace) ======
+
+public class MarcaQuantidadeViewModel
+{
+    public string NomeMarca { get; set; }
+    public int Quantidade { get; set; }
+}
 public class PecaItem
 {
     public int IdPeca { get; set; }
@@ -40,11 +51,20 @@ public class ClienteCount
     public string Email { get; set; } = "";
 }
 
-public class OrdensServicoCount
+public class ModeloVeiculos
+{
+  public int IdVeiculo { get; set; }
+  public string Fabricante { get; set; } = "";
+  public string Modelo { get; set; } = "";
+  public string Placa { get; set; } = "";
+}
+
+public class PecasPorVeiculo
 {
     public int IdOrdemServico { get; set; }
-    public string DataServico { get; set; } = "";
-    public int ValorTotal { get; set; }
-    public int QtdOrdemServico { get; set; } 
+    public string Fabricante { get; set; } = "";
+    public int QuantidadePecas { get; set; }
 }
+
+
 

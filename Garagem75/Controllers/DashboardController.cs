@@ -24,19 +24,7 @@ namespace Garagem75.Controllers
             vm.TotalOrdensServico = await _context.OrdemServicos.CountAsync();
             vm.TotalUsuarios = await _context.Usuarios.CountAsync();
 
-            //Ultimas Peças Cadastradas
-            vm.UltimasPecas = await _context.Pecas
-                .AsNoTracking()
-                .OrderByDescending(p => p.IdPeca)               
-                .Select(p => new PecaItem
-                {
-                    IdPeca = p.IdPeca,
-                    Marca = p.Marca,
-                    Nome = p.Nome,
-                    Preco = p.Preco
-                })
-                .Take(4)
-                .ToListAsync();
+        
 
             //Clientes Mais Antigos
             vm.ClientesMaisAntigos = await _context.Clientes
@@ -50,11 +38,60 @@ namespace Garagem75.Controllers
                     Email = c.Email
 
                 })
-                .Take(2)
+                .Take(5)
                 .ToListAsync();
 
-            //Marcas de Peças Mais Usadas
-            
+            //Ultimos veiculos  
+            vm.UltimosVeiculosAtendidos = await _context.Veiculos
+                .AsNoTracking()
+                .OrderByDescending(v => v.IdVeiculo)
+                .Select(v => new ModeloVeiculos
+                {
+                    IdVeiculo = v.IdVeiculo,
+                    Fabricante = v.Fabricante,
+                    Modelo = v.Modelo,
+                    Placa = v.Placa
+                })
+                .Take(5)
+                .ToListAsync();
+
+            // 👇 Top 5 marcas de peças
+            vm.MarcasPecasMaisUsadas = await _context.Pecas
+                .GroupBy(p => p.Marca)
+                .Select(g => new MarcaQuantidadeViewModel
+                {
+                    NomeMarca = g.Key,
+                    Quantidade = g.Count()
+                })
+                .OrderByDescending(x => x.Quantidade)
+                .Take(5)
+                .ToListAsync();
+
+            // 👇 Top 5 marcas de veículos
+            vm.MarcasVeiculosMaisUsadas = await _context.Veiculos
+                .GroupBy(v => v.Fabricante)
+                .Select(g => new MarcaQuantidadeViewModel
+                {
+                    NomeMarca = g.Key,
+                    Quantidade = g.Count()
+                })
+                .OrderByDescending(x => x.Quantidade)
+                .Take(5)
+                .ToListAsync();
+            //Peças por veiculo
+            vm.PecasPorVeiculo = await _context.OrdemServicos
+                .AsNoTracking()
+                .Select(o => new PecasPorVeiculo
+                {
+                    IdOrdemServico = o.IdOrdemServico,
+                    Fabricante = o.Veiculo.Fabricante,
+                    QuantidadePecas = o.PecasAssociadas.Count
+                }) 
+                .OrderByDescending(o => o.QuantidadePecas)
+                .Take(5)
+                .ToListAsync();
+
+
             return View(vm);
         }     
     }
