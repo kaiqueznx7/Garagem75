@@ -82,7 +82,7 @@ namespace Garagem75.Controllers
         ViewBag.Success = "Login realizado com sucesso!";
 
 
-            return RedirectToAction("Index", "Usuario");
+            return RedirectToAction("Index", "Dashboard");
     }
 
 
