@@ -152,15 +152,27 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = await _context.Clientes
+                .Include(c => c.Enderecos)
+                .Include(c => c.Veiculos)
+                .FirstOrDefaultAsync(c => c.IdCliente == id);
+
             if (cliente != null)
             {
+                // Remove dependências primeiro
+                if (cliente.Enderecos != null)
+                    _context.Enderecos.RemoveRange(cliente.Enderecos);
+
+                if (cliente.Veiculos != null)
+                    _context.Veiculos.RemoveRange(cliente.Veiculos);
+
                 _context.Clientes.Remove(cliente);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool ClienteExists(int id)
         {

@@ -28,6 +28,10 @@ public class Cliente
     [Display(Name = "Email")]
     [StringLength(75)]
     public string Email { get; set; }
+
+    public ICollection<Endereco> Enderecos { get; set; }
+    public ICollection<Veiculo> Veiculos { get; set; }
+
 }
 
 

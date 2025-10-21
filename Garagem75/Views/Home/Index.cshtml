@@ -164,6 +164,7 @@
                 <h2 class="text-center text-white mb-4">Área Restrita</h2>
                 <div class="p-4 p-md-5 rounded shadow-lg" style="background-color: #FFD700;">
                     <form method="post" asp-controller="Usuario" asp-action="Login">
+                        @Html.AntiForgeryToken()
                         @if(ViewBag.Error != null)
                         {
 							<div class="alert alert-danger textcenter">@ViewBag.Error</div>

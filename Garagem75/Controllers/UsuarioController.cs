@@ -48,7 +48,8 @@ namespace Garagem75.Controllers
 
         // POST: Usuario/Login
     [HttpPost]
-    public async Task<IActionResult> Login(string email, string senha)
+    [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(string email, string senha)
     {
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
         {
@@ -231,17 +232,36 @@ namespace Garagem75.Controllers
 
         // POST: Usuario/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario != null)
-            {
-                _context.Usuarios.Remove(usuario);
-            }
-
-            await _context.SaveChangesAsync();
+            await _usuarioRepository.InativarAsync(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Inativos()
+        {
+            var usuarios = await _usuarioRepository.GetAllAsync();
+            var inativos = usuarios.Where(u => !u.Ativo)
+                                   .OrderByDescending(u => u.IdUsuario)
+                                   .ToList();
+            return View(inativos);
+        }
+
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Ativar(int id)
+        {
+            if (id <= 0) return NotFound();
+
+            var usuario = await _usuarioRepository.GetByIdAsync(id);
+            if (usuario == null) return NotFound();
+
+            usuario.Ativo = true;
+            await _usuarioRepository.UpdateAsync(usuario);
+
+            return RedirectToAction(nameof(Inativos));
         }
 
         private bool UsuarioExists(int id)
