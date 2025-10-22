@@ -307,6 +307,15 @@
             duration: 1000, // Duração da animação em milissegundos
             once: true,     // Animação acontece apenas uma vez
         });
+        const backToTopBtn = document.getElementById("backToTopBtn");
+
+        window.addEventListener("scroll", () => {
+          if (window.scrollY > 100) {
+            backToTopBtn.style.display = "block"; // mostra o botão
+          } else {
+            backToTopBtn.style.display = "none"; // esconde o botão
+          }
+        });
     </script>
 </body>
 </html>

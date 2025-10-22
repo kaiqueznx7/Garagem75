@@ -270,6 +270,7 @@ html {
 }
 
 #backToTopBtn {
+    display: none;
     position: fixed;
     bottom: 20px;
     right: 30px;
@@ -287,6 +288,7 @@ html {
 
     #backToTopBtn:hover {
         opacity: 1;
+        transform: scale(1.1);
         background-color: #e09700;
     }
 
