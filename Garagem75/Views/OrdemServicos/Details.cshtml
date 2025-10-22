@@ -145,6 +145,22 @@
 
     <hr />
 
+    <!-- Dados do veículo -->
+    @if (Model.Veiculo != null)
+    {
+        <div class="cupom-info">
+            <strong>Cliente:</strong> @Model.Veiculo.Cliente.Nome
+
+            <strong>Veículo:</strong> @Model.Veiculo.Fabricante @Model.Veiculo.Modelo<br />
+            <strong>Placa:</strong> @Model.Veiculo.Placa<br />
+            <strong>Ano:</strong> @Model.Veiculo.Ano
+        </div>
+
+        <hr />
+    }
+
+    <hr />
+
     <div class="cupom-info">
         <strong>Serviço:</strong> @Model.Descricao
     </div>

@@ -42,6 +42,8 @@ namespace Garagem75.Controllers
 
             // CORREÇÃO: Uso de PecasAssociadas
             var ordemServico = await _context.OrdemServicos
+                .Include(o => o.Veiculo)
+                    .ThenInclude(v => v.Cliente)
                 .Include(o => o.PecasAssociadas)
                     .ThenInclude(op => op.Peca)
                 .FirstOrDefaultAsync(m => m.IdOrdemServico == id);
@@ -293,7 +295,9 @@ namespace Garagem75.Controllers
             if (id == null)
                 return NotFound();
 
-            var ordemServico = await _context.OrdemServicos              
+            var ordemServico = await _context.OrdemServicos
+                .Include(o => o.Veiculo)
+                    .ThenInclude(v => v.Cliente)
                 .Include(o => o.PecasAssociadas)
                     .ThenInclude(op => op.Peca)
                 .FirstOrDefaultAsync(o => o.IdOrdemServico == id);

@@ -27,14 +27,14 @@
             margin-bottom: 20px;
         }
 
-        header img {
-            width: 100px;
-        }
+            header img {
+                width: 100px;
+            }
 
-        header h1 {
-            font-size: 24px;
-            margin: 0;
-        }
+            header h1 {
+                font-size: 24px;
+                margin: 0;
+            }
 
         .empresa-info {
             text-align: right;
@@ -45,12 +45,12 @@
             margin-bottom: 25px;
         }
 
-        .section h2 {
-            background: #f2f2f2;
-            padding: 6px;
-            border-left: 4px solid #444;
-            font-size: 16px;
-        }
+            .section h2 {
+                background: #f2f2f2;
+                padding: 6px;
+                border-left: 4px solid #444;
+                font-size: 16px;
+            }
 
         table {
             width: 100%;
@@ -120,7 +120,23 @@
         <p><strong>Entrega:</strong> @(Model.DataEntrega.ToString("dd/MM/yyyy") ?? "-")</p>
     </section>
 
-    
+    @* 🚗 Dados do veículo *@
+    @if (Model.Veiculo != null)
+    {
+        <section class="section">
+            <h2>Dados do Veículo</h2>
+            <p><strong>Marca:</strong> @Model.Veiculo.Fabricante</p>
+            <p><strong>Modelo:</strong> @Model.Veiculo.Modelo</p>
+            <p><strong>Placa:</strong> @Model.Veiculo.Placa</p>
+            <p><strong>Ano:</strong> @Model.Veiculo.Ano</p>
+
+            @* Se quiser incluir o cliente (proprietário) *@
+            @if (Model.Veiculo.Cliente != null)
+            {
+                <p><strong>Proprietário:</strong> @Model.Veiculo.Cliente.Nome</p>
+            }
+        </section>
+    }
 
     <section class="section">
         <h2>Serviço</h2>
@@ -129,32 +145,32 @@
 
     @if (Model.PecasAssociadas != null && Model.PecasAssociadas.Any())
     {
-            <section class="section">
-                <h2>Peças Utilizadas</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Peça</th>
-                            <th>Marca</th>
-                            <th>Quantidade</th>
-                            <th>Valor Unitário</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        <section class="section">
+            <h2>Peças Utilizadas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Peça</th>
+                        <th>Marca</th>
+                        <th>Quantidade</th>
+                        <th>Valor Unitário</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
                     @foreach (var item in Model.PecasAssociadas)
                     {
-                                <tr>
-                                    <td>@item.Peca.Nome</td>
-                                    <td>@item.Peca.Marca</td>
-                                    <td>@item.Quantidade</td>
-                                    <td>R$ @item.PrecoUnitario.ToString("F2")</td>
-                                    <td>R$ @(item.Quantidade * item.PrecoUnitario).ToString("F2")</td>
-                                </tr>
+                        <tr>
+                            <td>@item.Peca.Nome</td>
+                            <td>@item.Peca.Marca</td>
+                            <td>@item.Quantidade</td>
+                            <td>R$ @item.PrecoUnitario.ToString("F2")</td>
+                            <td>R$ @(item.Quantidade * item.PrecoUnitario)</td>
+                        </tr>
                     }
-                    </tbody>
-                </table>
-            </section>
+                </tbody>
+            </table>
+        </section>
     }
 
     <section class="section">
@@ -166,8 +182,6 @@
             <p><strong style="font-size:16px;">TOTAL GERAL:</strong> <strong>R$ @Model.ValorTotal.ToString("F2")</strong></p>
         </div>
     </section>
-
-
 
     <footer>
         <p>Relatório técnico gerado em @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
