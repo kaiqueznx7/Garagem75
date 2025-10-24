@@ -1,0 +1,23 @@
+﻿@model Garagem75.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Excluir Post";
+}
+
+<h2>Excluir Post</h2>
+
+<div class="alert alert-warning">
+    Tem certeza que deseja excluir o post "<strong>@Model.Titulo</strong>"?
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+

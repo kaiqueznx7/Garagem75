@@ -59,7 +59,7 @@ namespace Garagem75.Controllers
 
         var usuario = await _context.Usuarios
             .Include(u => u.TipoUsuario)
-            .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+            .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha && u.Ativo);
 
         if (usuario == null)
         {
@@ -67,12 +67,6 @@ namespace Garagem75.Controllers
                 return View();
             }
 
-            // 🚫 Verificação do status ativo
-            if (!usuario.Ativo)
-            {
-                ModelState.AddModelError(string.Empty, "Usuário inativo. Entre em contato com o administrador.");
-                return View();
-            }
 
             // Cria as claims
             var claims = new List<Claim>

@@ -255,6 +255,44 @@
     </div>
 
 
+    @inject Garagem75.Data.Garagem75DBContext _context
+
+    @{
+        var posts = _context.BlogPosts
+        .Where(p => p.Ativo)
+        .OrderByDescending(p => p.DataPublicacao)
+        .Take(3)
+        .ToList();
+    }
+
+    <section class="blog-section py-5 bg-light">
+        <div class="container">
+            <h3 class="text-center mb-4">Últimas do Blog</h3>
+            <div class="row">
+                @foreach (var post in posts)
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            <img src="@post.ImagemUrl" class="card-img-top" alt="@post.Titulo" />
+                            <div class="card-body">
+                                <h5>@post.Titulo</h5>
+                                <p>@post.Resumo</p>
+                                <a asp-controller="Blog" asp-action="Detalhes" asp-route-id="@post.Id" class="btn btn-sm btn-outline-primary">
+                                    Ler mais
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-3">
+                <a asp-controller="Blog" asp-action="Index" class="btn btn-primary">Ver todas as postagens</a>
+            </div>
+        </div>
+    </section>
+
+
+
     <footer class="footer py-5" style="background-color: #FFD700; color: #000;">
         <div class="container">
             <div class="row justify-content-between align-items-start text-center text-md-start">
