@@ -13,17 +13,20 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Descricao)
+                @Html.DisplayNameFor(model => model.Veiculo)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DataServico)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MaoDeObra)
+                @Html.DisplayNameFor(model => model.Descricao)
             </th>
             <th>
                 @* CORREÇÃO: Remove a referência direta a 'Pecas' no cabeçalho *@
                 Peças Utilizadas
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaoDeObra)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ValorDesconto)
@@ -37,9 +40,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.DataEntrega)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Veiculo)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -48,13 +48,13 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Descricao)
+                    @(item.Veiculo != null ? $"{item.Veiculo.Modelo} - {item.Veiculo.Placa}" : "")
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DataServico)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MaoDeObra)
+                    @Html.DisplayFor(modelItem => item.Descricao)
                 </td>
                 <td>
                     @* CORREÇÃO: Usa PecasAssociadas (ICollection<OrdemServicoPeca>) *@
@@ -78,6 +78,9 @@
                     }
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.MaoDeObra)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.ValorDesconto)
                 </td>
                 <td>
@@ -88,9 +91,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DataEntrega)
-                </td>
-                <td>
-                    @(item.Veiculo != null ? $"{item.Veiculo.Modelo} - {item.Veiculo.Placa}" : "")
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.IdOrdemServico" class="btn btn-primary">Editar</a> 

@@ -67,8 +67,15 @@ namespace Garagem75.Controllers
                 return View();
             }
 
-        // Cria as claims
-        var claims = new List<Claim>
+            // 🚫 Verificação do status ativo
+            if (!usuario.Ativo)
+            {
+                ModelState.AddModelError(string.Empty, "Usuário inativo. Entre em contato com o administrador.");
+                return View();
+            }
+
+            // Cria as claims
+            var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, usuario.Nome),
         new Claim(ClaimTypes.Email, usuario.Email),
