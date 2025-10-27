@@ -47,15 +47,15 @@
                         <i class="bi bi-house"></i> Inicio
                 </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-controller="Blog" asp-action="Index">
-                        <i class="bi bi-pencil-square"></i> Blog
-                    </a>
-                </li>
 
 
                 @if (User.IsInRole("Administrador") || User.IsInRole("Mecânico"))
                 {
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-controller="BlogAdmin" asp-action="Index">
+                        <i class="bi bi-pencil-square"></i> Blog
+                    </a>
+                </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link text-white" asp-controller="Cliente" asp-action="Index">
                             <i class="bi bi-people"></i> Clientes
