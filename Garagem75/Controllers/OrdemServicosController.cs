@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Garagem75.Data;
 using Garagem75.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Globalization;
 
 namespace Garagem75.Controllers
 {
@@ -80,6 +81,22 @@ namespace Garagem75.Controllers
             int[] pecaIds, // IDs das peças selecionadas
             int[] quantidades) // Quantidades correspondentes
         {
+            // Mao de obra seguro
+            if (Request.Form.TryGetValue("MaoDeObra", out var maoDeObraTexto))
+            {
+                try
+                {
+                    maoDeObraTexto = maoDeObraTexto.ToString()
+                                           .Replace("R$", "")
+                                           .Replace(".", "")
+                                           .Replace(",", ".");
+                    ordemServico.MaoDeObra = decimal.Parse(maoDeObraTexto, CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    ModelState.AddModelError("MaoDeObra", "Formato de mao de obra inválido!");
+                }
+            }
             if (ModelState.IsValid)
             {
                 if (pecaIds.Length != quantidades.Length)

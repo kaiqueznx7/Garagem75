@@ -9,6 +9,7 @@ using Garagem75.Data;
 using Garagem75.Models;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.AspNetCore.Authorization;
+using System.Globalization;
 
 namespace Garagem75.Controllers
 {
@@ -87,17 +88,31 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Peca peca, IFormFile? ImagemUpload)
         {
-            // Log para conferir se o arquivo chegou
-            Console.WriteLine($"Arquivo recebido: {ImagemUpload?.FileName ?? "NENHUM"}");
+           
+
+            // Preço seguro
+            if (Request.Form.TryGetValue("Preco", out var precoTexto))
+            {
+                try
+                {
+                    precoTexto = precoTexto.ToString()
+                                           .Replace("R$", "")
+                                           .Replace(".", "")
+                                           .Replace(",", ".");
+                    peca.Preco = decimal.Parse(precoTexto, CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    ModelState.AddModelError("Preco", "Formato de preço inválido!");
+                }
+            }
 
             if (ModelState.IsValid)
             {
                 if (ImagemUpload != null && ImagemUpload.Length > 0)
                 {
-                    // Pasta wwwroot/img
                     var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img");
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                     var fileName = Path.GetFileName(ImagemUpload.FileName);
                     var filePath = Path.Combine(dir, fileName);
@@ -107,11 +122,9 @@ namespace Garagem75.Controllers
                         await ImagemUpload.CopyToAsync(stream);
                     }
 
-                    // Salva o caminho relativo no banco
                     peca.Imagem = "/img/" + fileName;
                 }
 
-                // Salva no banco
                 _context.Add(peca);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -144,22 +157,31 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Peca peca, IFormFile? ImagemUpload)
         {
-            if (id != peca.IdPeca)
-                return NotFound();
+            if (id != peca.IdPeca) return NotFound();
 
-            if (!ModelState.IsValid)
+            // 🔹 Corrige o preço para decimal
+            if (Request.Form.TryGetValue("Preco", out var precoTexto))
             {
-                var erros = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                Console.WriteLine("Erros de validação: " + string.Join(", ", erros));
-                return View(peca);
+                try
+                {
+                    precoTexto = precoTexto.ToString()
+                                           .Replace("R$", "")
+                                           .Replace(".", "")
+                                           .Replace(",", ".");
+                    peca.Preco = decimal.Parse(precoTexto, CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    ModelState.AddModelError("Preco", "Formato de preço inválido!");
+                }
             }
 
-            try
+            if (ModelState.IsValid)
             {
                 var pecaDb = await _context.Pecas.FindAsync(id);
                 if (pecaDb == null) return NotFound();
 
-                // Atualiza campos básicos
+                // Atualiza campos
                 pecaDb.CodPeca = peca.CodPeca;
                 pecaDb.Marca = peca.Marca;
                 pecaDb.Nome = peca.Nome;
@@ -168,12 +190,11 @@ namespace Garagem75.Controllers
                 pecaDb.QuantidadeEstoque = peca.QuantidadeEstoque;
                 pecaDb.DataUltimaAtualizacao = DateTime.Now;
 
-                // Se enviou nova imagem, salva
+                // Atualiza imagem se enviada
                 if (ImagemUpload != null && ImagemUpload.Length > 0)
                 {
                     var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img");
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                     var fileName = Path.GetFileName(ImagemUpload.FileName);
                     var filePath = Path.Combine(dir, fileName);
@@ -189,13 +210,8 @@ namespace Garagem75.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Pecas.Any(e => e.IdPeca == peca.IdPeca))
-                    return NotFound();
-                else
-                    throw;
-            }
+
+            return View(peca);
         }
 
 
