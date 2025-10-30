@@ -109,6 +109,11 @@ namespace Garagem75.Controllers
 
             if (ModelState.IsValid)
             {
+                // 🚨 AÇÃO CRÍTICA: Preencher DataCadastro com a data e hora atual do servidor
+                peca.DataCadastro = DateTime.Now;
+
+                // Se você também tiver DataUltimaAtualizacao, preencha-a aqui também:
+                peca.DataUltimaAtualizacao = DateTime.Now;
                 if (ImagemUpload != null && ImagemUpload.Length > 0)
                 {
                     var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img");
