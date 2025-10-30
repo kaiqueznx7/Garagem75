@@ -81,22 +81,17 @@ namespace Garagem75.Controllers
             int[] pecaIds, // IDs das peças selecionadas
             int[] quantidades) // Quantidades correspondentes
         {
-            // Mao de obra seguro
-            if (Request.Form.TryGetValue("MaoDeObra", out var maoDeObraTexto))
+            if (Request.Form.TryGetValue("MaoDeObra", out var maoTexto))
             {
-                try
-                {
-                    maoDeObraTexto = maoDeObraTexto.ToString()
-                                           .Replace("R$", "")
-                                           .Replace(".", "")
-                                           .Replace(",", ".");
-                    ordemServico.MaoDeObra = decimal.Parse(maoDeObraTexto, CultureInfo.InvariantCulture);
-                }
-                catch
-                {
-                    ModelState.AddModelError("MaoDeObra", "Formato de mao de obra inválido!");
-                }
+                maoTexto = maoTexto.ToString().Replace("R$", "").Trim();
+                if (decimal.TryParse(maoTexto, NumberStyles.Any, new CultureInfo("pt-BR"), out var m))
+                    ordemServico.MaoDeObra = m;
+                else
+                    ModelState.AddModelError("MaoDeObra", "Formato inválido");
             }
+
+
+
             if (ModelState.IsValid)
             {
                 if (pecaIds.Length != quantidades.Length)

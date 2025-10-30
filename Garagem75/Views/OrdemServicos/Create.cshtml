@@ -27,13 +27,15 @@
 
             <div class="form-group">
                 <label asp-for="MaoDeObra"></label>
-                <input asp-for="MaoDeObra" class="form-control" id="MaoDeObra" />
+                <input asp-for="MaoDeObra" type="text" class="form-control" />
                 <span asp-validation-for="MaoDeObra" class="text-danger"></span>
             </div>
 
+
+
             <div class="form-group">
                 <label asp-for="ValorDesconto"></label>
-                <input asp-for="ValorDesconto" class="form-control" id="ValorDesconto" />
+                <input asp-for="ValorDesconto" type="text" class="form-control" id="ValorDesconto" />
                 <span asp-validation-for="ValorDesconto" class="text-danger"></span>
             </div>
 
@@ -103,51 +105,51 @@
 </div>
 @section Scripts {
     @{
+        // Este Partial carrega os scripts de validação do jQuery
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <!-- Dependências -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
     <script>
-        // 🔧 Corrige validação do jQuery Validate para aceitar vírgula como separador decimal (pt-BR)
-        $.validator.methods.number = function (value, element) {
-            return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)?(?:,\d+)?$/.test(value);
-        };
-
         $(document).ready(function () {
+            // Aplica máscara (MANTENHA)
+            $('#MaoDeObra, #ValorDesconto').mask('000.000.000,00', { reverse: true });
 
-            // 💰 Aplica máscara nos campos decimais
-            $('#MaoDeObra, #ValorDesconto, #ValorTotal').mask('000.000.000,00', { reverse: true });
+            // Sobrescrita do $.validator.methods.number (Aceita milhar e vírgula decimal)
+            if ($.validator && $.validator.methods) {
+                $.validator.methods.number = function (value, element) {
+                    if (this.optional(element)) {
+                        return true;
+                    }
+                    var val_limpo = value.replace(/\./g, '');
+                    var val_padrao = val_limpo.replace(/,/g, '.');
+                    return !isNaN(parseFloat(val_padrao));
+                };
+            }
 
-            // 🧮 Antes de enviar o formulário:
+
+            // Antes de enviar o form (Remove apenas os pontos de milhar, mantendo a vírgula)
             $('form').on('submit', function () {
-
-                // 🔄 Converte vírgula -> ponto (para o ASP.NET interpretar corretamente)
-                $('#MaoDeObra, #ValorDesconto, #ValorTotal').each(function () {
-                    let valor = $(this).val();
-                    if (valor) {
-                        valor = valor.replace(/\./g, '').replace(',', '.');
-                        $(this).val(valor);
+                $('#MaoDeObra, #ValorDesconto').each(function () {
+                    let v = $(this).val();
+                    if (v) {
+                        let valor_limpo = v.replace(/\./g, '');
+                        $(this).val(valor_limpo);
                     }
                 });
 
-                // ⚙️ Submissão dinâmica das peças
+                // Peças
                 $('input[name="pecaIds"]').remove();
                 $('.peca-quantidade-input').each(function () {
                     var quantidade = parseInt($(this).val());
                     var pecaId = $(this).data('peca-id');
-
                     if (quantidade > 0) {
                         $('<input>').attr({
                             type: 'hidden',
                             name: 'pecaIds',
                             value: pecaId
                         }).appendTo('form');
-
                         $(this).attr('name', 'quantidades');
                     } else {
                         $(this).removeAttr('name');
@@ -156,4 +158,5 @@
             });
         });
     </script>
+
 }

@@ -134,10 +134,13 @@
         };
     </script>
 
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
 
     <script>
         $(document).ready(function () {
+            // Aplica máscara (MANTENHA)
+            $('#MaoDeObra, #ValorDesconto').mask('000.000.000,00', { reverse: true });
             // Ação disparada ao submeter o formulário de EDIÇÃO
             $('form').submit(function (e) {
 
@@ -178,6 +181,3 @@
     </script>
 }
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
