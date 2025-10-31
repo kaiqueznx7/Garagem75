@@ -31,7 +31,7 @@
 
     <div class="form-group">
         <label asp-for="Preco"></label>
-        <input asp-for="Preco" type="text" class="form-control" />
+        <input asp-for="Preco" class="form-control" id="Preco" />
         <span asp-validation-for="Preco" class="text-danger"></span>
     </div>
 
@@ -71,32 +71,16 @@
     <a asp-action="Index" class="btn btn-secondary">Voltar</a>
 </form>
 
+
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script>
-        // Esta função sobrescreve o método 'number' do jQuery Validation
-        // para aceitar a vírgula (',') como separador decimal.
-        $.validator.methods.number = function (value, element) {
-            // Se o campo for opcional e vazio, retorna true
-            if (this.optional(element)) {
-                return true;
-            }
-
-            // 1. Substitui a vírgula por ponto no valor (para que o JS entenda como float)
-            var val_ajustado = value.replace(/,/g, '.');
-
-            // 2. Tenta converter para um número
-            // isNaN(parseFloat(val_ajustado)) é a validação de que é um número
-            return !isNaN(parseFloat(val_ajustado));
-        };
+        $(document).ready(function () {
+            $('#Preco').mask('000.000.000,00', { reverse: true });
+        });
     </script>
 }
-
-
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
 

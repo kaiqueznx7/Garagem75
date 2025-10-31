@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Garagem75.Data;
 using Garagem75.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Globalization;
 
 namespace Garagem75.Controllers
 {
@@ -42,6 +43,8 @@ namespace Garagem75.Controllers
 
             // CORREÇÃO: Uso de PecasAssociadas
             var ordemServico = await _context.OrdemServicos
+                .Include(o => o.Veiculo)
+                    .ThenInclude(v => v.Cliente)
                 .Include(o => o.PecasAssociadas)
                     .ThenInclude(op => op.Peca)
                 .FirstOrDefaultAsync(m => m.IdOrdemServico == id);
@@ -78,6 +81,17 @@ namespace Garagem75.Controllers
             int[] pecaIds, // IDs das peças selecionadas
             int[] quantidades) // Quantidades correspondentes
         {
+            if (Request.Form.TryGetValue("MaoDeObra", out var maoTexto))
+            {
+                maoTexto = maoTexto.ToString().Replace("R$", "").Trim();
+                if (decimal.TryParse(maoTexto, NumberStyles.Any, new CultureInfo("pt-BR"), out var m))
+                    ordemServico.MaoDeObra = m;
+                else
+                    ModelState.AddModelError("MaoDeObra", "Formato inválido");
+            }
+
+
+
             if (ModelState.IsValid)
             {
                 if (pecaIds.Length != quantidades.Length)
@@ -293,7 +307,9 @@ namespace Garagem75.Controllers
             if (id == null)
                 return NotFound();
 
-            var ordemServico = await _context.OrdemServicos              
+            var ordemServico = await _context.OrdemServicos
+                .Include(o => o.Veiculo)
+                    .ThenInclude(v => v.Cliente)
                 .Include(o => o.PecasAssociadas)
                     .ThenInclude(op => op.Peca)
                 .FirstOrDefaultAsync(o => o.IdOrdemServico == id);

@@ -128,7 +128,7 @@
 <div class="cupom-container">
     <!-- Cabeçalho -->
     <div class="cupom-header">
-        <img src="~/img/logo.png" alt="Garagem 75" />
+        <img src="~/img/logoFooter1.png" alt="Garagem 75" />
         <h2>GARAGEM 75</h2>
         <small>Travessa Particular 1, 57 - Itaim Paulista<br />CNPJ: 00.000.000/0001-00<br />Tel: 11964749052</small>
     </div>
@@ -142,6 +142,22 @@
         <strong>Status:</strong> @Model.Status<br />
         <strong>Entrega:</strong> @(Model.DataEntrega.ToString("dd/MM/yyyy") ?? "-")<br />
     </div>
+
+    <hr />
+
+    <!-- Dados do veículo -->
+    @if (Model.Veiculo != null)
+    {
+        <div class="cupom-info">
+            <strong>Cliente:</strong> @Model.Veiculo.Cliente.Nome
+
+            <strong>Veículo:</strong> @Model.Veiculo.Fabricante @Model.Veiculo.Modelo<br />
+            <strong>Placa:</strong> @Model.Veiculo.Placa<br />
+            <strong>Ano:</strong> @Model.Veiculo.Ano
+        </div>
+
+        <hr />
+    }
 
     <hr />
 

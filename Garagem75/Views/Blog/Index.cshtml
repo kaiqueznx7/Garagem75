@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Garagem75.Models.BlogPost>
+
+@{
+    ViewData["Title"] = "Blog - Garagem75";
+}
+
+<h2 class="text-center mb-4">Nosso Blog</h2>
+
+<div class="row">
+    @foreach (var post in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <img src="@post.ImagemUrl" class="card-img-top" alt="@post.Titulo" />
+                <div class="card-body">
+                    <h5 class="card-title">@post.Titulo</h5>
+                    <p class="card-text">@post.Resumo</p>
+                    <a asp-controller="Blog" asp-action="Detalhes" asp-route-id="@post.Id" class="btn btn-primary">
+                        Ler mais
+                    </a>
+                </div>
+                <div class="card-footer text-muted small">
+                    Publicado em @post.DataPublicacao.ToString("dd/MM/yyyy")
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -33,9 +33,16 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ITipoUsuarioRepository, TipoUsuarioRepository>();
 
 
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Força a mensagem de erro em português para números (resolve o erro em inglês)
+    options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor(
+        (_) => "O campo deve ser um número válido, utilize vírgula (,) como separador decimal."
+    );
+})
+// Adicione estas duas linhas se quiser traduzir outras mensagens de erro:
+.AddViewLocalization()
+.AddDataAnnotationsLocalization();
 
 // DataProtection (chaves persistentes fora da pasta do projeto)
 var dpBase = Path.Combine(
