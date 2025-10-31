@@ -95,7 +95,7 @@ namespace Garagem75.Controllers
                 .Select(o => new PecasPorVeiculo
                 {
                     IdOrdemServico = o.IdOrdemServico,
-                    Fabricante = o.Veiculo.Fabricante,
+                    Modelo = o.Veiculo.Modelo,
                     QuantidadePecas = o.PecasAssociadas.Count
                 }) 
                 .OrderByDescending(o => o.QuantidadePecas)

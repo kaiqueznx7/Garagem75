@@ -63,7 +63,7 @@ public class ModeloVeiculos
 public class PecasPorVeiculo
 {
     public int IdOrdemServico { get; set; }
-    public string Fabricante { get; set; } = "";
+    public string Modelo { get; set; } = "";
     public int QuantidadePecas { get; set; }
 }
 

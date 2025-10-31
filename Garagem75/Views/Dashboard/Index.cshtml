@@ -252,7 +252,7 @@
         });
 
     // 3) Veiculos com que utilizaram mais peças (Barras Horizontais)
-    const topGenerosLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PecasPorVeiculo.Select(o => o.Fabricante)));
+    const topGenerosLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PecasPorVeiculo.Select(o => o.Modelo)));
     const topGenerosData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PecasPorVeiculo.Select(o => o.QuantidadePecas)));
 
     new Chart(document.getElementById('chartTopVeiculos'), {
@@ -268,7 +268,7 @@
             }]
         },
         options: {
-            indexAxis: 'y', // ← barras horizontais
+            indexAxis: 'x', // ← barras horizontais
             responsive: true,
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
