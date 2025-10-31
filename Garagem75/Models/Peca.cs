@@ -22,6 +22,7 @@ public class Peca
     [Required]
 
     [Column(TypeName = "decimal(18,2)")]
+    [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
     public decimal Preco { get; set; }
     [Required(ErrorMessage ="O Fornecedor é obrigatório.")]
     [StringLength(100)]

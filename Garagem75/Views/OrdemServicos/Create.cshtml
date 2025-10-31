@@ -4,49 +4,59 @@
     ViewData["Title"] = "Criar nova ordem de serviço";
 }
 
-<h1>Create</h1>
+<h1>Criar Ordem de Serviço</h1>
 
 <h4>OrdemServico</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="Descricao" class="control-label"></label>
                 <input asp-for="Descricao" class="form-control" />
                 <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="DataServico" class="control-label"></label>
                 <input asp-for="DataServico" class="form-control" />
                 <span asp-validation-for="DataServico" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="MaoDeObra" class="control-label"></label>
+                <label asp-for="MaoDeObra"></label>
                 <input asp-for="MaoDeObra" type="text" class="form-control" />
                 <span asp-validation-for="MaoDeObra" class="text-danger"></span>
             </div>
+
+
+
             <div class="form-group">
-                <label asp-for="ValorDesconto" class="control-label"></label>
-                <input asp-for="ValorDesconto" type="text" class="form-control" />
+                <label asp-for="ValorDesconto"></label>
+                <input asp-for="ValorDesconto" type="text" class="form-control" id="ValorDesconto" />
                 <span asp-validation-for="ValorDesconto" class="text-danger"></span>
             </div>
-            @* <div class="form-group"> *@
-            @*     <label asp-for="ValorTotal" class="control-label"></label> *@
-            @*     <input asp-for="ValorTotal" class="form-control" /> *@
-            @*     <span asp-validation-for="ValorTotal" class="text-danger"></span> *@
-            @* </div> *@
+
+           @*  <div class="form-group">
+                <label asp-for="ValorTotal" class="control-label"></label>
+                <input asp-for="ValorTotal" class="form-control" readonly />
+                <span asp-validation-for="ValorTotal" class="text-danger"></span>
+            </div> *@
+
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
                 <input asp-for="Status" class="form-control" />
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="DataEntrega" class="control-label"></label>
                 <input asp-for="DataEntrega" class="form-control" />
                 <span asp-validation-for="DataEntrega" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="VeiculoId" class="control-label"></label>
                 <select asp-for="VeiculoId" class="form-control" asp-items="ViewBag.VeiculoId">
@@ -54,6 +64,7 @@
                 </select>
                 <span asp-validation-for="VeiculoId" class="text-danger"></span>
             </div>
+
             <h4>Peças utilizadas</h4>
             <div class="form-group">
                 <table class="table table-sm">
@@ -71,10 +82,7 @@
                                 <td>@peca.Nome</td>
                                 <td>R$ @peca.Preco.ToString("N2")</td>
                                 <td>
-                                    @* CAMPO HIDDEN: Este campo só será ativado via JS se a quantidade for > 0 *@
                                     <input type="hidden" class="peca-id-input" name="pecaIds" value="@peca.IdPeca" disabled />
-
-                                    @* CAMPO DE QUANTIDADE: Este campo envia o array "quantidades" *@
                                     <input type="number"
                                            class="form-control form-control-sm peca-quantidade-input"
                                            data-peca-id="@peca.IdPeca"
@@ -87,79 +95,68 @@
                     </tbody>
                 </table>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Criar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        // Este Partial carrega os scripts de validação do jQuery
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-    <script>
-        // Esta função sobrescreve o método 'number' do jQuery Validation
-        // para aceitar a vírgula (',') como separador decimal.
-        $.validator.methods.number = function (value, element) {
-            // Se o campo for opcional e vazio, retorna true
-            if (this.optional(element)) {
-                return true;
-            }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
-            // 1. Substitui a vírgula por ponto no valor (para que o JS entenda como float)
-            var val_ajustado = value.replace(/,/g, '.');
-
-            // 2. Tenta converter para um número
-            // isNaN(parseFloat(val_ajustado)) é a validação de que é um número
-            return !isNaN(parseFloat(val_ajustado));
-        };
-    </script>
     <script>
         $(document).ready(function () {
-            // Ação disparada ao submeter o formulário
-            $('form').submit(function (e) {
-                // Remove todos os campos pecaIds existentes (para evitar duplicatas)
-                $('input[name="pecaIds"]').remove();
+            // Aplica máscara (MANTENHA)
+            $('#MaoDeObra, #ValorDesconto').mask('000.000.000,00', { reverse: true });
 
-                // Para cada campo de quantidade
+            // Sobrescrita do $.validator.methods.number (Aceita milhar e vírgula decimal)
+            if ($.validator && $.validator.methods) {
+                $.validator.methods.number = function (value, element) {
+                    if (this.optional(element)) {
+                        return true;
+                    }
+                    var val_limpo = value.replace(/\./g, '');
+                    var val_padrao = val_limpo.replace(/,/g, '.');
+                    return !isNaN(parseFloat(val_padrao));
+                };
+            }
+
+
+            // Antes de enviar o form (Remove apenas os pontos de milhar, mantendo a vírgula)
+            $('form').on('submit', function () {
+                $('#MaoDeObra, #ValorDesconto').each(function () {
+                    let v = $(this).val();
+                    if (v) {
+                        let valor_limpo = v.replace(/\./g, '');
+                        $(this).val(valor_limpo);
+                    }
+                });
+
+                // Peças
+                $('input[name="pecaIds"]').remove();
                 $('.peca-quantidade-input').each(function () {
                     var quantidade = parseInt($(this).val());
                     var pecaId = $(this).data('peca-id');
-
                     if (quantidade > 0) {
-                        // 1. Adiciona o campo pecaIds: garante que o ID será enviado
-                        // O nome deve ser 'pecaIds' para ser mapeado no Controller
                         $('<input>').attr({
                             type: 'hidden',
                             name: 'pecaIds',
                             value: pecaId
                         }).appendTo('form');
-
-                        // 2. Renomeia o campo de Quantidade para 'quantidades':
-                        // O nome deve ser 'quantidades' para ser mapeado no Controller
-                        // Importante: A ordem de 'pecaIds' e 'quantidades' deve ser a mesma
                         $(this).attr('name', 'quantidades');
-
                     } else {
-                        // Se a quantidade for zero ou negativa, remove o atributo 'name'
-                        // para que o campo NÃO seja submetido
                         $(this).removeAttr('name');
                     }
                 });
-
-                // Permite que o formulário continue a submissão
-                return true;
             });
         });
     </script>
-}
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+}

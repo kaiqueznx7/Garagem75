@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Blog Garagem 75</title>
+
+    <!-- Bootstrap e Ícones -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap-spacelab.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #f7f7f7;
+            color: #333;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        header {
+            background: linear-gradient(135deg, #212529, #343a40);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+            header h1 {
+                font-size: 2.2rem;
+                font-weight: 700;
+                letter-spacing: 1px;
+            }
+
+            header p {
+                font-size: 1.1rem;
+                opacity: 0.85;
+            }
+
+        .post-container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: -40px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .post-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .post-content img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        footer {
+            background-color: #212529;
+            color: #ccc;
+            text-align: center;
+            padding: 25px 10px;
+            margin-top: 50px;
+        }
+
+            footer a {
+                color: #ccc;
+                text-decoration: none;
+            }
+
+                footer a:hover {
+                    color: #fff;
+                }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 25px;
+            text-decoration: none;
+            color: #0d6efd;
+        }
+
+            .back-btn i {
+                margin-right: 6px;
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Blog da Garagem 75</h1>
+        <p>Dicas, novidades e curiosidades do mundo automotivo</p>
+    </header>
+
+    <main class="container my-5">
+        <div class="post-container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer>
+        <p>© @DateTime.Now.Year Garagem 75 — Todos os direitos reservados.</p>
+        <a asp-controller="Home" asp-action="Index">
+            <i class="bi bi-house"></i> Voltar ao site
+        </a>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -16,6 +16,7 @@ namespace Garagem75.Data;
     public DbSet<Endereco> Enderecos { get; set; }
     public DbSet<OrdemServico> OrdemServicos { get; set; }
     public DbSet<OrdemServicoPeca> OrdemServicoPecas { get; set; }
+    public DbSet<BlogPost> BlogPosts { get; set; }
 
 
 

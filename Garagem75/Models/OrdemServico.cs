@@ -15,9 +15,11 @@ namespace Garagem75.Models;
     public DateTime DataServico { get; set; }
     [Required]
     [Column(TypeName = "decimal(18,2)")]
+    [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
     public decimal MaoDeObra { get; set; }
 
     [Column(TypeName = "decimal(18,2)")]
+    [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
     public decimal ValorDesconto { get; set; }
 
     [Required]

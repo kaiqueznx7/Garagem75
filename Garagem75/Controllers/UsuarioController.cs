@@ -59,7 +59,7 @@ namespace Garagem75.Controllers
 
         var usuario = await _context.Usuarios
             .Include(u => u.TipoUsuario)
-            .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+            .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha && u.Ativo);
 
         if (usuario == null)
         {
@@ -67,8 +67,9 @@ namespace Garagem75.Controllers
                 return View();
             }
 
-        // Cria as claims
-        var claims = new List<Claim>
+
+            // Cria as claims
+            var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, usuario.Nome),
         new Claim(ClaimTypes.Email, usuario.Email),
@@ -82,7 +83,7 @@ namespace Garagem75.Controllers
         ViewBag.Success = "Login realizado com sucesso!";
 
 
-            return RedirectToAction("Index", "Usuario");
+            return RedirectToAction("Index", "Dashboard");
     }
 
 

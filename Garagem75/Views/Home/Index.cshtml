@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="./css/site.css">
+
 </head>
 <body>
 
@@ -43,6 +44,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#area-restrita">Área Restrita</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#blog">Blog</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#contato-localizacao">Contato</a>
@@ -195,6 +199,21 @@
                 <div class="col-12 col-md-6" data-aos="fade-right">
                     <div class="p-4 rounded" style="background-color: #FFD700; color: #000;">
                         <h2 class="text-center mb-4">Agendar seu serviço</h2>
+                        @if (TempData["MensagemSucesso"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                @TempData["MensagemSucesso"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+                        @if (TempData["MensagemErro"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                @TempData["MensagemErro"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
                         <form method="post" asp-controller="Home" asp-action="EnviarAgendamento">
                        
                             <div class="mb-3"><input type="text" class="form-control" name="nome" placeholder="Nome Completo" required></div>
@@ -221,11 +240,77 @@
     </section>
 
     <section>
-        <h2 class="text-light display-4 titulo-avaliacoes">AVALIAÇÕES</h2>
+        <h2 class="text-center text-white titulo-avaliacoes">AVALIAÇÕES</h2>
         <!-- Elfsight Google Reviews | Untitled Google Reviews -->
     <script src="https://elfsightcdn.com/platform.js" async></script>
     <div class="elfsight-app-c6f2f295-0c7a-4c1f-a525-7243b27f7709" data-elfsight-app-lazy></div>
     </section>
+
+    <!-- Carrossel de marcas -->
+    
+    <div class="marcas-container">
+        <div class="marcas-carousel">
+            <img src="~/img/fiat.png" alt="Fiat">
+            <img src="~/img/chevrolet.png" alt="Chevrolet">
+            <img src="~/img/ford.png" alt="Ford">
+            <img src="~/img/volkswagen.png" alt="Volkswagen">
+            <img src="~/img/honda.png" alt="Honda">
+            <img src="~/img/toyota.png" alt="Toyota">
+            <img src="~/img/nissan.png" alt="Nissan">
+            <img src="~/img/renault.png" alt="Renault">
+            <img src="~/img/peugeot.png" alt="Peugeot">
+
+            <!-- duplicadas para looping suave -->
+            <img src="~/img/fiat.png" alt="Fiat">
+            <img src="~/img/chevrolet.png" alt="Chevrolet">
+            <img src="~/img/ford.png" alt="Ford">
+            <img src="~/img/volkswagen.png" alt="Volkswagen">
+            <img src="~/img/honda.png" alt="Honda">
+            <img src="~/img/toyota.png" alt="Toyota">
+            <img src="~/img/nissan.png" alt="Nissan">
+            <img src="~/img/renault.png" alt="Renault">
+            <img src="~/img/peugeot.png" alt="Peugeot">
+        </div>
+    </div>
+
+
+    @inject Garagem75.Data.Garagem75DBContext _context
+
+    @{
+        var posts = _context.BlogPosts
+        .Where(p => p.Ativo)
+        .OrderByDescending(p => p.DataPublicacao)
+        .Take(3)
+        .ToList();
+    }
+
+    <section id="blog" class="blog-section py-5 bg-light">
+        <div class="container">
+            <h3 class="text-center mb-4">Últimas do Blog</h3>
+            <div class="row">
+                @foreach (var post in posts)
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            <img src="@post.ImagemUrl" class="card-img-top" alt="@post.Titulo" />
+                            <div class="card-body">
+                                <h5>@post.Titulo</h5>
+                                <p>@post.Resumo</p>
+                                <a asp-controller="Blog" asp-action="Detalhes" asp-route-id="@post.Id" class="btn btn-sm btn-outline-primary">
+                                    Ler mais
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-3">
+                <a asp-controller="Blog" asp-action="Index" class="btn btn-primary">Ver todas as postagens</a>
+            </div>
+        </div>
+    </section>
+
+
 
     <footer class="footer py-5" style="background-color: #FFD700; color: #000;">
         <div class="container">
@@ -241,9 +326,11 @@
                 <div class="col-12 col-md-3 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="150">
                     <h5 class="mb-3 text-uppercase fw-bold">Continue Navegando</h5>
                     <ul class="list-unstyled">
+                        <li><a href="#home" class="footer-link text-dark text-decoration-none">Início</a></li>
                         <li><a href="#quem-somos" class="footer-link text-dark text-decoration-none">Quem Somos</a></li>
                         <li><a href="#servicos" class="footer-link text-dark text-decoration-none">Serviços</a></li>
                         <li><a href="#area-restrita" class="footer-link text-dark text-decoration-none">Área Restrita</a></li>
+                        <li><a href="#blog" class="footer-link text-dark text-decoration-none">Blog</a></li>
                         <li><a href="#contato-localizacao" class="footer-link text-dark text-decoration-none">Contato</a></li>
                     </ul>
                 </div>
@@ -279,6 +366,17 @@
             duration: 1000, // Duração da animação em milissegundos
             once: true,     // Animação acontece apenas uma vez
         });
+        const backToTopBtn = document.getElementById("backToTopBtn");
+
+        window.addEventListener("scroll", () => {
+          if (window.scrollY > 100) {
+            backToTopBtn.style.display = "block"; // mostra o botão
+          } else {
+            backToTopBtn.style.display = "none"; // esconde o botão
+          }
+        });
     </script>
+
+
 </body>
 </html>

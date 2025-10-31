@@ -1,0 +1,61 @@
+﻿@model Garagem75.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Novo Post";
+}
+
+<h2>Novo Post</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Titulo" class="form-label"></label>
+        <input asp-for="Titulo" class="form-control" />
+        <span asp-validation-for="Titulo" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Resumo" class="form-label"></label>
+        <textarea asp-for="Resumo" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ImagemUrl" class="form-label">URL da Imagem</label>
+        <input asp-for="ImagemUrl" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Conteudo" class="form-label"></label>
+        <textarea asp-for="Conteudo" id="editor" class="form-control" rows="8"></textarea>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="Ativo" class="form-check-input" />
+        <label asp-for="Ativo" class="form-check-label">Ativo</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    
+    <script>
+        $(document).ready(function () {
+            $('#editor').summernote({
+                height: 250,
+                placeholder: 'Digite o conteúdo do post aqui...',
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture']],
+                    ['view', ['codeview']]
+                ]
+            });
+        });
+    </script>
+}
+
+
+
+

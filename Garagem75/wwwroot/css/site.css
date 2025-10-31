@@ -270,6 +270,7 @@ html {
 }
 
 #backToTopBtn {
+    display: none;
     position: fixed;
     bottom: 20px;
     right: 30px;
@@ -287,6 +288,7 @@ html {
 
     #backToTopBtn:hover {
         opacity: 1;
+        transform: scale(1.1);
         background-color: #e09700;
     }
 
@@ -350,6 +352,46 @@ html {
     /* linha branca */
     border-bottom: 2px solid var(--borda-titulo);
     display: inline-block;
+}
+
+
+.marcas-container {
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--yellow);
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.marcas-carousel {
+    display: flex;
+    gap: 150px;
+    align-items: center;
+    animation: scrollMarcas 20s linear infinite;
+    width: max-content;
+}
+
+    .marcas-carousel img {
+        height: 40px;
+        object-fit: contain;
+        opacity: 0.8;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+        .marcas-carousel img:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+@keyframes scrollMarcas {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
 }
 
 
