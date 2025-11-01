@@ -2,108 +2,185 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- AOS Animations -->
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
 <style>
+    body {
+        background: linear-gradient(135deg, #0e0e0e, #1a1a1a);
+        color: #fff;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    h2 {
+        font-weight: 600;
+        color: #22d3ee;
+        border-left: 5px solid #22d3ee;
+        padding-left: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 16px;
+        background: #1c1c1c;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 0 18px rgba(34, 211, 238, 0.35);
+    }
+
     .chart-card .card-body {
         background: #121212;
         color: #fff;
         min-height: 320px;
+        border-radius: 12px;
     }
 
     .chart-card canvas {
         width: 100% !important;
         height: 260px !important;
     }
+
+    .kpi-card i {
+        font-size: 2.5rem;
+        color: #22d3ee;
+        margin-bottom: 0.5rem;
+    }
+
+    .kpi-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #22d3ee;
+    }
+
+    .kpi-label {
+        color: #ccc;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table-dark {
+        background: transparent;
+        color: #fff;
+    }
+
+    .table-dark th {
+        color: #22d3ee;
+        font-weight: 600;
+    }
+
+    .table-dark tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .card-header {
+        background: linear-gradient(90deg, #22d3ee, #007bff);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+    }
 </style>
 
-<div class="container-fluid py-3">
-    <h2 class="mb-4">📊 Dashboard</h2>
+<div class="container-fluid py-4">
+    <h2 class="mb-4" data-aos="fade-right" data-aos-duration="800">📊 Dashboard</h2>
 
+    <!-- KPIs -->
+    <div class="row g-4">
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="card kpi-card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fa-solid fa-gears"></i>
+                    <div class="kpi-value">@Model.TotalPecas</div>
+                    <div class="kpi-label">Peças</div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Cards de KPIs movidos para baixo -->
-    <div class="row g-3 mt-3">
-        <div class="col-6 col-md-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body bg-dark text-light">
-                    <div class="fs-1 fw-bold">@Model.TotalPecas</div>
-                    <div class="text-light">Peças</div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="card kpi-card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fa-solid fa-users"></i>
+                    <div class="kpi-value">@Model.TotalClientes</div>
+                    <div class="kpi-label">Clientes</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body bg-dark text-light">
-                    <div class="fs-1 fw-bold">@Model.TotalClientes</div>
-                    <div class="text-light">Clientes</div>
+
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="card kpi-card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <div class="kpi-value">@Model.TotalOrdensServico</div>
+                    <div class="kpi-label">Ordens de Serviço</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body bg-dark text-light">
-                    <div class="fs-1 fw-bold">@Model.TotalOrdensServico</div>
-                    <div class="text-light">Ordens de Serviço</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body bg-dark text-light">
-                    <div class="fs-1 fw-bold">@Model.TotalUsuarios</div>
-                    <div class="text-light">Usuários</div>
+
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="400">
+            <div class="card kpi-card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <div class="kpi-value">@Model.TotalUsuarios</div>
+                    <div class="kpi-label">Usuários</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-3 mt-1">
-    <div class="col-12 col-lg-6">
-        <div class="card shadow-sm h-100 chart-card">
-            <div class="card-header fw-semibold bg-dark text-light">🏆 Top 5 Clientes mais antigos</div>
-            <div class="card-body bg-dark text-light">
-                @if (Model.ClientesMaisAntigos?.Count > 0)
-                {
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle table-dark">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nome</th>
-                                    <th>Telefone</th>
-                                    <th>Email</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var c in Model.ClientesMaisAntigos.Take(5))
-                                {
+    <!-- Listas -->
+    <div class="row g-4 mt-4">
+        <div class="col-12 col-lg-6" data-aos="fade-right" data-aos-delay="200">
+            <div class="card chart-card h-100">
+                <div class="card-header"><i class="fa-solid fa-crown me-2"></i>Top 5 Clientes Mais Antigos</div>
+                <div class="card-body">
+                    @if (Model.ClientesMaisAntigos?.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm table-dark align-middle">
+                                <thead>
                                     <tr>
-                                        <td>@c.IdCliente</td>
-                                        <td>@c.Nome</td>
-                                        <td>@c.Telefone</td>
-                                        <td>@c.Email</td>
-                                        
+                                        <th>#</th>
+                                        <th>Nome</th>
+                                        <th>Telefone</th>
+                                        <th>Email</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <p class="text-muted m-0">Sem Clientes cadastrados.</p>
-                }
+                                </thead>
+                                <tbody>
+                                    @foreach (var c in Model.ClientesMaisAntigos.Take(5))
+                                    {
+                                        <tr>
+                                            <td>@c.IdCliente</td>
+                                            <td>@c.Nome</td>
+                                            <td>@c.Telefone</td>
+                                            <td>@c.Email</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted m-0">Sem clientes cadastrados.</p>
+                    }
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-12 col-lg-6">
-            <div class="card shadow-sm h-100 chart-card">
-                <div class="card-header fw-semibold bg-dark text-light">🚗 Últimos 5 Veiculos Trabalhados</div>
-                <div class="card-body bg-dark text-light">
+        <div class="col-12 col-lg-6" data-aos="fade-left" data-aos-delay="300">
+            <div class="card chart-card h-100">
+                <div class="card-header"><i class="fa-solid fa-car me-2"></i>Últimos 5 Veículos Trabalhados</div>
+                <div class="card-body">
                     @if (Model.UltimosVeiculosAtendidos?.Count > 0)
                     {
                         <div class="table-responsive">
-                            <table class="table table-sm align-middle table-dark">
+                            <table class="table table-sm table-dark align-middle">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -113,14 +190,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var c in Model.UltimosVeiculosAtendidos.Take(5))
+                                    @foreach (var v in Model.UltimosVeiculosAtendidos.Take(5))
                                     {
                                         <tr>
-                                            <td>@c.IdVeiculo</td>
-                                            <td>@c.Fabricante</td>
-                                            <td>@c.Modelo</td>
-                                            <td>@c.Placa</td>
-
+                                            <td>@v.IdVeiculo</td>
+                                            <td>@v.Fabricante</td>
+                                            <td>@v.Modelo</td>
+                                            <td>@v.Placa</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -129,132 +205,85 @@
                     }
                     else
                     {
-                        <p class="text-muted m-0">Sem  cadastrados.</p>
+                        <p class="text-muted m-0">Sem veículos cadastrados.</p>
                     }
                 </div>
             </div>
         </div>
     </div>
 
-                <div class="row g-3 mt-1">
-                    <!-- Top Marcas de Peças -->
-                    <div class="col-12 col-lg-3">
-                        <div class="card shadow-sm h-100 chart-card">
-                            <div class="card-header fw-semibold bg-dark text-light">🔩 Marcas de Peças mais utilizadas</div>
-                            <div class="card-body bg-dark text-light">
-                                <canvas id="chartPecas"></canvas>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Gráficos -->
+    <div class="row g-4 mt-4">
+        <div class="col-12 col-lg-3" data-aos="zoom-in" data-aos-delay="100">
+            <div class="card chart-card h-100">
+                <div class="card-header"><i class="fa-solid fa-screwdriver-wrench me-2"></i>Marcas de Peças mais Utilizadas</div>
+                <div class="card-body"><canvas id="chartPecas"></canvas></div>
+            </div>
+        </div>
 
-                    <!-- Top Marcas de Veículos -->
-                    <div class="col-12 col-lg-3">
-                        <div class="card shadow-sm h-100 chart-card">
-                            <div class="card-header fw-semibold bg-dark text-light">🚘 Marcas de Veículos mais comuns</div>
-                            <div class="card-body bg-dark text-light">
-                                <canvas id="chartVeiculos"></canvas>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-12 col-lg-3" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card chart-card h-100">
+                <div class="card-header"><i class="fa-solid fa-car-side me-2"></i>Marcas de Veículos mais Comuns</div>
+                <div class="card-body"><canvas id="chartVeiculos"></canvas></div>
+            </div>
+        </div>
 
-                   @* <! -- Peças por Veiculo --> *@
-        <div class="col-12 col-lg-3">
-            <div class="card shadow-sm h-100 chart-card">
-                <div class="card-header fw-semibold bg-dark text-light">🏆  Peças Usadas Por Veiculo</div>
-                <div class="card-body bg-dark text-light">
-                    <canvas id="chartTopVeiculos"></canvas>
+        <div class="col-12 col-lg-3" data-aos="zoom-in" data-aos-delay="300">
+            <div class="card chart-card h-100">
+                <div class="card-header"><i class="fa-solid fa-chart-column me-2"></i>Peças Usadas por Veículo</div>
+                <div class="card-body"><canvas id="chartTopVeiculos"></canvas></div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-3" data-aos="zoom-in" data-aos-delay="400">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fa-solid fa-sack-dollar fa-2x text-success mb-2"></i>
+                    <div class="kpi-label">Total Faturado na Semana</div>
+                    <div class="kpi-value">R$@Model.ValorTotalOrdensServico</div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-3">
-            <div class="card shadow-sm h-100 chart-card">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body bg-dark text-light">
-                        <div class="text-light">Total Faturado na semana:</div>
-                        <div class="fs-1 fw-bold">R$@Model.ValorTotalOrdensServico</div>
-                     
-                    </div>
-                </div>
-            </div>
+    </div>
+</div>
 
-        </div>
-  
-      
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script>
+    const colors = [
+        'rgba(255, 99, 132, 0.8)',
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(255, 206, 86, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(153, 102, 255, 0.8)'
+    ];
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        const marcasPecas = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MarcasPecasMaisUsadas));
-        const marcasVeiculos = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MarcasVeiculosMaisUsadas));
-
-        // Paleta de cores personalizada (cores diferentes para cada fatia)
-        const colors = [
-            'rgba(255, 99, 132, 0.8)',
-            'rgba(54, 162, 235, 0.8)',
-            'rgba(255, 206, 86, 0.8)',
-            'rgba(75, 192, 192, 0.8)',
-            'rgba(153, 102, 255, 0.8)'
-        ];
-
-        // === GRÁFICO DE PEÇAS ===
-        new Chart(document.getElementById('chartPecas'), {
-            type: 'pie',
-            data: {
-                labels: marcasPecas.map(m => m.NomeMarca),
-                datasets: [{
-                    label: 'Peças por Marca',
-                    data: marcasPecas.map(m => m.Quantidade),
-                    backgroundColor: colors,
-                    borderColor: '#121212',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { color: '#fff' }
-                    },
-                    title: {
-                        display: false
-                    }
-                }
-            }
-        });
-
-        // === GRÁFICO DE VEÍCULOS ===
-        new Chart(document.getElementById('chartVeiculos'), {
-            type: 'doughnut',
-            data: {
-                labels: marcasVeiculos.map(m => m.NomeMarca),
-                datasets: [{
-                    label: 'Veículos por Marca',
-                    data: marcasVeiculos.map(m => m.Quantidade),
-                    backgroundColor: colors,
-                    borderColor: '#121212',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { color: '#fff' }
-                    },
-                    title: {
-                        display: false
-                    }
-                }
-            }
-        });
-
-    // 3) Veiculos com que utilizaram mais peças (Barras Horizontais)
+    const marcasPecas = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MarcasPecasMaisUsadas));
+    const marcasVeiculos = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MarcasVeiculosMaisUsadas));
     const topGenerosLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PecasPorVeiculo.Select(o => o.Modelo)));
     const topGenerosData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PecasPorVeiculo.Select(o => o.QuantidadePecas)));
 
+    // Gráfico de Peças
+    new Chart(document.getElementById('chartPecas'), {
+        type: 'pie',
+        data: {
+            labels: marcasPecas.map(m => m.NomeMarca),
+            datasets: [{ data: marcasPecas.map(m => m.Quantidade), backgroundColor: colors }]
+        },
+        options: { plugins: { legend: { labels: { color: '#fff' } } } }
+    });
+
+    // Gráfico de Veículos
+    new Chart(document.getElementById('chartVeiculos'), {
+        type: 'doughnut',
+        data: {
+            labels: marcasVeiculos.map(m => m.NomeMarca),
+            datasets: [{ data: marcasVeiculos.map(m => m.Quantidade), backgroundColor: colors }]
+        },
+        options: { plugins: { legend: { labels: { color: '#fff' } } } }
+    });
+
+    // Barras Peças por Veículo
     new Chart(document.getElementById('chartTopVeiculos'), {
         type: 'bar',
         data: {
@@ -262,29 +291,19 @@
             datasets: [{
                 label: 'Qtd Peças',
                 data: topGenerosData,
-                backgroundColor: "rgba(34, 211, 238, 0.85)",
-                borderColor: "rgba(34, 211, 238, 1)",
-                borderWidth: 1
+                backgroundColor: "rgba(34, 211, 238, 0.85)"
             }]
         },
         options: {
-            indexAxis: 'x', // ← barras horizontais
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
             scales: {
-                x: { beginAtZero: true, ticks: { stepSize: 1 } },
-                y: { ticks: { autoSkip: false } }
+                x: { ticks: { color: '#fff' } },
+                y: { ticks: { color: '#fff', beginAtZero: true } }
             },
-            layout: { padding: { bottom: 0, top: 0 } }
+            plugins: { legend: { display: false } }
         }
     });
-
-    </script>
-
+</script>
 
 
-
-
-
-
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
