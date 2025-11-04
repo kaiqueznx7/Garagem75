@@ -12,6 +12,24 @@ namespace Garagem75.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "BlogPosts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Titulo = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Resumo = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    Conteudo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImagemUrl = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    DataPublicacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Ativo = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogPosts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cliente",
                 columns: table => new
                 {
@@ -40,7 +58,8 @@ namespace Garagem75.Migrations
                     Fornecedor = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     QuantidadeEstoque = table.Column<int>(type: "int", nullable: false),
                     DataCadastro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DataUltimaAtualizacao = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DataUltimaAtualizacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Imagem = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -70,17 +89,18 @@ namespace Garagem75.Migrations
                     Numero = table.Column<int>(type: "int", nullable: false),
                     Complemento = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Bairro = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Uf = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
+                    Cidade = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Uf = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Cep = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
                     Principal = table.Column<bool>(type: "bit", nullable: false),
-                    ClienteIdCliente = table.Column<int>(type: "int", nullable: true)
+                    ClienteId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Endereco", x => x.IdEndereco);
                     table.ForeignKey(
-                        name: "FK_Endereco_Cliente_ClienteIdCliente",
-                        column: x => x.ClienteIdCliente,
+                        name: "FK_Endereco_Cliente_ClienteId",
+                        column: x => x.ClienteId,
                         principalTable: "Cliente",
                         principalColumn: "IdCliente");
                 });
@@ -93,17 +113,17 @@ namespace Garagem75.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Fabricante = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Modelo = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
-                    Ano = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Ano = table.Column<int>(type: "int", nullable: false),
                     Placa = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
                     Cor = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    ClienteIdCliente = table.Column<int>(type: "int", nullable: true)
+                    ClienteId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Veiculo", x => x.IdVeiculo);
                     table.ForeignKey(
-                        name: "FK_Veiculo_Cliente_ClienteIdCliente",
-                        column: x => x.ClienteIdCliente,
+                        name: "FK_Veiculo_Cliente_ClienteId",
+                        column: x => x.ClienteId,
                         principalTable: "Cliente",
                         principalColumn: "IdCliente");
                 });
@@ -140,31 +160,74 @@ namespace Garagem75.Migrations
                     Descricao = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     DataServico = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MaoDeObra = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ValorDesconto = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ValorDesconto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ValorTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DataEntrega = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    VeiculoIdVeiculo = table.Column<int>(type: "int", nullable: true)
+                    VeiculoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrdemServicos", x => x.IdOrdemServico);
                     table.ForeignKey(
-                        name: "FK_OrdemServicos_Veiculo_VeiculoIdVeiculo",
-                        column: x => x.VeiculoIdVeiculo,
+                        name: "FK_OrdemServicos_Veiculo_VeiculoId",
+                        column: x => x.VeiculoId,
                         principalTable: "Veiculo",
-                        principalColumn: "IdVeiculo");
+                        principalColumn: "IdVeiculo",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrdemServicoPecas",
+                columns: table => new
+                {
+                    OrdemServicoId = table.Column<int>(type: "int", nullable: false),
+                    PecaId = table.Column<int>(type: "int", nullable: false),
+                    Quantidade = table.Column<int>(type: "int", nullable: false),
+                    PrecoUnitario = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    PecaIdPeca = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrdemServicoPecas", x => new { x.OrdemServicoId, x.PecaId });
+                    table.ForeignKey(
+                        name: "FK_OrdemServicoPecas_OrdemServicos_OrdemServicoId",
+                        column: x => x.OrdemServicoId,
+                        principalTable: "OrdemServicos",
+                        principalColumn: "IdOrdemServico",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrdemServicoPecas_Peca_PecaId",
+                        column: x => x.PecaId,
+                        principalTable: "Peca",
+                        principalColumn: "IdPeca",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrdemServicoPecas_Peca_PecaIdPeca",
+                        column: x => x.PecaIdPeca,
+                        principalTable: "Peca",
+                        principalColumn: "IdPeca");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Endereco_ClienteIdCliente",
+                name: "IX_Endereco_ClienteId",
                 table: "Endereco",
-                column: "ClienteIdCliente");
+                column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrdemServicos_VeiculoIdVeiculo",
+                name: "IX_OrdemServicoPecas_PecaId",
+                table: "OrdemServicoPecas",
+                column: "PecaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrdemServicoPecas_PecaIdPeca",
+                table: "OrdemServicoPecas",
+                column: "PecaIdPeca");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrdemServicos_VeiculoId",
                 table: "OrdemServicos",
-                column: "VeiculoIdVeiculo");
+                column: "VeiculoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Usuario_Email",
@@ -178,16 +241,25 @@ namespace Garagem75.Migrations
                 column: "TipoUsuarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Veiculo_ClienteIdCliente",
+                name: "IX_Veiculo_ClienteId",
                 table: "Veiculo",
-                column: "ClienteIdCliente");
+                column: "ClienteId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BlogPosts");
+
+            migrationBuilder.DropTable(
                 name: "Endereco");
+
+            migrationBuilder.DropTable(
+                name: "OrdemServicoPecas");
+
+            migrationBuilder.DropTable(
+                name: "Usuario");
 
             migrationBuilder.DropTable(
                 name: "OrdemServicos");
@@ -196,13 +268,10 @@ namespace Garagem75.Migrations
                 name: "Peca");
 
             migrationBuilder.DropTable(
-                name: "Usuario");
+                name: "TipoUsuario");
 
             migrationBuilder.DropTable(
                 name: "Veiculo");
-
-            migrationBuilder.DropTable(
-                name: "TipoUsuario");
 
             migrationBuilder.DropTable(
                 name: "Cliente");

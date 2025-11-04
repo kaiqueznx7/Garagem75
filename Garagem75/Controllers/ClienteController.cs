@@ -51,8 +51,10 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ClienteCadastroViewModel model)
         {
+            
             if (!ModelState.IsValid)
             {
+               
                 return View(model);
             }
 
@@ -123,6 +125,25 @@ namespace Garagem75.Controllers
             }
             return View(cliente);
         }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var cliente = await _context.Clientes
+                .FirstOrDefaultAsync(m => m.IdCliente == id);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            return View(cliente);
+        }
+
 
         // GET: Cliente/Delete/5
         public async Task<IActionResult> Delete(int? id)

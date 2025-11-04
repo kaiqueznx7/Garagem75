@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garagem75.Migrations
 {
     [DbContext(typeof(Garagem75DBContext))]
-    [Migration("20251007231309_ano1")]
-    partial class ano1
+    [Migration("20251104122556_seedUsuario1")]
+    partial class seedUsuario1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,44 @@ namespace Garagem75.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Garagem75.Models.BlogPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Conteudo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DataPublicacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImagemUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Resumo")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BlogPosts");
+                });
 
             modelBuilder.Entity("Garagem75.Models.Cliente", b =>
                 {
@@ -136,7 +174,7 @@ namespace Garagem75.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("ValorDesconto")
+                    b.Property<decimal>("ValorDesconto")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("ValorTotal")
@@ -150,6 +188,32 @@ namespace Garagem75.Migrations
                     b.HasIndex("VeiculoId");
 
                     b.ToTable("OrdemServicos");
+                });
+
+            modelBuilder.Entity("Garagem75.Models.OrdemServicoPeca", b =>
+                {
+                    b.Property<int>("OrdemServicoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PecaId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PecaIdPeca")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PrecoUnitario")
+                        .HasColumnType("decimal(10, 2)");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrdemServicoId", "PecaId");
+
+                    b.HasIndex("PecaId");
+
+                    b.HasIndex("PecaIdPeca");
+
+                    b.ToTable("OrdemServicoPecas");
                 });
 
             modelBuilder.Entity("Garagem75.Models.Peca", b =>
@@ -299,7 +363,7 @@ namespace Garagem75.Migrations
             modelBuilder.Entity("Garagem75.Models.Endereco", b =>
                 {
                     b.HasOne("Garagem75.Models.Cliente", "Cliente")
-                        .WithMany()
+                        .WithMany("Enderecos")
                         .HasForeignKey("ClienteId");
 
                     b.Navigation("Cliente");
@@ -316,6 +380,29 @@ namespace Garagem75.Migrations
                     b.Navigation("Veiculo");
                 });
 
+            modelBuilder.Entity("Garagem75.Models.OrdemServicoPeca", b =>
+                {
+                    b.HasOne("Garagem75.Models.OrdemServico", "OrdemServico")
+                        .WithMany("PecasAssociadas")
+                        .HasForeignKey("OrdemServicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Garagem75.Models.Peca", "Peca")
+                        .WithMany()
+                        .HasForeignKey("PecaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Garagem75.Models.Peca", null)
+                        .WithMany("PecasAssociadas")
+                        .HasForeignKey("PecaIdPeca");
+
+                    b.Navigation("OrdemServico");
+
+                    b.Navigation("Peca");
+                });
+
             modelBuilder.Entity("Garagem75.Models.Usuario", b =>
                 {
                     b.HasOne("Garagem75.Models.TipoUsuario", "TipoUsuario")
@@ -330,10 +417,27 @@ namespace Garagem75.Migrations
             modelBuilder.Entity("Garagem75.Models.Veiculo", b =>
                 {
                     b.HasOne("Garagem75.Models.Cliente", "Cliente")
-                        .WithMany()
+                        .WithMany("Veiculos")
                         .HasForeignKey("ClienteId");
 
                     b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("Garagem75.Models.Cliente", b =>
+                {
+                    b.Navigation("Enderecos");
+
+                    b.Navigation("Veiculos");
+                });
+
+            modelBuilder.Entity("Garagem75.Models.OrdemServico", b =>
+                {
+                    b.Navigation("PecasAssociadas");
+                });
+
+            modelBuilder.Entity("Garagem75.Models.Peca", b =>
+                {
+                    b.Navigation("PecasAssociadas");
                 });
 
             modelBuilder.Entity("Garagem75.Models.TipoUsuario", b =>

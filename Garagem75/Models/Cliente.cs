@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garagem75.Models;
@@ -29,7 +30,9 @@ public class Cliente
     [StringLength(75)]
     public string Email { get; set; }
 
+    [ValidateNever]
     public ICollection<Endereco> Enderecos { get; set; }
+    [ValidateNever]
     public ICollection<Veiculo> Veiculos { get; set; }
 
 }

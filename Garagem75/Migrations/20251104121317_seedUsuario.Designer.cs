@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garagem75.Migrations
 {
     [DbContext(typeof(Garagem75DBContext))]
-    [Migration("20251024003859_blog")]
-    partial class blog
+    [Migration("20251104121317_seedUsuario")]
+    partial class seedUsuario
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
