@@ -9,6 +9,69 @@
 <p>
     <a asp-action="Create" class="btn btn-success">Criar novo</a>
 </p>
+<style>
+    .busca-veiculos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+        .busca-veiculos input {
+            width: 220px;
+            border-radius: 8px;
+            padding: 8px 12px;
+            transition: box-shadow 0.2s ease;
+        }
+
+            .busca-veiculos input:focus {
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.6);
+            }
+
+        .busca-veiculos button,
+        .busca-veiculos a {
+            border-radius: 8px;
+            padding: 8px 16px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+            .busca-veiculos button:hover,
+            .busca-veiculos a:hover {
+                transform: scale(1.03);
+            }
+
+    @@media (max-width: 576px) {
+        .busca-veiculos
+
+    {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .busca-veiculos input,
+    .busca-veiculos button,
+    .busca-veiculos a {
+        width: 100%;
+    }
+
+    }
+</style>
+
+<form asp-action="Index" method="get" class="busca-veiculos">
+    <input type="text" name="searchPlaca" value="@Context.Request.Query["searchPlaca"]"
+           class="form-control" placeholder="Buscar por placa" />
+
+    <input type="text" name="searchCliente" value="@Context.Request.Query["searchCliente"]"
+           class="form-control" placeholder="Buscar por cliente" />
+
+    <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+    <a asp-action="Index" class="btn btn-secondary">Limpar</a>
+</form>
+
+
 <table class="table">
     <thead>
         <tr>

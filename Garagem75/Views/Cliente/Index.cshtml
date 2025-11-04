@@ -4,57 +4,109 @@
     ViewData["Title"] = "Lista de Clientes";
 }
 
-<h1>Lista de clientes</h1>
-
+<h1>Clientes</h1>
 <p>
-    <a asp-action="Create" class="btn btn-success">Novo Cliente</a>
+    <a asp-action="Create" class="btn btn-success">Criar novo</a>
 </p>
-<table class="table">
+
+<style>
+    /* Estilo geral do formulário */
+    .busca-clientes {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap; /* permite quebrar linha em telas pequenas */
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+        .busca-clientes input {
+            width: 220px;
+            border-radius: 8px;
+            padding: 8px 12px;
+            transition: box-shadow 0.2s ease;
+        }
+
+            .busca-clientes input:focus {
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.6);
+            }
+
+        .busca-clientes button,
+        .busca-clientes a {
+            border-radius: 8px;
+            padding: 8px 16px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+            .busca-clientes button:hover,
+            .busca-clientes a:hover {
+                transform: scale(1.03);
+            }
+
+    /* Responsividade */
+    @@media (max-width: 576px) {
+        .busca-clientes
+
+    {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .busca-clientes input,
+    .busca-clientes button,
+    .busca-clientes a {
+        width: 100%;
+    }
+
+    }
+</style>
+
+<form asp-action="Index" method="get" class="busca-clientes">
+    <input type="text" name="searchNome" value="@Context.Request.Query["searchNome"]"
+           class="form-control" placeholder="Buscar por nome" />
+
+    <input type="text" name="searchTelefone" value="@Context.Request.Query["searchTelefone"]"
+           class="form-control" placeholder="Buscar por telefone" />
+
+    <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+    <a asp-action="Index" class="btn btn-secondary">Limpar</a>
+</form>
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.IdCliente)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.Cpf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telefone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Email</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.Telefone</td>
+                <td>@item.Email</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.IdCliente)
+                    <a asp-action="Edit" asp-route-id="@item.IdCliente" class="btn btn-sm btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.IdCliente" class="btn btn-sm btn-info">Detalhes</a>
+                    <a asp-action="Delete" asp-route-id="@item.IdCliente" class="btn btn-sm btn-danger">Excluir</a>
                 </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cpf)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telefone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdCliente" class=" btn btn-primary">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.IdCliente"class="btn btn-secondary">Detalhes</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdCliente" class="btn btn-danger">Deletar</a>
-            </td>
-        </tr>
-}
+            </tr>
+        }
     </tbody>
 </table>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
+<script src="~/js/site.js"></script>

@@ -22,11 +22,26 @@ namespace Garagem75.Controllers
         }
 
         // GET: Veiculo
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(string searchPlaca, string searchCliente)
         {
-            return View(await _context.Veiculos.
-                Include(v =>v.Cliente).ToListAsync());
+            var veiculos = _context.Veiculos
+                .Include(v => v.Cliente) // traz os dados do cliente relacionado
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchPlaca))
+            {
+                veiculos = veiculos.Where(v => v.Placa.Contains(searchPlaca));
+            }
+
+            if (!string.IsNullOrEmpty(searchCliente))
+            {
+                veiculos = veiculos.Where(v => v.Cliente.Nome.Contains(searchCliente));
+            }
+
+            return View(await veiculos.ToListAsync());
         }
+
 
         // GET: Veiculo/Details/5
         public async Task<IActionResult> Details(int? id)

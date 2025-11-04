@@ -23,27 +23,22 @@ namespace Garagem75.Controllers
         }
 
         // GET: Cliente
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchNome, string searchTelefone)
         {
-            return View(await _context.Clientes.ToListAsync());
-        }
+            var clientes = from c in _context.Clientes
+                           select c;
 
-        // GET: Cliente/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            if (!string.IsNullOrEmpty(searchNome))
             {
-                return NotFound();
+                clientes = clientes.Where(c => c.Nome.Contains(searchNome));
             }
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.IdCliente == id);
-            if (cliente == null)
+            if (!string.IsNullOrEmpty(searchTelefone))
             {
-                return NotFound();
+                clientes = clientes.Where(c => c.Telefone.Contains(searchTelefone));
             }
 
-            return View(cliente);
+            return View(await clientes.ToListAsync());
         }
 
         [HttpGet]
