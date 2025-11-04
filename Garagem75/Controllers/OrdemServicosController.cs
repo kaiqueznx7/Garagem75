@@ -23,15 +23,27 @@ namespace Garagem75.Controllers
         }
 
         // GET: OrdemServicos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            // CORREÇÃO: Uso de PecasAssociadas
-            return View(await _context.OrdemServicos
+            // Base query incluindo os relacionamentos
+            var query = _context.OrdemServicos
                 .Include(o => o.Veiculo)
                 .Include(o => o.PecasAssociadas)
                     .ThenInclude(op => op.Peca)
-                .ToListAsync());
+                .AsQueryable();
+
+            // Filtro de busca
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(o =>
+                    o.Veiculo.Placa.Contains(searchString) ||
+                    o.Descricao.Contains(searchString));
+            }
+
+            // Retorna a View com os dados
+            return View(await query.ToListAsync());
         }
+
 
         // GET: OrdemServicos/Details/5
         public async Task<IActionResult> Details(int? id)

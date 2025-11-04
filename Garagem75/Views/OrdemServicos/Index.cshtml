@@ -9,6 +9,16 @@
 <p>
     <a asp-action="Create" class="btn btn-success">Nova Ordem de Serviço</a>
 </p>
+
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="searchString" value="@Context.Request.Query["searchString"]"
+               class="form-control" placeholder="Buscar por placa..." />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <a asp-action="Index" class="btn btn-secondary">Limpar</a>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
