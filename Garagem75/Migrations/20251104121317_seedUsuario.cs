@@ -11,8 +11,8 @@ namespace Garagem75.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-            INSERT INTO Usuario (Nome, Cpf, Telefone, Email)
-            VALUES ('Beto Barba', '34869389835', '(11)981203489', 'beto@teste.com');
+            INSERT INTO Usuario (Nome, Email, Senha, TipoUsuarioId, Ativo)
+            VALUES ('Beto Barba', 'beto2@teste.com', '123456', '1', 'true')
     ");
 
         }
