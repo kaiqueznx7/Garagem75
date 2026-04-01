@@ -236,25 +236,31 @@ body {
 
 
 /* logo no card */
-.mascote-sylvester {
-    position: absolute;
-    /* posiciona no topo e à direita */
-    top: 1250px;
-    right: 230px;
-    width: 250px; /* ajuste o tamanho conforme desejar */
-    height: auto;
-    /* a logo fique acima dos cards */
-    z-index: 3;
+/* Ajuste na Seção para remover o espaço vazio */
+#servicos {
+    min-height: auto !important; /* Remove o 100vh que criava o buraco */
+    padding-bottom: 2rem !important; /* Espaço pequeno para não colar no Contato */
 }
 
-    .mascote-sylvester:hover {
-        transform: scale(1.05);
-        transition: transform 0.3s ease-in-out;
-    }
+/* Ajuste no Mascote para "sentar" no card da direita */
+.mascote-sylvester {
+    position: absolute;
+    top: -80px; /* Move para cima do card */
+    right: -20px; /* Move para a direita do card */
+    width: 200px; /* Tamanho do mascote */
+    height: auto;
+    z-index: 100; /* Garante que fique na frente de tudo */
+    pointer-events: none; /* Evita que o mascote atrapalhe cliques no card */
+}
 
+/* Garante que o título Contato suba */
+#contato-localizacao h1 {
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+}
 
+/* Esconde o mascote em telas de celular para não quebrar o layout */
 @media (max-width: 992px) {
-    /* esconde a logo em telas menores para não atrapalhar o layout */
     .mascote-sylvester {
         display: none;
     }
@@ -395,6 +401,59 @@ html {
 }
 
 
+/* --- ESTILO BLOG  --- */
+
+.card-blog-custom {
+    background-color: #FFD700 !important;
+    border: none !important;
+    border-radius: 20px !important; /* Arredondamento dos cards */
+    height: 100%;
+    transition: all 0.4s ease;
+    overflow: hidden; /* Garante que a imagem siga o arredondamento */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+    /* Efeito de Reflexo/Sombra (Glow) */
+    .card-blog-custom:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); /* Brilho amarelo */
+    }
+
+.card-img-top-blog {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    /* Removemos bordas retas para manter o design limpo */
+}
+
+.card-body-blog {
+    padding: 25px;
+    color: #000;
+}
+
+/* --- BOTÃO "VER TODAS AS POSTAGENS" EM DESTAQUE --- */
+.btn-ver-todas {
+    background-color: #FFD700 !important;
+    color: #000 !important;
+    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+    padding: 15px 40px;
+    border-radius: 50px; /* Botão bem arredondado (pílula) */
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: 2px solid #FFD700;
+}
+
+    .btn-ver-todas:hover {
+        background-color: transparent !important;
+        color: #FFD700 !important;
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+
+
 /* #region footer */
 .footer-link {
     color: #000;
@@ -442,6 +501,39 @@ html {
             color: #000000; /* Muda a cor para um cinza escuro */
             transform: scale(1.2); /* Aumenta o tamanho do ícone em 20% */
         }
+
+
+
+/* Localize o fim de .btn-ver-todas:hover e cole logo abaixo: */
+
+.blog-link {
+    color: #000000 !important; /* Força a cor preta */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+    .blog-link:hover {
+        color: #333333 !important; /* Cinza escuro no hover */
+        text-decoration: underline;
+        transform: translateX(5px); /* Pequeno movimento para a direita */
+    }
+
+.blog-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.blog-text {
+    color: #000;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
 
 
 

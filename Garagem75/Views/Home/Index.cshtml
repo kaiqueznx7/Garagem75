@@ -45,9 +45,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#servicos">Serviços</a>
                         </li>
-                        <li class="nav-item">
+                        @* <li class="nav-item">
                             <a class="nav-link" href="#area-restrita">Área Restrita</a>
-                        </li>
+                        </li> *@
                         <li class="nav-item">
                             <a class="nav-link" href="#blog">Blog</a>
                         </li>
@@ -66,11 +66,11 @@
                     <h1 data-aos="fade-up" data-aos-duration="800">MAIS QUE UMA MECÂNICA, É A PAIXÃO POR MOTORES</h1>
                     <p data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">Onde a excelência encontra a solução para o seu motor.</p>
                     <a href="https://wa.me/5511964749052?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20solicitar%20um%20orçamento%20para%20meu%20veículo."
-                       target="_blank"
-                       class="btn btn-orcamento mt-4"
-                       data-aos="fade-up"
-                       data-aos-delay="400"
-                       data-aos-duration="800">
+                           target="_blank"
+                           class="btn btn-orcamento mt-4"
+                           data-aos="fade-up"
+                           data-aos-delay="400"
+                           data-aos-duration="800">
                         <img src="./img/WhatsApp.png" alt="Ícone do WhatsApp" style="height: 30px; margin-right: 8px;">
                         ORÇAMENTO
                     </a>
@@ -113,7 +113,7 @@
         <a href="#home" id="backToTopBtn" title="Voltar ao Topo">▲</a>
     </section>
 
-    <section id="servicos" class="py-5 bg-dark" style="min-height: 100vh; position: relative; overflow: hidden;">
+    <section id="servicos" class="py-5 bg-dark" style="position: relative;">
         <div class="container">
             <div class="row mb-5">
                 <div class="col-12" data-aos="fade-down">
@@ -150,7 +150,12 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="col-lg-4 col-md-6" style="position: relative;" data-aos="fade-up" data-aos-delay="500">
+                
+                    <div class="mascote-sylvester" data-aos="fade-left" data-aos-delay="600">
+                        <img src="./img/logo.png" alt="Mascote Silvestre" class="img-fluid">
+                    </div>
+
                     <div class="card card-servico shadow-lg">
                         <div class="card-body p-0">
                             <h3 class="card-title text-center py-3 px-3">Mecânica em Geral</h3>
@@ -164,14 +169,10 @@
                     </div>
                 </div>
             </div>
-
-            <div class="mascote-sylvester" data-aos="fade-left" data-aos-delay="600">
-                <img src="./img/logo.png" alt="Mascote Silvestre" class="img-fluid">
-            </div>
         </div>
     </section>
 
-    <section id="area-restrita">
+    @* <section id="area-restrita">
         <div class="vh-100 d-flex justify-content-center align-items-center" style="background-color: #000;">
             <div class="login-card p-4 p-md-5" data-aos="zoom-in-up">
                 <h2 class="text-center text-white mb-4">Área Restrita</h2>
@@ -199,11 +200,11 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> *@
 
     <section id="contato-localizacao" class="py-5 bg-dark text-white">
         <div class="container">
-            <h1 class="text-center mb-5" data-aos="fade-down">Contato</h1>
+            <h1  class="text-light display-4 titulo-servicos" data>Contato</h1>
             <div class="row g-4 justify-content-center">
                 <div class="col-12 col-md-6" data-aos="fade-right">
                     <div class="p-4 rounded" style="background-color: #FFD700; color: #000;">
@@ -251,8 +252,8 @@
     <section>
         <h2 class="text-center text-white titulo-avaliacoes">AVALIAÇÕES</h2>
         <!-- Elfsight Google Reviews | Untitled Google Reviews -->
-    <script src="https://elfsightcdn.com/platform.js" async></script>
-    <div class="elfsight-app-c6f2f295-0c7a-4c1f-a525-7243b27f7709" data-elfsight-app-lazy></div>
+        <script src="https://elfsightcdn.com/platform.js" async></script>
+        <div class="elfsight-app-c6f2f295-0c7a-4c1f-a525-7243b27f7709" data-elfsight-app-lazy></div>
     </section>
 
     <!-- Carrossel de marcas -->
@@ -260,116 +261,120 @@
     <div class="marcas-container">
         <div class="marcas-carousel">
             <img src="~/img/fiat.png" alt="Fiat">
-            <img src="~/img/chevrolet.png" alt="Chevrolet">
-            <img src="~/img/ford.png" alt="Ford">
-            <img src="~/img/volkswagen.png" alt="Volkswagen">
-            <img src="~/img/honda.png" alt="Honda">
-            <img src="~/img/toyota.png" alt="Toyota">
-            <img src="~/img/nissan.png" alt="Nissan">
-            <img src="~/img/renault.png" alt="Renault">
-            <img src="~/img/peugeot.png" alt="Peugeot">
+                <img src="~/img/chevrolet.png" alt="Chevrolet">
+                    <img src="~/img/ford.png" alt="Ford">
+                        <img src="~/img/volkswagen.png" alt="Volkswagen">
+                            <img src="~/img/honda.png" alt="Honda">
+                                <img src="~/img/toyota.png" alt="Toyota">
+                                    <img src="~/img/nissan.png" alt="Nissan">
+                                        <img src="~/img/renault.png" alt="Renault">
+                                            <img src="~/img/peugeot.png" alt="Peugeot">
 
-            <!-- duplicadas para looping suave -->
-            <img src="~/img/fiat.png" alt="Fiat">
-            <img src="~/img/chevrolet.png" alt="Chevrolet">
-            <img src="~/img/ford.png" alt="Ford">
-            <img src="~/img/volkswagen.png" alt="Volkswagen">
-            <img src="~/img/honda.png" alt="Honda">
-            <img src="~/img/toyota.png" alt="Toyota">
-            <img src="~/img/nissan.png" alt="Nissan">
-            <img src="~/img/renault.png" alt="Renault">
-            <img src="~/img/peugeot.png" alt="Peugeot">
-        </div>
-    </div>
-
-
-    @inject Garagem75.Data.Garagem75DBContext _context
-
-    @{
-        var posts = _context.BlogPosts
-        .Where(p => p.Ativo)
-        .OrderByDescending(p => p.DataPublicacao)
-        .Take(3)
-        .ToList();
-    }
-
-    <section id="blog" class="blog-section py-5 bg-light">
-        <div class="container">
-            <h3 class="text-center mb-4">Últimas do Blog</h3>
-            <div class="row">
-                @foreach (var post in posts)
-                {
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 shadow-sm">
-                            <img src="@post.ImagemUrl" class="card-img-top" alt="@post.Titulo" />
-                            <div class="card-body">
-                                <h5>@post.Titulo</h5>
-                                <p>@post.Resumo</p>
-                                <a asp-controller="Blog" asp-action="Detalhes" asp-route-id="@post.Id" class="btn btn-sm btn-outline-primary">
-                                    Ler mais
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-            <div class="text-center mt-3">
-                <a asp-controller="Blog" asp-action="Index" class="btn btn-primary">Ver todas as postagens</a>
-            </div>
-        </div>
-    </section>
+                                                <!-- duplicadas para looping suave -->
+                                                <img src="~/img/fiat.png" alt="Fiat">
+                                                    <img src="~/img/chevrolet.png" alt="Chevrolet">
+                                                        <img src="~/img/ford.png" alt="Ford">
+                                                            <img src="~/img/volkswagen.png" alt="Volkswagen">
+                                                                <img src="~/img/honda.png" alt="Honda">
+                                                                    <img src="~/img/toyota.png" alt="Toyota">
+                                                                        <img src="~/img/nissan.png" alt="Nissan">
+                                                                            <img src="~/img/renault.png" alt="Renault">
+                                                                                <img src="~/img/peugeot.png" alt="Peugeot">
+                                                                                </div>
+                                                                            </div>
 
 
+                                                                            @inject Garagem75.Data.Garagem75DBContext _context
 
-    <footer class="footer py-5" style="background-color: #FFD700; color: #000;">
-        <div class="container">
-            <div class="row justify-content-between align-items-start text-center text-md-start">
+                                                                            @{
+                                                                                var posts = _context.BlogPosts
+                                                                                .Where(p => p.Ativo)
+                                                                                .OrderByDescending(p => p.DataPublicacao)
+                                                                                .Take(3)
+                                                                                .ToList();
+                                                                            }
 
-                <div class="col-12 col-md-4 mb-4 mb-md-0 d-flex flex-column align-items-center align-items-md-start" data-aos="fade-up">
-                    <img src="./img/logoFooter1.png" alt="Mascote Garagem 75" style="max-height: 170px; width: auto;margin-left: 50px; margin-bottom: 5px; position: relative; top: -50px;">
-                    <p class="small text-dark mb-0" style="margin-top: -63px;">
-                        A gente entende, cuida e valoriza seu <br /> carro para  que cada viagem seja feita <br />com segurança, conforto e confiança.
-                    </p>
-                </div>
+                                                                            <section id="blog" class="blog-section py-5 bg-black">
+                                                                                <div class="container">
+                                                                                    <h2 class="text-center text-white titulo-servicos mb-5">Nosso Blog</h2>
+        
+                                                                                    <div class="row g-4 justify-content-center">
+                                                                                        @foreach (var post in posts)
+                                                                                        {
+                                                                                            <div class="col-md-4 mb-3" data-aos="fade-up">
+                                                                                                <div class="card card-blog-custom">
+                                                                                                    <img src="@post.ImagemUrl" class="card-img-top-blog" alt="@post.Titulo" />
+                                                                                                    <div class="card-body-blog">
+                                                                                                        <h3 class="blog-title">@post.Titulo</h3>
+                                                                                                        <p class="blog-text">@post.Resumo</p>
+                                                                                                        <a asp-controller="Blog" asp-action="Detalhes" asp-route-id="@post.Id" class="blog-link">
+                                                                                                            ver mais >>
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+                                                                                    </div>
 
-                <div class="col-12 col-md-3 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="150">
-                    <h5 class="mb-3 text-uppercase fw-bold">Continue Navegando</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#home" class="footer-link text-dark text-decoration-none">Início</a></li>
-                        <li><a href="#quem-somos" class="footer-link text-dark text-decoration-none">Quem Somos</a></li>
-                        <li><a href="#servicos" class="footer-link text-dark text-decoration-none">Serviços</a></li>
-                        <li><a href="#area-restrita" class="footer-link text-dark text-decoration-none">Área Restrita</a></li>
-                        <li><a href="#blog" class="footer-link text-dark text-decoration-none">Blog</a></li>
-                        <li><a href="#contato-localizacao" class="footer-link text-dark text-decoration-none">Contato</a></li>
-                    </ul>
-                </div>
+                                                                                    <div class="text-center mt-5">
+                                                                                        <a asp-controller="Blog" asp-action="Index" class="btn btn-ver-todas">
+                                                                                            VER TODAS AS POSTAGENS
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </section>
 
-                <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="300">
-                    <h5 class="mb-3 text-uppercase fw-bold">Fale Conosco</h5>
-                    <div class="social-icons mt-2">
-                        <a href="https://wa.me/5511964749052" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                        <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    </div>
-                    <p class="mb-1"><i class="fas fa-clock"></i> Seg a Sex: 08:00 às 17:00</p>
-                    <p class="mb-1">Sáb: 08:00 às 14:00</p>
-                    <p class="mt-3 mb-1"><i class="fas fa-phone-alt"></i> (11) 96474-9052</p>
-                    <p class="small mb-3">
-                        Tv. Particular 1, 57 - Itaim Paulista, São Paulo - SP, 08110-343
-                    </p>
-                </div>
 
-                <hr class="my-4" style="border-color: rgba(0, 0, 0, 0.2);">
 
-                <div class="text-center small">
-                    © 2025 Todos os direitos reservados | <strong>VisionWeb</strong>
-                </div>
-            </div>
-        </div>
-    </footer>
+                                                                            <footer class="footer py-5" style="background-color: #FFD700; color: #000;">
+                                                                                <div class="container">
+                                                                                    <div class="row justify-content-between align-items-start text-center text-md-start">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+                                                                                        <div class="col-12 col-md-4 mb-4 mb-md-0 d-flex flex-column align-items-center align-items-md-start" data-aos="fade-up">
+                                                                                            <img src="./img/logoFooter1.png" alt="Mascote Garagem 75" style="max-height: 170px; width: auto;margin-left: 50px; margin-bottom: 5px; position: relative; top: -50px;">
+                                                                                            <p class="small text-dark mb-0" style="margin-top: -63px;">
+                                                                                                A gente entende, cuida e valoriza seu <br /> carro para  que cada viagem seja feita <br />com segurança, conforto e confiança.
+                                                                                            </p>
+                                                                                        </div>
+
+                                                                                        <div class="col-12 col-md-3 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="150">
+                                                                                            <h5 class="mb-3 text-uppercase fw-bold">Continue Navegando</h5>
+                                                                                            <ul class="list-unstyled">
+                                                                                                <li><a href="#home" class="footer-link text-dark text-decoration-none">Início</a></li>
+                                                                                                <li><a href="#quem-somos" class="footer-link text-dark text-decoration-none">Quem Somos</a></li>
+                                                                                                <li><a href="#servicos" class="footer-link text-dark text-decoration-none">Serviços</a></li>
+                                                                                                
+                                                                                                <li><a href="#blog" class="footer-link text-dark text-decoration-none">Blog</a></li>
+                                                                                                <li><a href="#contato-localizacao" class="footer-link text-dark text-decoration-none">Contato</a></li>
+                                                                                            </ul>
+                                                                                        </div>
+
+                                                                                        <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="300">
+                                                                                            <h5 class="mb-3 text-uppercase fw-bold">Fale Conosco</h5>
+                                                                                            <div class="social-icons mt-2">
+                                                                                                <a href="https://wa.me/5511964749052" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                                                                                                <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                                                                                                <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                                                                            </div>
+                                                                                            <p class="mb-1"><i class="fas fa-clock"></i> Seg a Sex: 08:00 às 17:00</p>
+                                                                                            <p class="mb-1">Sáb: 08:00 às 14:00</p>
+                                                                                            <p class="mt-3 mb-1"><i class="fas fa-phone-alt"></i> (11) 96474-9052</p>
+                                                                                            <p class="small mb-3">
+                                                                                                Tv. Particular 1, 57 - Itaim Paulista, São Paulo - SP, 08110-343
+                                                                                            </p>
+                                                                                        </div>
+
+                                                                                        <hr class="my-4" style="border-color: rgba(0, 0, 0, 0.2);">
+
+                                                                                        <div class="text-center small">
+                                                                                            © 2025 Todos os direitos reservados | <strong>VisionWeb</strong>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </footer>
+
+                                                                            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                                                                            <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
                                                                             <script>
                                                                                 let deferredPrompt;
 
@@ -395,28 +400,28 @@
                                                                                 }
 
                                                                                 });</script>
-    <script>
-        AOS.init({
-            duration: 1000, // Duração da animação em milissegundos
-            once: true,     // Animação acontece apenas uma vez
-        });
-        const backToTopBtn = document.getElementById("backToTopBtn");
+                                                                                <script>
+                                                                                    AOS.init({
+                                                                                    duration: 1000, // Duração da animação em milissegundos
+                                                                                    once: true,     // Animação acontece apenas uma vez
+                                                                                    });
+                                                                                    const backToTopBtn = document.getElementById("backToTopBtn");
 
-        window.addEventListener("scroll", () => {
-          if (window.scrollY > 100) {
-            backToTopBtn.style.display = "block"; // mostra o botão
-          } else {
-            backToTopBtn.style.display = "none"; // esconde o botão
-          }
-        });
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
-    </script>
+                                                                                    window.addEventListener("scroll", () => {
+                                                                                    if (window.scrollY > 100) {
+                                                                                    backToTopBtn.style.display = "block"; // mostra o botão
+                                                                                    } else {
+                                                                                    backToTopBtn.style.display = "none"; // esconde o botão
+                                                                                    }
+                                                                                    });
+                                                                                </script>
+                                                                                <script>
+                                                                                    if ('serviceWorker' in navigator) {
+                                                                                    navigator.serviceWorker.register('service-worker.js');
+                                                                                    }
+                                                                                </script>
 
 
 
-</body>
-</html>
+                                                                            </body>
+                                                                        </html>
