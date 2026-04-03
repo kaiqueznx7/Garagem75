@@ -1,198 +1,121 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Garagem75.Data;
-using Garagem75.Models;
-using Microsoft.AspNetCore.Authorization;
-using Garagem75.ViewModels;
+using Garagem75.Client.Services;
+using Garagem75.Shared.Dtos;
 
 namespace Garagem75.Controllers
 {
     [Authorize(Roles = "Administrador, Mêcanico")]
     public class ClienteController : Controller
     {
-        private readonly Garagem75DBContext _context;
+        private readonly ClienteApiService _api;
 
-        public ClienteController(Garagem75DBContext context)
+        public ClienteController(ClienteApiService api)
         {
-            _context = context;
+            _api = api;
         }
 
-        // GET: Cliente
+        // ================= LISTAGEM =================
         public async Task<IActionResult> Index(string searchNome, string searchTelefone)
         {
-            var clientes = from c in _context.Clientes
-                           select c;
+            var clientes = await _api.GetAll();
 
             if (!string.IsNullOrEmpty(searchNome))
-            {
-                clientes = clientes.Where(c => c.Nome.Contains(searchNome));
-            }
+                clientes = clientes.Where(c => c.Nome.Contains(searchNome)).ToList();
 
             if (!string.IsNullOrEmpty(searchTelefone))
-            {
-                clientes = clientes.Where(c => c.Telefone.Contains(searchTelefone));
-            }
+                clientes = clientes.Where(c => c.Telefone.Contains(searchTelefone)).ToList();
 
-            return View(await clientes.ToListAsync());
+            return View(clientes);
         }
 
+        // ================= CREATE =================
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            return View(new ClienteCadastroDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ClienteCadastroViewModel model)
+        public async Task<IActionResult> Create(ClienteCadastroDto model)
         {
-            
             if (!ModelState.IsValid)
-            {
-               
                 return View(model);
+
+            var clienteDto = new ClienteDto
+            {
+                Nome = model.Cliente.Nome,
+                Cpf = model.Cliente.Cpf,
+                Telefone = model.Cliente.Telefone,
+                Email = model.Cliente.Email,
+
+                // ✅ ISSO VAI FUNCIONAR
+                Enderecos = new List<EnderecoDto>
+        {
+            new EnderecoDto
+            {
+                Rua = model.Endereco.Rua,
+                Numero = model.Endereco.Numero,
+                Complemento = model.Endereco.Complemento,
+                Bairro = model.Endereco.Bairro,
+                Cidade = model.Endereco.Cidade,
+                Uf = model.Endereco.Uf,
+                Cep = model.Endereco.Cep
             }
+        }
 
-            // Salvar Cliente
-            _context.Clientes.Add(model.Cliente);
-            await _context.SaveChangesAsync();
+                // ❌ NÃO coloca Veiculo aqui (API não suporta)
+            };
 
-            // Vincular Endereco ao Cliente
-            model.Endereco.ClienteId = model.Cliente.IdCliente;
-            _context.Enderecos.Add(model.Endereco);
-
-            // Vincular Veiculo ao Cliente
-            model.Veiculo.ClienteId = model.Cliente.IdCliente;
-            _context.Veiculos.Add(model.Veiculo);
-
-            await _context.SaveChangesAsync();
+            await _api.Create(clienteDto);
 
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Cliente/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-            return View(cliente);
-        }
-
-        // POST: Cliente/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdCliente,Nome,Cpf,Telefone,Email")] Cliente cliente)
+        public async Task<IActionResult> Edit(int id, ClienteDto dto)
         {
-            if (id != cliente.IdCliente)
-            {
+            if (id != dto.Id)
                 return NotFound();
-            }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(cliente);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClienteExists(cliente.IdCliente))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(cliente);
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            await _api.Update(dto);
+
+            return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Details(int? id)
+        // ================= DETAILS =================
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.IdCliente == id);
+            var cliente = await _api.GetById(id);
 
             if (cliente == null)
-            {
                 return NotFound();
-            }
 
             return View(cliente);
         }
 
-
-        // GET: Cliente/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // ================= DELETE =================
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var cliente = await _api.GetById(id);
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.IdCliente == id);
             if (cliente == null)
-            {
                 return NotFound();
-            }
 
             return View(cliente);
         }
 
-        // POST: Cliente/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var cliente = await _context.Clientes
-                .Include(c => c.Enderecos)
-                .Include(c => c.Veiculos)
-                .FirstOrDefaultAsync(c => c.IdCliente == id);
-
-            if (cliente != null)
-            {
-                // Remove dependências primeiro
-                if (cliente.Enderecos != null)
-                    _context.Enderecos.RemoveRange(cliente.Enderecos);
-
-                if (cliente.Veiculos != null)
-                    _context.Veiculos.RemoveRange(cliente.Veiculos);
-
-                _context.Clientes.Remove(cliente);
-                await _context.SaveChangesAsync();
-            }
-
+            await _api.Delete(id);
             return RedirectToAction(nameof(Index));
-        }
-
-
-        private bool ClienteExists(int id)
-        {
-            return _context.Clientes.Any(e => e.IdCliente == id);
         }
     }
 }

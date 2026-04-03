@@ -1,11 +1,12 @@
+using Garagem75.Client.Services;
 using Garagem75.Data;
 using Garagem75.Interfaces;
 using Garagem75.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
-using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,12 +26,37 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedUICultures = new List<CultureInfo> { cultureInfo };
 });
 
-builder.Services.AddDbContext<Garagem75DBContext>(options => 
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddDbContext<Garagem75DBContext>(options => 
+//options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHttpClient<UsuarioApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7244/");
+});
+builder.Services.AddHttpClient<ClienteApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7244/");
+});
+builder.Services.AddHttpClient<PecaApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7244/");
+});
+builder.Services.AddHttpClient<OrdemServicoApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7244/");
+});
+builder.Services.AddHttpClient<VeiculoApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7244/");
+});
+builder.Services.AddHttpClient<DashboardApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7244/");
+});
+
 
 //Repositórios
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<ITipoUsuarioRepository, TipoUsuarioRepository>();
+//builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+//builder.Services.AddScoped<ITipoUsuarioRepository, TipoUsuarioRepository>();
 
 
 builder.Services.AddControllersWithViews(options =>
@@ -102,6 +128,8 @@ app.UseStaticFiles();
 
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

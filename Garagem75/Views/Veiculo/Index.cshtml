@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Garagem75.Models.Veiculo>
+﻿@using Garagem75.Shared.Dtos
+
+@model IEnumerable<VeiculoDto>
 
 @{
     ViewData["Title"] = "Lista de veiculos";
@@ -90,9 +92,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Fabricante)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.Cliente)
-            </th>
+            </th> *@
             <th></th>
         </tr>
     </thead>
@@ -113,9 +115,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Fabricante)
-            </td>
+            @* </td>
                 <td>@(item.Cliente != null ? item.Cliente.Nome : "— sem proprietário —")</td>
-            <td>
+            <td> *@
                 <a asp-action="Edit" asp-route-id="@item.IdVeiculo" class="btn btn-primary">Editar</a> |
                 <a asp-action="Details" asp-route-id="@item.IdVeiculo" class="btn btn-secondary">Detalhes</a> |
                 <a asp-action="Delete" asp-route-id="@item.IdVeiculo" class="btn btn-danger">Deletar</a>

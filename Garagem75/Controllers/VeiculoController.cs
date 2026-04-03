@@ -1,183 +1,113 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Garagem75.Models;
+using Garagem75.Shared.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Garagem75.Data;
-using Garagem75.Models;
-using Microsoft.AspNetCore.Authorization;
 
-namespace Garagem75.Controllers
+[Authorize(Roles = "Administrador, Mêcanico")]
+public class VeiculoController : Controller
 {
-    [Authorize(Roles = "Administrador, Mêcanico")]
-    public class VeiculoController : Controller
+    private readonly VeiculoApiService _api;
+    private readonly ClienteApiService _clienteApi;
+
+    public VeiculoController(VeiculoApiService api, ClienteApiService clienteApi)
     {
-        private readonly Garagem75DBContext _context;
+        _api = api;
+        _clienteApi = clienteApi;
+    }
 
-        public VeiculoController(Garagem75DBContext context)
-        {
-            _context = context;
-        }
+    // 🔹 INDEX
+    public async Task<IActionResult> Index(string searchPlaca, string searchCliente)
+    {
+        var veiculos = await _api.GetAll(searchPlaca, searchCliente);
+        return View(veiculos);
+    }
 
-        // GET: Veiculo
-        [HttpGet]
-        public async Task<IActionResult> Index(string searchPlaca, string searchCliente)
-        {
-            var veiculos = _context.Veiculos
-                .Include(v => v.Cliente) // traz os dados do cliente relacionado
-                .AsQueryable();
+    // 🔹 DETAILS
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null) return NotFound();
 
-            if (!string.IsNullOrEmpty(searchPlaca))
-            {
-                veiculos = veiculos.Where(v => v.Placa.Contains(searchPlaca));
-            }
+        var veiculo = await _api.GetById(id.Value);
 
-            if (!string.IsNullOrEmpty(searchCliente))
-            {
-                veiculos = veiculos.Where(v => v.Cliente.Nome.Contains(searchCliente));
-            }
+        if (veiculo == null) return NotFound();
 
-            return View(await veiculos.ToListAsync());
-        }
+        return View(veiculo);
+    }
 
+    // 🔹 CREATE GET
+    public async Task<IActionResult> Create()
+    {
+        // ⚠️ Aqui você precisa de API de cliente
+        var clientes = await _clienteApi.GetAll();
 
-        // GET: Veiculo/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        ViewData["ClienteId"] = new SelectList(clientes, "IdCliente", "Nome");
 
-            var veiculo = await _context.Veiculos
-                .Include(v=>v.Cliente)
-                .FirstOrDefaultAsync(m => m.IdVeiculo == id);
-            if (veiculo == null)
-            {
-                return NotFound();
-            }
+        return View();
+    }
 
+    // 🔹 CREATE POST
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(VeiculoDto veiculo)
+    {
+        if (!ModelState.IsValid)
             return View(veiculo);
-        }
 
-        // GET: Veiculo/Create
-        public IActionResult Create()
-        {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome");
-            return View();
-        }
+        await _api.Create(veiculo);
 
-        // POST: Veiculo/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdVeiculo,Modelo,Ano,Placa,Cor,Fabricante,ClienteId")] Veiculo veiculo)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(veiculo);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+        return RedirectToAction(nameof(Index));
+    }
 
+    // 🔹 EDIT GET
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id == null) return NotFound();
+
+        var veiculo = await _api.GetById(id.Value);
+        if (veiculo == null) return NotFound();
+
+        var clientes = await _clienteApi.GetAll();
+
+        ViewData["ClienteId"] = new SelectList(clientes, "IdCliente", "Nome", veiculo.ClienteId);
+
+        return View(veiculo);
+    }
+
+    // 🔹 EDIT POST
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, VeiculoDto veiculo)
+    {
+        if (id != veiculo.IdVeiculo)
+            return NotFound();
+
+        if (!ModelState.IsValid)
             return View(veiculo);
-        }
 
-        // GET: Veiculo/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        await _api.Update(id, veiculo);
 
-            var veiculo = await _context.Veiculos.FindAsync(id);
-            if (veiculo == null)
-            {
-                return NotFound();
-            }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+        return RedirectToAction(nameof(Index));
+    }
 
-            return View(veiculo);
-        }
+    // 🔹 DELETE GET
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null) return NotFound();
 
-        // POST: Veiculo/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdVeiculo,Modelo,Ano,Placa,Cor,Fabricante,ClienteId")] Veiculo veiculo)
-        {
-            if (id != veiculo.IdVeiculo)
-            {
-                return NotFound();
-            }
+        var veiculo = await _api.GetById(id.Value);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(veiculo);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!VeiculoExists(veiculo.IdVeiculo))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "IdCliente", "Nome", veiculo.ClienteId);
+        if (veiculo == null) return NotFound();
 
-            return View(veiculo);
-        }
+        return View(veiculo);
+    }
 
-        // GET: Veiculo/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var veiculo = await _context.Veiculos
-                .FirstOrDefaultAsync(m => m.IdVeiculo == id);
-            if (veiculo == null)
-            {
-                return NotFound();
-            }
-
-            return View(veiculo);
-        }
-
-        // POST: Veiculo/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var veiculo = await _context.Veiculos.FindAsync(id);
-            if (veiculo != null)
-            {
-                _context.Veiculos.Remove(veiculo);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool VeiculoExists(int id)
-        {
-            return _context.Veiculos.Any(e => e.IdVeiculo == id);
-        }
+    // 🔹 DELETE POST
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        await _api.Delete(id);
+        return RedirectToAction(nameof(Index));
     }
 }

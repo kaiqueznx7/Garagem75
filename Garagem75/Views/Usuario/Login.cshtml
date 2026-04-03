@@ -1,59 +1,26 @@
-﻿@{
-    ViewData["Title"] = "Login";
-    // Define o título da página (pode aparecer no <title> do layout).
-}
+﻿@model LoginDto
 
-<h2>@ViewData["Title"]</h2>
-@* Renderiza o título dinâmico da página (Lista de Filmes). *@
+<h2>Login</h2>
 
 <form asp-action="Login" method="post">
-    <!-- Tag Helper de formulário:
-         - asp-action="Login" liga este form à Action Login (POST) do UsuarioController atual.
-         - method="post" aciona a validação antiforgery automática (ver nota abaixo). -->
+    @Html.AntiForgeryToken()
 
     <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <!-- rótulo do campo; "for" casa com o name/id do input -->
-        <input type="email" name="email" class="form-control" required />
-        <!-- name="email" precisa bater com o parâmetro da Action: Login(string email, string senha)
-             type="email" ativa validação HTML5; required obriga preenchimento no client-side -->
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label for="senha" class="form-label">Senha</label>
-        <input type="password" name="senha" maxlength="6" class="form-control" required />
-        <!-- name="senha" corresponde ao parâmetro da Action. type="password" oculta a digitação -->
+        <label asp-for="Senha" class="form-label"></label>
+        <input asp-for="Senha" type="password" class="form-control" />
     </div>
 
     <button type="submit" class="btn btn-primary">Entrar</button>
-    <!-- envia o form para Usuario/Login (POST) -->
 </form>
 
 @if (!ViewData.ModelState.IsValid)
 {
-    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-        @Html.ValidationSummary(false, "", new { @class = "mb-0" })
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="alert alert-danger mt-3">
+        @Html.ValidationSummary()
     </div>
 }
-
-@if (ViewBag.Success != null)
-{
-    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-        @ViewBag.Success
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Fecha automaticamente qualquer alerta após 3 segundos
-    setTimeout(() => {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
-            bsAlert.close();
-        });
-    }, 3000);
-</script>
-
-

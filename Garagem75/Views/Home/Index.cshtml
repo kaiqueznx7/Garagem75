@@ -45,9 +45,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#servicos">Serviços</a>
                         </li>
-                        @* <li class="nav-item">
-                            <a class="nav-link" href="#area-restrita">Área Restrita</a>
-                        </li> *@
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Auth" asp-action="Login">Área Restrita</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#blog">Blog</a>
                         </li>
@@ -284,17 +284,17 @@
                                                                             </div>
 
 
-                                                                            @inject Garagem75.Data.Garagem75DBContext _context
+                                                                            @* @inject Garagem75.Data.Garagem75DBContext _context *@
 
-                                                                            @{
+                                                                            @* @{
                                                                                 var posts = _context.BlogPosts
                                                                                 .Where(p => p.Ativo)
                                                                                 .OrderByDescending(p => p.DataPublicacao)
                                                                                 .Take(3)
                                                                                 .ToList();
-                                                                            }
+                                                                            } *@
 
-                                                                            <section id="blog" class="blog-section py-5 bg-black">
+                                                                            @* <section id="blog" class="blog-section py-5 bg-black">
                                                                                 <div class="container">
                                                                                     <h2 class="text-center text-white titulo-servicos mb-5">Nosso Blog</h2>
         
@@ -322,7 +322,7 @@
                                                                                         </a>
                                                                                     </div>
                                                                                 </div>
-                                                                            </section>
+                                                                            </section> *@
 
 
 
