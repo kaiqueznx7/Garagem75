@@ -53,6 +53,11 @@ builder.Services.AddHttpClient<DashboardApiService>(client =>
     client.BaseAddress = new Uri("https://localhost:7244/");
 });
 
+builder.Services.AddHttpClient<EnderecoApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7244/"); // A porta da sua API
+});
+
 
 //Repositórios
 //builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();

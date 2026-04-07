@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Garagem75.Models.Endereco>
+﻿@model IEnumerable<Garagem75.Shared.Dtos.EnderecoDto>;
 
 @{
     ViewData["Title"] = "Lista de endereços";
@@ -30,9 +30,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Cep)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Principal)
-            </th>
+            
             <th></th>
         </tr>
     </thead>
@@ -57,9 +55,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Cep)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Principal)
-            </td>
+            
             <td>
                 <a asp-action="Edit" asp-route-id="@item.IdEndereco">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.IdEndereco">Details</a> |

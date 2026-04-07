@@ -1,4 +1,4 @@
-﻿@model Garagem75.Models.Cliente
+﻿@model Garagem75.Shared.Dtos.ClienteDto
 
 @{
     ViewData["Title"] = "Editar Cliente";
@@ -10,9 +10,10 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IdCliente" />
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Nome" class="control-label"></label>
                 <input asp-for="Nome" class="form-control" />
@@ -33,6 +34,43 @@
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
+            <hr />
+            <h4>Endereço</h4>
+            @for (int i = 0; i < Model.Enderecos.Count; i++)
+            {
+                <input type="hidden" asp-for="Enderecos[i].IdEndereco" />
+
+                  
+                    <div class="col-md-10">
+                        <label>Rua</label>
+                        <input asp-for="Enderecos[i].Rua" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label>Número</label>
+                        <input asp-for="Enderecos[i].Numero" class="form-control" />
+                    </div>
+                <div class="col-md-10">
+                    <label>Complemento</label>
+                    <input asp-for="Enderecos[i].Complemento" class="form-control" />
+                </div>
+                <div class="col-md-10">
+                    <label>Cep</label>
+                    <input asp-for="Enderecos[i].Cep" class="form-control" />
+                </div>
+                    <div class="col-md-8">
+                        <label>Bairro</label>
+                        <input asp-for="Enderecos[i].Bairro" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label>Cidade</label>
+                        <input asp-for="Enderecos[i].Cidade" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>UF</label>
+                        <input asp-for="Enderecos[i].Uf" class="form-control" />
+                    </div>
+                
+            }
             <div class="form-group">
                 <input type="submit" value="Salvar" class="btn btn-primary" />
                 <a asp-action="Index" class=" btn btn-secondary">Voltar</a>
@@ -45,12 +83,9 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    
+    <partial name="_ValidationScriptsPartial" />
 }
-
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
-<script src="~/js/site.js"></script>

@@ -41,7 +41,7 @@ public class VeiculoController : Controller
         // ⚠️ Aqui você precisa de API de cliente
         var clientes = await _clienteApi.GetAll();
 
-        ViewData["ClienteId"] = new SelectList(clientes, "IdCliente", "Nome");
+        ViewData["ClienteId"] = new SelectList(clientes, "Id", "Nome");
 
         return View();
     }
@@ -52,7 +52,11 @@ public class VeiculoController : Controller
     public async Task<IActionResult> Create(VeiculoDto veiculo)
     {
         if (!ModelState.IsValid)
+        { // 🔥 ESSENCIAL: Recarregar a lista de clientes para a View não quebrar!
+            var clientes = await _clienteApi.GetAll();
+            ViewData["ClienteId"] = new SelectList(clientes, "Id", "Nome", veiculo.ClienteId);
             return View(veiculo);
+        }
 
         await _api.Create(veiculo);
 
@@ -60,6 +64,7 @@ public class VeiculoController : Controller
     }
 
     // 🔹 EDIT GET
+    [HttpGet]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null) return NotFound();
@@ -69,7 +74,7 @@ public class VeiculoController : Controller
 
         var clientes = await _clienteApi.GetAll();
 
-        ViewData["ClienteId"] = new SelectList(clientes, "IdCliente", "Nome", veiculo.ClienteId);
+        ViewData["ClienteId"] = new SelectList(clientes, "Id", "Nome", veiculo.ClienteId);
 
         return View(veiculo);
     }
@@ -83,7 +88,13 @@ public class VeiculoController : Controller
             return NotFound();
 
         if (!ModelState.IsValid)
+        {
+            // 🔥 ESSENCIAL: Recarregar a lista de clientes para a View não quebrar!
+            var clientes = await _clienteApi.GetAll();
+            ViewData["ClienteId"] = new SelectList(clientes, "Id", "Nome", veiculo.ClienteId);
+
             return View(veiculo);
+        }
 
         await _api.Update(id, veiculo);
 

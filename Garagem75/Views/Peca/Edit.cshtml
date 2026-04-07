@@ -1,4 +1,4 @@
-﻿@model Garagem75.Models.Peca
+﻿@model Garagem75.Shared.Dtos.PecaDto
 
 @{
     ViewData["Title"] = "Editar Peça";
@@ -47,24 +47,21 @@
         <span asp-validation-for="QuantidadeEstoque" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="DataCadastro"></label>
-        <input asp-for="DataCadastro" class="form-control" readonly />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="DataUltimaAtualizacao"></label>
-        <input asp-for="DataUltimaAtualizacao" class="form-control" readonly />
-    </div>
-
     <!-- IMAGEM -->
-    <div class="form-group">
-        <label for="ImagemUpload">Imagem</label><br />
+    <input type="hidden" asp-for="Imagem" />
+    <div class="form-group mb-3">
+        <label for="ImagemUpload">Imagem da Peça</label><br />
+        
         @if (!string.IsNullOrEmpty(Model.Imagem))
         {
-            <img src="@Model.Imagem" alt="Imagem da peça" width="150" class="mb-2" />
+            <div class="mb-2">
+                <img src="@Model.Imagem" alt="Imagem atual" width="150" class="img-thumbnail" />
+                <p class="small text-muted">Imagem atual cadastrada</p>
+            </div>
         }
+        
         <input type="file" name="ImagemUpload" id="ImagemUpload" class="form-control" />
+        <span class="text-muted small">Selecione um arquivo apenas se desejar trocar a imagem.</span>
     </div>
 
     <button type="submit" class="btn btn-primary">Salvar</button>

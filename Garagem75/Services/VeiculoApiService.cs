@@ -23,9 +23,9 @@ public class VeiculoApiService
         return await _http.GetFromJsonAsync<List<VeiculoDto>>(url) ?? new();
     }
 
-    public async Task<Veiculo?> GetById(int id)
+    public async Task<VeiculoDto?> GetById(int id)
     {
-        return await _http.GetFromJsonAsync<Veiculo>($"api/veiculo/{id}");
+        return await _http.GetFromJsonAsync<VeiculoDto>($"api/veiculo/{id}");
     }
 
     public async Task Create(VeiculoDto veiculo)

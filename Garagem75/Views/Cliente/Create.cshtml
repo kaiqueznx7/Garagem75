@@ -1,4 +1,4 @@
-﻿@model Garagem75.ViewModels.ClienteCadastroViewModel
+﻿@model Garagem75.Shared.Dtos.ClienteCadastroDto
 
 @{
     ViewData["Title"] = "Cadastrar Cliente Completo";
@@ -18,11 +18,11 @@
                 Endereço
             </button>
         </li>
-        <li class="nav-item" role="presentation">
+        @* <li class="nav-item" role="presentation">
             <button class="nav-link" id="veiculo-tab" data-bs-toggle="tab" data-bs-target="#veiculo" type="button" role="tab">
                 Veículo
             </button>
-        </li>
+        </li> *@
     </ul>
 
     <div class="tab-content border border-top-0 p-4 rounded-bottom bg-light" id="clienteTabsContent">
@@ -89,21 +89,16 @@
                     <label asp-for="Endereco.Cep" class="form-label"></label>
                     <input asp-for="Endereco.Cep" class="form-control" />
                 </div>
-                <div class="col-md-3 d-flex align-items-center">
-                    <div class="form-check mt-4">
-                        <input asp-for="Endereco.Principal" type="checkbox" class="form-check-input" />
-                        <label asp-for="Endereco.Principal" class="form-check-label"></label>
-                    </div>
-                </div>
+                
             </div>
 
             <div class="d-flex justify-content-between">
                 <button type="button" class="btn btn-secondary prev-tab"><i class="bi bi-arrow-left"></i> Voltar</button>
-                <button type="button" class="btn btn-primary next-tab">Próximo <i class="bi bi-arrow-right"></i></button>
+                <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Salvar</button>
             </div>
         </div>
 
-        <!-- Aba Veículo -->
+        @* <!-- Aba Veículo -->
         <div class="tab-pane fade" id="veiculo" role="tabpanel">
             <div class="row">
                 <div class="col-md-4 mb-3">
@@ -132,7 +127,7 @@
                 <button type="button" class="btn btn-secondary prev-tab"><i class="bi bi-arrow-left"></i> Voltar</button>
                 <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Salvar</button>
             </div>
-        </div>
+        </div> *@
     </div>
 </form>
 

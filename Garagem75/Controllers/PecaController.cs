@@ -22,7 +22,6 @@ namespace Garagem75.Controllers
         {
             var pecas = await _api.GetAll();
 
-            // 🔥 montar marcas (igual antes)
             var marcas = pecas
                 .Select(p => p.Marca)
                 .Distinct()
@@ -31,15 +30,18 @@ namespace Garagem75.Controllers
 
             ViewBag.Marcas = new SelectList(marcas);
 
-            // filtros
+            // Filtro Case-Insensitive (para aceitar minúsculas como você pediu antes)
             if (!string.IsNullOrEmpty(marca))
                 pecas = pecas.Where(p => p.Marca == marca).ToList();
 
             if (!string.IsNullOrEmpty(searchString))
+            {
+                var busca = searchString.ToLower();
                 pecas = pecas.Where(p =>
-                    p.Nome.Contains(searchString) ||
-                    p.Fornecedor.Contains(searchString)
+                    p.Nome.ToLower().Contains(busca) ||
+                    p.Fornecedor.ToLower().Contains(busca)
                 ).ToList();
+            }
 
             return View(pecas);
         }
@@ -54,41 +56,21 @@ namespace Garagem75.Controllers
         }
 
         // ================= CREATE =================
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View(new PecaDto());
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PecaDto dto, IFormFile? ImagemUpload)
         {
-            // 🔥 tratar preço
-            if (Request.Form.TryGetValue("Preco", out var precoTexto))
-            {
-                try
-                {
-                    precoTexto = precoTexto.ToString()
-                        .Replace("R$", "")
-                        .Replace(".", "")
-                        .Replace(",", ".");
+            TratarPreco(dto); // Método auxiliar criado abaixo
 
-                    dto.Preco = decimal.Parse(precoTexto, CultureInfo.InvariantCulture);
-                }
-                catch
-                {
-                    ModelState.AddModelError("Preco", "Formato inválido");
-                }
-            }
+            if (!ModelState.IsValid) return View(dto);
 
-            if (!ModelState.IsValid)
-                return View(dto);
-
-            // 🚀 1. CRIA PEÇA (SEM IMAGEM)
+            // 🚀 1. CRIA PEÇA NA API
             var criada = await _api.Create(dto);
 
-            // 🚀 2. UPLOAD DA IMAGEM (se tiver)
-            if (ImagemUpload != null && ImagemUpload.Length > 0)
+            // 🚀 2. UPLOAD DA IMAGEM PARA A API
+            if (criada != null && ImagemUpload != null)
             {
                 await _api.UploadImagem(criada.IdPeca, ImagemUpload);
             }
@@ -101,7 +83,6 @@ namespace Garagem75.Controllers
         {
             var peca = await _api.GetById(id);
             if (peca == null) return NotFound();
-
             return View(peca);
         }
 
@@ -109,48 +90,20 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, PecaDto dto, IFormFile? ImagemUpload)
         {
-            if (id != dto.IdPeca)
-                return NotFound();
+            if (id != dto.IdPeca) return NotFound();
 
-            // 🔥 preço
-            if (Request.Form.TryGetValue("Preco", out var precoTexto))
-            {
-                try
-                {
-                    precoTexto = precoTexto.ToString()
-                        .Replace("R$", "")
-                        .Replace(".", "")
-                        .Replace(",", ".");
+            TratarPreco(dto);
 
-                    dto.Preco = decimal.Parse(precoTexto, CultureInfo.InvariantCulture);
-                }
-                catch
-                {
-                    ModelState.AddModelError("Preco", "Formato inválido");
-                }
-            }
+            if (!ModelState.IsValid) return View(dto);
 
-            if (!ModelState.IsValid)
-                return View(dto);
+            // 🔥 1. ATUALIZA DADOS NA API
+            await _api.Update(dto);
 
-            // 🔥 imagem
+            // 🔥 2. SE TROCOU A IMAGEM, ENVIA PARA A API
             if (ImagemUpload != null && ImagemUpload.Length > 0)
             {
-                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img");
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-
-                var fileName = Path.GetFileName(ImagemUpload.FileName);
-                var filePath = Path.Combine(dir, fileName);
-
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await ImagemUpload.CopyToAsync(stream);
-
-                dto.Imagem = "/img/" + fileName;
+                await _api.UploadImagem(dto.IdPeca, ImagemUpload);
             }
-
-            
-
-            await _api.Update(dto);
 
             return RedirectToAction(nameof(Index));
         }
@@ -160,7 +113,6 @@ namespace Garagem75.Controllers
         {
             var peca = await _api.GetById(id);
             if (peca == null) return NotFound();
-
             return View(peca);
         }
 
@@ -170,6 +122,27 @@ namespace Garagem75.Controllers
         {
             await _api.Delete(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        // Método auxiliar para não repetir código de preço
+        private void TratarPreco(PecaDto dto)
+        {
+            if (Request.Form.TryGetValue("Preco", out var precoTexto))
+            {
+                try
+                {
+                    var valorLimpo = precoTexto.ToString()
+                        .Replace("R$", "").Trim()
+                        .Replace(".", "")
+                        .Replace(",", ".");
+
+                    dto.Preco = decimal.Parse(valorLimpo, CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    ModelState.AddModelError("Preco", "Formato de preço inválido.");
+                }
+            }
         }
     }
 }

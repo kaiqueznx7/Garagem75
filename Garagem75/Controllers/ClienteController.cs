@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Garagem75.Client.Services;
+﻿using Garagem75.Client.Services;
 using Garagem75.Shared.Dtos;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Garagem75.Controllers
 {
-    [Authorize(Roles = "Administrador, Mêcanico")]
+    [Authorize(Roles = "Administrador, Mecanico")]
     public class ClienteController : Controller
     {
         private readonly ClienteApiService _api;
@@ -21,7 +22,7 @@ namespace Garagem75.Controllers
             var clientes = await _api.GetAll();
 
             if (!string.IsNullOrEmpty(searchNome))
-                clientes = clientes.Where(c => c.Nome.Contains(searchNome)).ToList();
+                clientes = clientes.Where(c => c.Nome.ToLower().Contains(searchNome)).ToList();
 
             if (!string.IsNullOrEmpty(searchTelefone))
                 clientes = clientes.Where(c => c.Telefone.Contains(searchTelefone)).ToList();
@@ -73,17 +74,25 @@ namespace Garagem75.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ClienteDto dto)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id != dto.Id)
+            var cliente = await _api.GetById(id);
+            Console.WriteLine(cliente == null ? "NULL" : "OK");
+            if (cliente == null)
                 return NotFound();
 
-            if (!ModelState.IsValid)
-                return View(dto);
+            return View(cliente);
+        }
 
-            await _api.Update(dto);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ClienteDto model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            await _api.Update(model);
 
             return RedirectToAction(nameof(Index));
         }

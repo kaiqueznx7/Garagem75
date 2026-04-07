@@ -10,10 +10,10 @@ public class PecaApiService
     }
 
     public async Task<List<PecaDto>> GetAll()
-        => await _http.GetFromJsonAsync<List<PecaDto>>("api/pecas") ?? new();
+        => await _http.GetFromJsonAsync<List<PecaDto>>("api/peca") ?? new();
 
     public async Task<PecaDto?> GetById(int id)
-        => await _http.GetFromJsonAsync<PecaDto>($"api/pecas/{id}");
+        => await _http.GetFromJsonAsync<PecaDto>($"api/peca/{id}");
 
     public async Task<PecaDto> Create(PecaDto dto)
     {
@@ -24,10 +24,10 @@ public class PecaApiService
     }
 
     public async Task Update(PecaDto dto)
-        => await _http.PutAsJsonAsync($"api/pecas/{dto.IdPeca}", dto);
+        => await _http.PutAsJsonAsync($"api/peca/{dto.IdPeca}", dto);
 
     public async Task Delete(int id)
-        => await _http.DeleteAsync($"api/pecas/{id}");
+        => await _http.DeleteAsync($"api/peca/{id}");
 
     public async Task UploadImagem(int id, IFormFile file)
     {

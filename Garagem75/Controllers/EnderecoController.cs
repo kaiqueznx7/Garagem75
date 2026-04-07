@@ -1,42 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Garagem75.Data;
-using Garagem75.Models;
+﻿using Garagem75.Client.Services;
+using Garagem75.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Garagem75.Controllers
 {
     [Authorize(Roles = "Administrador, Mêcanico")]
     public class EnderecoController : Controller
     {
-        private readonly Garagem75DBContext _context;
+        private readonly EnderecoApiService _api;
 
-        public EnderecoController(Garagem75DBContext context)
+        public EnderecoController(EnderecoApiService api)
         {
-            _context = context;
+            _api = api;
         }
 
         // GET: Endereco
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Enderecos.ToListAsync());
+            // Busca a lista da API
+            var enderecos = await _api.GetAll();
+            return View(enderecos);
         }
 
         // GET: Endereco/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var endereco = await _context.Enderecos
-                .FirstOrDefaultAsync(m => m.IdEndereco == id);
+            var endereco = await _api.GetById(id);
             if (endereco == null)
             {
                 return NotFound();
@@ -48,34 +38,26 @@ namespace Garagem75.Controllers
         // GET: Endereco/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new EnderecoDto());
         }
 
         // POST: Endereco/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdEndereco,Rua,Numero,Complemento,Bairro,Uf,Cep,Principal")] Endereco endereco)
+        public async Task<IActionResult> Create(EnderecoDto endereco)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(endereco);
-                await _context.SaveChangesAsync();
+                await _api.Create(endereco);
                 return RedirectToAction(nameof(Index));
             }
             return View(endereco);
         }
 
         // GET: Endereco/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var endereco = await _context.Enderecos.FindAsync(id);
+            var endereco = await _api.GetById(id);
             if (endereco == null)
             {
                 return NotFound();
@@ -84,12 +66,11 @@ namespace Garagem75.Controllers
         }
 
         // POST: Endereco/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdEndereco,Rua,Numero,Complemento,Bairro,Uf,Cep,Principal")] Endereco endereco)
+        public async Task<IActionResult> Edit(int id, EnderecoDto endereco)
         {
+            // Garante que o ID da URL é o mesmo do objeto
             if (id != endereco.IdEndereco)
             {
                 return NotFound();
@@ -97,37 +78,16 @@ namespace Garagem75.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(endereco);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EnderecoExists(endereco.IdEndereco))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _api.Update(endereco);
                 return RedirectToAction(nameof(Index));
             }
             return View(endereco);
         }
 
         // GET: Endereco/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var endereco = await _context.Enderecos
-                .FirstOrDefaultAsync(m => m.IdEndereco == id);
+            var endereco = await _api.GetById(id);
             if (endereco == null)
             {
                 return NotFound();
@@ -141,19 +101,8 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var endereco = await _context.Enderecos.FindAsync(id);
-            if (endereco != null)
-            {
-                _context.Enderecos.Remove(endereco);
-            }
-
-            await _context.SaveChangesAsync();
+            await _api.Delete(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool EnderecoExists(int id)
-        {
-            return _context.Enderecos.Any(e => e.IdEndereco == id);
         }
     }
 }
