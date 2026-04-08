@@ -1,20 +1,24 @@
-﻿using Garagem75.Shared.Dtos;
+﻿using Garagem75.Client.Services;
+using Garagem75.Services;
+using Garagem75.Shared.Dtos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
-using Garagem75.Client.Services;
 
 namespace Garagem75.Controllers
 {
     public class UsuarioController : Controller
     {
         private readonly UsuarioApiService _api;
+        private readonly TipoUsuarioApiService _tipoApi; 
 
-        public UsuarioController(UsuarioApiService api)
+        public UsuarioController(UsuarioApiService api, TipoUsuarioApiService tipoApi)
         {
             _api = api;
+            _tipoApi = tipoApi;
         }
 
         // ================= LOGIN =================
@@ -35,28 +39,23 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string senha)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
-            {
-                ViewBag.Error = "Preencha todos os campos.";
-                return View();
-            }
+            // 1. Chama o Service
+            var response = await _api.Login(email, senha);
 
-            var usuario = await _api.Login(email, senha);
-
-            if (usuario == null)
+            if (response == null || string.IsNullOrEmpty(response.Token))
             {
                 ModelState.AddModelError("", "Email ou senha inválidos.");
                 return View();
             }
 
-
+            // 2. Cria as Claims de autenticação do MVC
             var claims = new List<Claim>
-            {
-
-                new Claim(ClaimTypes.Name, usuario.Nome ?? ""),
-                new Claim(ClaimTypes.Role, usuario.Tipo ?? ""),
-                
-            };
+    {
+        new Claim(ClaimTypes.Name, response.Nome ?? ""),
+        new Claim(ClaimTypes.Role, response.Role ?? ""),
+        // CRUCIAL: Salva o token da API no Cookie do MVC
+        new Claim("JWToken", response.Token)
+    };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
@@ -64,11 +63,7 @@ namespace Garagem75.Controllers
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal,
-                new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTime.UtcNow.AddHours(2)
-                });
+                new AuthenticationProperties { IsPersistent = true });
 
             return RedirectToAction("Index", "Dashboard");
         }
@@ -113,19 +108,25 @@ namespace Garagem75.Controllers
             return View(usuario);
         }
 
-        // ================= CREATE =================
-
-        public IActionResult Create()
+        // GET: Usuario/Create
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var tipos = await _tipoApi.GetAll();
+            ViewBag.TipoUsuarioId = new SelectList(tipos, "IdTipoUsuario", "DescricaoTipoUsuario");
+            return View(new UsuarioDto { Ativo = true });
         }
 
+        // POST: Usuario/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UsuarioDto usuario)
         {
             if (!ModelState.IsValid)
+            {
+                var tipos = await _tipoApi.GetAll();
+                ViewBag.TipoUsuarioId = new SelectList(tipos, "IdTipoUsuario", "DescricaoTipoUsuario", usuario.TipoUsuarioId);
                 return View(usuario);
+            }
 
             await _api.Create(usuario);
             return RedirectToAction(nameof(Index));

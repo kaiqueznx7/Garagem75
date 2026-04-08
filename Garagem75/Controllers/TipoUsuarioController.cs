@@ -1,137 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Garagem75.Data;
-using Garagem75.Models;
+﻿using Garagem75.Client.Services;
+using Garagem75.Services;
+using Garagem75.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Garagem75.Controllers
 {
-    //[Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador")] // Geralmente apenas Admin mexe em níveis de acesso
     public class TipoUsuarioController : Controller
     {
-        private readonly Garagem75DBContext _context;
+        private readonly TipoUsuarioApiService _api;
 
-        public TipoUsuarioController(Garagem75DBContext context)
+        public TipoUsuarioController(TipoUsuarioApiService api)
         {
-            _context = context;
+            _api = api;
         }
 
         // GET: TipoUsuario
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TipoUsuarios.ToListAsync());
+            var tipos = await _api.GetAll();
+            return View(tipos);
         }
 
         // GET: TipoUsuario/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var tipoUsuario = await _context.TipoUsuarios
-                .FirstOrDefaultAsync(m => m.IdTipoUsuario == id);
-            if (tipoUsuario == null)
-            {
-                return NotFound();
-            }
+            var tipoUsuario = await _api.GetById(id);
+            if (tipoUsuario == null) return NotFound();
 
             return View(tipoUsuario);
         }
 
         // GET: TipoUsuario/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View(new TipoUsuarioDto());
 
         // POST: TipoUsuario/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdTipoUsuario,DescricaoTipoUsuario")] TipoUsuario tipoUsuario)
+        public async Task<IActionResult> Create(TipoUsuarioDto dto)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tipoUsuario);
-                await _context.SaveChangesAsync();
+                await _api.Create(dto);
                 return RedirectToAction(nameof(Index));
             }
-            return View(tipoUsuario);
+            return View(dto);
         }
 
         // GET: TipoUsuario/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var tipoUsuario = await _api.GetById(id);
+            if (tipoUsuario == null) return NotFound();
 
-            var tipoUsuario = await _context.TipoUsuarios.FindAsync(id);
-            if (tipoUsuario == null)
-            {
-                return NotFound();
-            }
             return View(tipoUsuario);
         }
 
         // POST: TipoUsuario/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdTipoUsuario,DescricaoTipoUsuario")] TipoUsuario tipoUsuario)
+        public async Task<IActionResult> Edit(int id, TipoUsuarioDto dto)
         {
-            if (id != tipoUsuario.IdTipoUsuario)
-            {
-                return NotFound();
-            }
+            if (id != dto.IdTipoUsuario) return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(tipoUsuario);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TipoUsuarioExists(tipoUsuario.IdTipoUsuario))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _api.Update(dto);
                 return RedirectToAction(nameof(Index));
             }
-            return View(tipoUsuario);
+            return View(dto);
         }
 
         // GET: TipoUsuario/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var tipoUsuario = await _context.TipoUsuarios
-                .FirstOrDefaultAsync(m => m.IdTipoUsuario == id);
-            if (tipoUsuario == null)
-            {
-                return NotFound();
-            }
+            var tipoUsuario = await _api.GetById(id);
+            if (tipoUsuario == null) return NotFound();
 
             return View(tipoUsuario);
         }
@@ -141,19 +86,8 @@ namespace Garagem75.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tipoUsuario = await _context.TipoUsuarios.FindAsync(id);
-            if (tipoUsuario != null)
-            {
-                _context.TipoUsuarios.Remove(tipoUsuario);
-            }
-
-            await _context.SaveChangesAsync();
+            await _api.Delete(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool TipoUsuarioExists(int id)
-        {
-            return _context.TipoUsuarios.Any(e => e.IdTipoUsuario == id);
         }
     }
 }

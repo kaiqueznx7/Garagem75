@@ -2,6 +2,7 @@ using Garagem75.Client.Services;
 using Garagem75.Data;
 using Garagem75.Interfaces;
 using Garagem75.Repositories;
+using Garagem75.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
@@ -25,7 +26,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = new List<CultureInfo> { cultureInfo };
     options.SupportedUICultures = new List<CultureInfo> { cultureInfo };
 });
-
+builder.Services.AddHttpContextAccessor();
 //builder.Services.AddDbContext<Garagem75DBContext>(options => 
 //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpClient<UsuarioApiService>(client =>
@@ -55,9 +56,12 @@ builder.Services.AddHttpClient<DashboardApiService>(client =>
 
 builder.Services.AddHttpClient<EnderecoApiService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7244/"); // A porta da sua API
+    client.BaseAddress = new Uri("https://localhost:7244/");
 });
-
+builder.Services.AddHttpClient<TipoUsuarioApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7244/");
+});
 
 //Repositórios
 //builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
