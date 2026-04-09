@@ -1,7 +1,8 @@
-﻿@model Garagem75.Models.OrdemServico
+﻿@model Garagem75.Shared.Dtos.OrdemServicoDto
 
 @{
     ViewData["Title"] = "Cupom da Ordem de Serviço";
+    // Corrigido para usar a URL correta do seu projeto
     string urlQrCode = $"https://www.garagem75.com.br/ordemservico/detalhes/{Model.IdOrdemServico}";
 }
 
@@ -126,7 +127,6 @@
 </style>
 
 <div class="cupom-container">
-    <!-- Cabeçalho -->
     <div class="cupom-header">
         <img src="~/img/logoFooter1.png" alt="Garagem 75" />
         <h2>GARAGEM 75</h2>
@@ -135,29 +135,20 @@
 
     <hr />
 
-    <!-- Dados da OS -->
     <div class="cupom-info">
         <strong>Nº OS:</strong> @Model.IdOrdemServico<br />
         <strong>Data:</strong> @Model.DataServico.ToString("dd/MM/yyyy")<br />
         <strong>Status:</strong> @Model.Status<br />
-        <strong>Entrega:</strong> @(Model.DataEntrega.ToString("dd/MM/yyyy") ?? "-")<br />
+        <strong>Entrega:</strong> @(Model.DataEntrega != DateTime.MinValue ? Model.DataEntrega.ToString("dd/MM/yyyy") : "-")<br />
     </div>
 
     <hr />
 
-    <!-- Dados do veículo -->
-    @if (Model.Veiculo != null)
-    {
-        <div class="cupom-info">
-            <strong>Cliente:</strong> @Model.Veiculo.Cliente.Nome
-
-            <strong>Veículo:</strong> @Model.Veiculo.Fabricante @Model.Veiculo.Modelo<br />
-            <strong>Placa:</strong> @Model.Veiculo.Placa<br />
-            <strong>Ano:</strong> @Model.Veiculo.Ano
-        </div>
-
-        <hr />
-    }
+    <div class="cupom-info">
+        <strong>Cliente:</strong> @Model.NomeCliente<br />
+        <strong>Veículo:</strong> @Model.VeiculoModelo<br />
+        <strong>Placa:</strong> @Model.PlacaVeiculo<br />
+    </div>
 
     <hr />
 
@@ -167,27 +158,26 @@
 
     <hr />
 
-    <!-- Peças utilizadas -->
-    @if (Model.PecasAssociadas != null && Model.PecasAssociadas.Any())
+    @if (Model.Pecas != null && Model.Pecas.Any())
     {
         <h6 style="text-align:center;">PEÇAS UTILIZADAS</h6>
         <table class="pecas-table">
             <thead>
                 <tr>
                     <th>Peça</th>
-                    <th>Marca</th>
                     <th>Qtd</th>
-                    <th>Valor</th>
+                    <th>Subtotal</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.PecasAssociadas)
+                @foreach (var item in Model.Pecas)
                 {
                     <tr>
-                        <td>@item.Peca.Nome</td>
-                        <td>@item.Peca.Marca</td>
+                        <td>@item.NomePeca</td>
                         <td>@item.Quantidade</td>
-                        <td>R$ @(item.Quantidade * item.PrecoUnitario)</td>
+                        @* Note: Como você disse que não tem valor unitário no DTO,
+                           ajuste aqui se tiver um campo 'ValorTotalPeca' ou similar *@
+                        <td>-</td>
                     </tr>
                 }
             </tbody>
@@ -196,24 +186,29 @@
 
     <hr />
 
-    <!-- Totais -->
     <div class="total-section">
-        <strong>Total Peças:</strong> R$ @Model.PecasAssociadas?.Sum(p => p.Quantidade * p.PrecoUnitario).ToString("F2")<br />
-        <strong>Mão de Obra:</strong> R$ @Model.MaoDeObra.ToString("F2")<br />
-        <strong>Desconto:</strong> R$ @Model.ValorDesconto.ToString("F2")<br />
-        <strong style="font-size:14px;">TOTAL GERAL:</strong> <strong style="float:right;">R$ @Model.ValorTotal.ToString("F2")</strong>
+        @* Se o seu DTO não tem o total das peças separado,
+           podemos apenas mostrar o que você já tem no DTO *@
+        <strong>Mão de Obra:</strong> R$ @Model.MaoDeObra.ToString("N2")<br />
+        <strong>Desconto:</strong> R$ @Model.ValorDesconto.ToString("N2")<br />
+        <strong style="font-size:14px;">TOTAL GERAL:</strong> <strong style="float:right;">R$ @Model.ValorTotal.ToString("N2")</strong>
     </div>
 
-    <hr />
+    @if (!string.IsNullOrEmpty(Model.Observacao))
+    {
+        <hr />
+        <div class="observacoes">
+            <strong>Obs:</strong> @Model.Observacao
+        </div>
+    }
 
+    <hr />
    
-    <!-- QR Code -->
     <div class="qrcode">
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=@urlQrCode" alt="QR Code" />
         <div><small>Verifique esta OS online</small></div>
     </div>
 
-    <!-- Rodapé -->
     <div class="cupom-footer">
         <p>Obrigado pela preferência!</p>
         <p>www.garagem75.com.br</p>
@@ -221,10 +216,7 @@
     </div>
 </div>
 
-<!-- Botões -->
 <div style="text-align:center; margin-bottom: 30px;">
     <button class="btn btn-success btn-print" onclick="window.print()">🖨️ Imprimir Cupom</button>
-    <a asp-action="Relatorio" asp-route-id="@Model.IdOrdemServico" class="btn btn-info relatorio">📋 Relatório Completo</a>
     <a asp-action="Index" class="btn btn-secondary btn-voltar">⬅️ Voltar</a>
-
 </div>

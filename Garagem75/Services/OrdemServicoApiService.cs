@@ -11,6 +11,8 @@ public class OrdemServicoApiService
         _http = http;
     }
 
+
+
     // 🔹 GET ALL
     public async Task<List<OrdemServicoDto>> GetAll(string? search = null)
     {

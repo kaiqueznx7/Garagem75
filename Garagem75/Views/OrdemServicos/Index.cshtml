@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Garagem75.Models.OrdemServico>
+﻿@model IEnumerable<Garagem75.Shared.Dtos.OrdemServicoDto>;
 
 @{
     ViewData["Title"] = "Ordens de Serviço";
@@ -23,7 +23,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Veiculo)
+                @Html.DisplayNameFor(model => model.VeiculoModelo)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DataServico)
@@ -42,13 +42,13 @@
                 @Html.DisplayNameFor(model => model.ValorDesconto)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ValorTotal)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DataEntrega)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValorTotal)
             </th>
             <th></th>
         </tr>
@@ -58,43 +58,39 @@
         {
             <tr>
                 <td>
-                    @(item.Veiculo != null ? $"{item.Veiculo.Modelo} - {item.Veiculo.Placa}" : "")
+                    @* Usando as propriedades diretas do seu DTO *@
+                    @($"{item.VeiculoModelo} - {item.PlacaVeiculo}")
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DataServico)
+                    @item.DataServico.ToString("dd/MM/yyyy")
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Descricao)
                 </td>
                 <td>
-                    @* CORREÇÃO: Usa PecasAssociadas (ICollection<OrdemServicoPeca>) *@
-                    @if (item.PecasAssociadas != null && item.PecasAssociadas.Any())
+                    @* CORREÇÃO: Usando a lista 'Pecas' que está no seu DTO *@
+                    @if (item.Pecas != null && item.Pecas.Any())
                     {
                         <ul>
-                            @* Itera sobre a nova tabela de junção *@
-                            @foreach (var associacao in item.PecasAssociadas)
+                            @foreach (var peca in item.Pecas)
                             {
-                                @* Acessa a Peça real (associacao.Peca) e a Quantidade (associacao.Quantidade) *@
                                 <li>
-                                    @($"{associacao.Peca.Nome} (x{associacao.Quantidade}) - R$ {associacao.Subtotal:N2}")
+                                    @* Aqui assumi que seu OrdemServicoPecaDto tem Nome, Quantidade e Valor *@
+                                    @($"{peca.NomePeca} (x{peca.Quantidade}) - R$ {peca.PrecoUnitario:N2}")
                                 </li>
-
                             }
                         </ul>
                     }
                     else
                     {
-                        <em>Sem peças</em>
+                        <span class="text-muted">Nenhuma peça</span>
                     }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MaoDeObra)
+                    @item.MaoDeObra.ToString()
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ValorDesconto)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ValorTotal)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Status)
@@ -102,14 +98,28 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.DataEntrega)
                 </td>
-                <td class="text-nowrap">
-                    <div class="d-inline-flex gap-2">
-                    <a asp-action="Edit" asp-route-id="@item.IdOrdemServico" class="btn btn-primary">Editar</a> 
-                    <a asp-action="Details" asp-route-id="@item.IdOrdemServico" class="btn btn-secondary">Detalhes</a>
-                    <a asp-action="Delete" asp-route-id="@item.IdOrdemServico" class="btn btn-danger">Deletar</a>
-                    </div>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValorTotal)
                 </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdOrdemServico" class="btn btn-sm btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.IdOrdemServico" class="btn btn-sm btn-info">Detalhes</a>
+                    <a asp-action="Delete" asp-route-id="@item.IdOrdemServico" class="btn btn-sm btn-danger">Excluir</a>
+                </td>
+             
+             
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
+<script src="~/js/site.js"></script>
