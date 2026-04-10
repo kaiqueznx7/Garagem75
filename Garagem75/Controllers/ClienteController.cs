@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Garagem75.Controllers
-{
+
     [Authorize(Roles = "Administrador, Mecanico")]
     public class ClienteController : Controller
     {
@@ -127,4 +126,3 @@ namespace Garagem75.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-}

@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 
-namespace Garagem75.Controllers
-{
-    public class UsuarioController : Controller
+[Authorize]
+
+public class UsuarioController : Controller
     {
         private readonly UsuarioApiService _api;
         private readonly TipoUsuarioApiService _tipoApi; 
@@ -42,7 +42,7 @@ namespace Garagem75.Controllers
             // 1. Chama o Service
             var response = await _api.Login(email, senha);
 
-            if (response == null || string.IsNullOrEmpty(response.Token))
+            if (response == null || string.IsNullOrEmpty(response.token))
             {
                 ModelState.AddModelError("", "Email ou senha inválidos.");
                 return View();
@@ -51,41 +51,43 @@ namespace Garagem75.Controllers
             // 2. Cria as Claims de autenticação do MVC
             var claims = new List<Claim>
     {
-        new Claim(ClaimTypes.Name, response.Nome ?? ""),
-        new Claim(ClaimTypes.Role, response.Role ?? ""),
+        new Claim(ClaimTypes.Name, response.nome ?? ""),
+        // 🔥 AQUI ESTÁ O AJUSTE: Garanta que o valor não seja nulo ou vazio
+        new Claim(ClaimTypes.Role, response.tipo ?? "Usuario"),
         // CRUCIAL: Salva o token da API no Cookie do MVC
-        new Claim("JWToken", response.Token)
+        new Claim("JWToken", response.token)
     };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
+            // Debug: Isso vai aparecer no console do Visual Studio na hora que você logar
+            foreach (var claim in claims)
+            {
+                Console.WriteLine($"Claim Tipo: {claim.Type} - Valor: {claim.Value}");
+            }
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal,
-                new AuthenticationProperties { IsPersistent = true });
+                new AuthenticationProperties { IsPersistent = false });
 
             return RedirectToAction("Index", "Dashboard");
         }
 
         // ================= LOGOUT =================
 
-        [HttpGet]
-        public async Task<IActionResult> LogoutGet()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            // Limpa o cookie de autenticação principal
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            Response.Cookies.Delete("Garagem75.AntiCsrf");
 
-            return RedirectToAction("Index", "Home",
-                new { _ts = DateTimeOffset.UtcNow.ToUnixTimeSeconds() });
+            // Opcional: Se você usa Session, limpe-a também
+            HttpContext.Session.Clear();
+
+            // Redireciona para o Login garantindo que não há cache
+            return RedirectToAction("Login", "Usuario", new { area = "" });
         }
 
         // ================= LISTAGEM =================
@@ -206,5 +208,10 @@ namespace Garagem75.Controllers
 
             return RedirectToAction(nameof(Inativos));
         }
+
+        [AllowAnonymous] // 👈 Obrigatório, senão quem não tem acesso não vê a página!
+        public IActionResult AcessoNegado()
+        {
+            return View();
+        }
     }
-}

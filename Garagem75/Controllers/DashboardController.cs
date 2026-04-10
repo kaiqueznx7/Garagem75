@@ -1,7 +1,11 @@
 ﻿using Garagem75.Shared.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize]
+
 public class DashboardController : Controller
+
 {
     private readonly DashboardApiService _api;
 

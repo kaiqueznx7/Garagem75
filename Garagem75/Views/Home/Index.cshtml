@@ -1,4 +1,6 @@
-﻿@{
+﻿
+
+@{
     Layout = null;
     var returnUrl = Context.Request.Query["returnUrl"].ToString();
 }
@@ -45,12 +47,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#servicos">Serviços</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Auth" asp-action="Login">Área Restrita</a>
-                        </li>
-                        <li class="nav-item">
+                        @* <li class="nav-item">
+                            <a class="nav-link" href="#area-restrita">Área Restrita</a>
+                        </li> *@
+                        @* <li class="nav-item">
                             <a class="nav-link" href="#blog">Blog</a>
-                        </li>
+                        </li> *@
                         <li class="nav-item">
                             <a class="nav-link" href="#contato-localizacao">Contato</a>
                         </li>
@@ -204,7 +206,7 @@
 
     <section id="contato-localizacao" class="py-5 bg-dark text-white">
         <div class="container">
-            <h1  class="text-light display-4 titulo-servicos" data>Contato</h1>
+            <h1 class="text-light display-4 titulo-servicos" data>Contato</h1>
             <div class="row g-4 justify-content-center">
                 <div class="col-12 col-md-6" data-aos="fade-right">
                     <div class="p-4 rounded" style="background-color: #FFD700; color: #000;">
@@ -284,9 +286,9 @@
                                                                             </div>
 
 
-                                                                            @* @inject Garagem75.Data.Garagem75DBContext _context *@
+                                                                            @* @inject Garagem75.Data.Garagem75DBContext _context
 
-                                                                            @* @{
+                                                                            @{
                                                                                 var posts = _context.BlogPosts
                                                                                 .Where(p => p.Ativo)
                                                                                 .OrderByDescending(p => p.DataPublicacao)

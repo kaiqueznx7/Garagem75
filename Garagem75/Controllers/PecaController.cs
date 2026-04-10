@@ -5,9 +5,8 @@ using Garagem75.Client.Services;
 using Garagem75.Shared.Dtos;
 using System.Globalization;
 
-namespace Garagem75.Controllers
-{
-    [Authorize(Roles = "Administrador, Mêcanico")]
+
+    [Authorize(Roles = "Administrador, Mecanico")]
     public class PecaController : Controller
     {
         private readonly PecaApiService _api;
@@ -145,4 +144,3 @@ namespace Garagem75.Controllers
             }
         }
     }
-}

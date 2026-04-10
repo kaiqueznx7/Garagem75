@@ -1,4 +1,4 @@
-﻿@model Garagem75.Models.OrdemServico
+﻿@model Garagem75.Shared.Dtos.OrdemServicoDto
 
 @{
     ViewData["Title"] = "Deletar ordem de serviço";
@@ -55,7 +55,7 @@
         </dd>
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="IdOrdemServico" />
         <input type="submit" value="Deletar" class="btn btn-danger" /> |
         <a asp-action="Index" class="btn btn-secondary">Voltar</a>

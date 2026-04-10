@@ -1,9 +1,19 @@
 ﻿@{
+    Layout = "_Layout";
     ViewData["Title"] = "Acesso Negado";
 }
 
-<h2 class="text-danger">Acesso Negado</h2>
-<p>Você não tem permissão para acessar este recurso.</p>
-
-<a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Voltar para a Página Inicial</a>
-<!-- asp-controller + asp-action gera um link para a action Index do HomeController. -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="display-1 text-danger"><i class="bi bi-shield-lock"></i></h1>
+            <h2 class="text-dark">Acesso Restrito</h2>
+            <p class="lead">Ops! Você não tem permissão para acessar esta área da <strong>Garagem 75</strong>.</p>
+            <hr />
+            <p>Se você acha que isso é um erro, entre em contato com o administrador do sistema.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-warning shadow-sm">
+                <i class="bi bi-house-door"></i> Voltar para o Início
+            </a>
+        </div>
+    </div>
+</div>

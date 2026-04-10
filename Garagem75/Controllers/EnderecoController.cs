@@ -3,9 +3,8 @@ using Garagem75.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Garagem75.Controllers
-{
-    [Authorize(Roles = "Administrador, Mêcanico")]
+
+    [Authorize(Roles = "Administrador, Mecanico")]
     public class EnderecoController : Controller
     {
         private readonly EnderecoApiService _api;
@@ -105,4 +104,3 @@ namespace Garagem75.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-}

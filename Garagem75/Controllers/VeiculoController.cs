@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-[Authorize(Roles = "Administrador, Mêcanico")]
+[Authorize(Roles = "Administrador, Mecanico")]
 public class VeiculoController : Controller
 {
     private readonly VeiculoApiService _api;
