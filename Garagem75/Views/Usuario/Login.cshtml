@@ -1,26 +1,121 @@
 ﻿@model Garagem75.Shared.Dtos.UsuarioDto
 
-<h2>Login</h2>
-
-<form asp-action="Login" method="post">
-    @Html.AntiForgeryToken()
-
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Senha" class="form-label"></label>
-        <input asp-for="Senha" type="password" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Entrar</button>
-</form>
-
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger mt-3">
-        @Html.ValidationSummary()
-    </div>
+@{
+    Layout = null; // 🔥 Isso remove o menu lateral e o layout padrão
 }
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Garagem 75</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+            @@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+
+            body {
+                background-color: #0f0f11;
+                color: #f0f0f0;
+                font-family: 'DM Sans', sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .login-card {
+                background: #18181c;
+                border: 1px solid rgba(255,255,255,0.07);
+                border-radius: 16px;
+                padding: 40px;
+                width: 100%;
+                max-width: 400px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            }
+
+            .logo {
+                text-align: center;
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 30px;
+            }
+
+                .logo span {
+                    color: #e8ff47;
+                }
+
+            .cli-input {
+                background: #222228;
+                border: 1px solid rgba(255,255,255,0.07);
+                border-radius: 10px;
+                padding: 12px 16px;
+                color: #fff;
+                width: 100%;
+                margin-bottom: 20px;
+                outline: none;
+            }
+
+                .cli-input:focus {
+                    border-color: #e8ff47;
+                }
+
+            .btn-login {
+                background: #e8ff47;
+                color: #0f0f11;
+                border: none;
+                border-radius: 10px;
+                padding: 14px;
+                width: 100%;
+                font-weight: 600;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+                .btn-login:hover {
+                    opacity: 0.9;
+                }
+
+            .alert-custom {
+                background: rgba(248,113,113,0.1);
+                color: #f87171;
+                border: 1px solid rgba(248,113,113,0.2);
+                border-radius: 10px;
+                padding: 12px;
+                font-size: 13px;
+                margin-top: 20px;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo">GARAGEM<span>75</span></div>
+
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-1">
+                <label class="small text-muted mb-2">E-mail</label>
+                <input asp-for="Email" class="cli-input" placeholder="seu@email.com" />
+            </div>
+
+            <div class="mb-1">
+                <label class="small text-muted mb-2">Senha</label>
+                <input asp-for="Senha" type="password" class="cli-input" placeholder="••••••••" />
+            </div>
+
+            <button type="submit" class="btn-login">Entrar no Sistema</button>
+        </form>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert-custom">
+                @Html.ValidationSummary(true)
+            </div>
+        }
+    </div>
+
+</body>
+</html>

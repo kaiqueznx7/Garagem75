@@ -74,7 +74,7 @@
                         @{
                             // Cria um dicionário para saber quais peças já estão na ordem
                             // Usamos PecaId como chave e Quantidade como valor
-                            var pecasNoDto = Model.Pecas?.ToDictionary(p => p.PecaId, p => p.Quantidade)
+                            var pecasNoDto = Model.PecasAssociadas?.ToDictionary(p => p.PecaId, p => p.Quantidade)
                                             ?? new Dictionary<int, int>();
                         }
 

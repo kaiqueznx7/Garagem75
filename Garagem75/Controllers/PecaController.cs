@@ -6,8 +6,8 @@ using Garagem75.Shared.Dtos;
 using System.Globalization;
 
 
-    [Authorize(Roles = "Administrador, Mecanico")]
-    public class PecaController : Controller
+[Authorize(Roles = "Administrador, Mecânico")]
+public class PecaController : Controller
     {
         private readonly PecaApiService _api;
 

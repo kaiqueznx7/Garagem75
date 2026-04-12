@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
-    [Authorize(Roles = "Administrador, Mecanico")]
+    [Authorize(Roles = "Administrador, Mecânico")]
     public class ClienteController : Controller
     {
         private readonly ClienteApiService _api;

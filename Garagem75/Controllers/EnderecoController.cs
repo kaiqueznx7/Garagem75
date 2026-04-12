@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
-    [Authorize(Roles = "Administrador, Mecanico")]
+    [Authorize(Roles = "Administrador, Mecânico")]
     public class EnderecoController : Controller
     {
         private readonly EnderecoApiService _api;

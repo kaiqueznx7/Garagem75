@@ -4,157 +4,123 @@
     ViewData["Title"] = "Criar nova ordem de serviço";
 }
 
-<h1>Criar Ordem de Serviço</h1>
-
-<h4>OrdemServico</h4>
+<h1 class="brand-text">Nova Ordem de Serviço</h1>
 <hr />
+
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
+    <div class="col-md-8">
+        <form asp-action="Create" id="formOS">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Descricao" class="control-label"></label>
-                <input asp-for="Descricao" class="form-control" />
-                <span asp-validation-for="Descricao" class="text-danger"></span>
+            <div class="card-app" style="background: #1a1a1a; padding: 20px;color: antiquewhite;     border-radius: 15px; border-left: 5px solid #FFD700;">
+                <div class="form-group mb-3">
+                    <label asp-for="Descricao" class="control-label">Descrição do Problema/Serviço</label>
+                    <textarea asp-for="Descricao" class="form-control" rows="3" placeholder="Ex: Revisão geral e troca de óleo"></textarea>
+                    <span asp-validation-for="Descricao" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="VeiculoId" class="control-label">Veículo</label>
+                            <select asp-for="VeiculoId" class="form-control" asp-items="ViewBag.VeiculoId">
+                                <option value="">Selecione o veículo...</option>
+                            </select>
+                            <span asp-validation-for="VeiculoId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="DataEntrega" class="control-label">Previsão de Entrega</label>
+                            <input asp-for="DataEntrega" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="DataEntrega" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Mão de Obra (R$)</label>
+                            @* Usamos name="MaoDeObraTexto" para o C# não validar como número antes do JS limpar *@
+                            <input type="text" class="form-control dinheiro" id="MaoDeObraInput" name="MaoDeObraTexto" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Valor Desconto (R$)</label>
+                            <input type="text" class="form-control dinheiro" id="ValorDescontoInput" name="ValorDescontoTexto" />
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="DataServico" class="control-label"></label>
-                <input asp-for="DataServico" class="form-control" />
-                <span asp-validation-for="DataServico" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="MaoDeObra"></label>
-                <input asp-for="MaoDeObra" type="text" class="form-control" />
-                <span asp-validation-for="MaoDeObra" class="text-danger"></span>
-            </div>
-
-
-
-            <div class="form-group">
-                <label asp-for="ValorDesconto"></label>
-                <input asp-for="ValorDesconto" type="text" class="form-control" id="ValorDesconto" />
-                <span asp-validation-for="ValorDesconto" class="text-danger"></span>
-            </div>
-
-            @*  <div class="form-group">
-                <label asp-for="ValorTotal" class="control-label"></label>
-                <input asp-for="ValorTotal" class="form-control" readonly />
-                <span asp-validation-for="ValorTotal" class="text-danger"></span>
-            </div> *@
-
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="DataEntrega" class="control-label"></label>
-                <input asp-for="DataEntrega" class="form-control" />
-                <span asp-validation-for="DataEntrega" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="VeiculoId" class="control-label"></label>
-                <select asp-for="VeiculoId" class="form-control" asp-items="ViewBag.VeiculoId">
-                    <option value="">Selecione um veículo</option>
-                </select>
-                <span asp-validation-for="VeiculoId" class="text-danger"></span>
-            </div>
-
-            <h4>Peças utilizadas</h4>
-            <div class="form-group">
-                <table class="table table-sm">
+            <h4 class="mt-4 brand-text">Peças Utilizadas</h4>
+            <div class="card-app" style="background: #1a1a1a; padding: 15px; border-radius: 15px;">
+                <table class="table table-dark table-hover">
                     <thead>
                         <tr>
                             <th>Peça</th>
-                            <th>Preço Unitário</th>
-                            <th>Quantidade</th>
+                            <th>Preço Unit.</th>
+                            <th style="width: 120px;">Qtd.</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var peca in (List<Garagem75.Shared.Dtos.PecaDto>)ViewBag.Pecas)
+                        @if (ViewBag.Pecas != null)
                         {
-                            <tr>
-                                <td>@peca.Nome</td>
-                                <td>R$ @peca.Preco.ToString("N2")</td>
-                                <td>
-                                    <input type="hidden" class="peca-id-input" name="pecaIds" value="@peca.IdPeca" disabled />
-                                    <input type="number"
-                                           class="form-control form-control-sm peca-quantidade-input"
-                                           data-peca-id="@peca.IdPeca"
-                                           value="0"
-                                           min="0"
-                                           style="width: 80px;" />
-                                </td>
-                            </tr>
+                            foreach (var peca in (List<Garagem75.Shared.Dtos.PecaDto>)ViewBag.Pecas)
+                            {
+                                <tr>
+                                    <td>@peca.Nome <br /><small class="text-muted">@peca.Marca</small></td>
+                                    <td>R$ @peca.Preco.ToString("N2")</td>
+                                    <td>
+                                        <input type="number"
+                                               class="form-control form-control-sm peca-quantidade-input"
+                                               data-peca-id="@peca.IdPeca"
+                                               value="0"
+                                               min="0" />
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
             </div>
 
-            <div class="form-group">
-                <input type="submit" value="Criar" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+            <div class="form-group mt-4 mb-5">
+                <button type="submit" class="btn btn-primary btn-lg w-100">Criar Ordem de Serviço</button>
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Voltar para a Lista</a>
             </div>
         </form>
     </div>
 </div>
-@section Scripts {
-    @{
-        // Este Partial carrega os scripts de validação do jQuery
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
 
+@section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
     <script>
         $(document).ready(function () {
-        // Aplica máscara (MANTENHA)
-        $('#MaoDeObra, #ValorDesconto').mask('000.000.000,00', { reverse: true });
+        // Aplica a máscara nos campos de texto que criamos
+        $('#MaoDeObraInput, #ValorDescontoInput').mask('#.##0,00', { reverse: true });
 
-        // Sobrescrita do $.validator.methods.number (Aceita milhar e vírgula decimal)
-        if ($.validator && $.validator.methods) {
-        $.validator.methods.number = function (value, element) {
-        if (this.optional(element)) {
-        return true;
-        }
-        var val_limpo = value.replace(/\./g, '');
-        var val_padrao = val_limpo.replace(/,/g, '.');
-        return !isNaN(parseFloat(val_padrao));
-        };
-        }
-
-
-        // Antes de enviar o form (Remove apenas os pontos de milhar, mantendo a vírgula)
         $('form').on('submit', function () {
-        $('#MaoDeObra, #ValorDesconto').each(function () {
-        let v = $(this).val();
-        if (v) {
-        let valor_limpo = v.replace(/\./g, '').replace(',', '.');;
-        $(this).val(valor_limpo);
+        // 1. Remove hiddens de peças antigos para não duplicar
+        $('input[name="pecaIds"], input[name="quantidades"]').remove();
+
+        // 2. Cria novos hiddens apenas para as peças com quantidade > 0
+        $('.peca-quantidade-input').each(function () {
+        var qtd = parseInt($(this).val());
+        var id = $(this).data('peca-id');
+        if (qtd > 0) {
+        $('<input>').attr({ type: 'hidden', name: 'pecaIds', value: id }).appendTo('form');
+        $('<input>').attr({ type: 'hidden', name: 'quantidades', value: qtd }).appendTo('form');
         }
         });
 
-        // Peças
-        $('input[name="pecaIds"]').remove();
-        $('.peca-quantidade-input').each(function () {
-        var quantidade = parseInt($(this).val());
-        var pecaId = $(this).data('peca-id');
-        if (quantidade > 0) {
-        // Hidden para ID
-        $('<input>').attr({ type: 'hidden', name: 'pecaIds', value: pecaId }).appendTo('form');
-        // Hidden para Quantidade
-        $('<input>').attr({ type: 'hidden', name: 'quantidades', value: quantidade }).appendTo('form');
-        } else {
-        $(this).removeAttr('name');
-        }
-        });
+        // Não limpamos os campos de valor aqui!
+        // O C# vai ler o "MaoDeObraTexto" direto da máscara.
+        return true;
         });
         });
     </script>
-
 }

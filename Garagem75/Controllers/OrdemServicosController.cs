@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 
-[Authorize]
+[Authorize(Roles = "Administrador, Mecânico")]
 
 public class OrdemServicosController : Controller
 {
@@ -37,6 +37,7 @@ public class OrdemServicosController : Controller
     }
 
     // 🔹 CREATE (TELA)
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         // 1. Carrega as peças para a tabela aparecer na View
@@ -51,13 +52,34 @@ public class OrdemServicosController : Controller
         return View(new OrdemServicoDto { DataServico = DateTime.Now });
     }
 
-    // 🔹 CREATE (POST)
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(OrdemServicoDto dto, int[] pecaIds, int[] quantidades)
+    public async Task<IActionResult> Create(OrdemServicoDto dto, int[] pecaIds, int[] quantidades, string MaoDeObraTexto, string ValorDescontoTexto)
     {
+        // 1. CONVERSÃO MANUAL (Isso garante o valor correto 222,22)
+        try
+        {
+            if (!string.IsNullOrEmpty(MaoDeObraTexto))
+            {
+                var valorLimpo = MaoDeObraTexto.Replace(".", "").Replace(",", ".");
+                dto.MaoDeObra = decimal.Parse(valorLimpo, System.Globalization.CultureInfo.InvariantCulture);
+            }
+            if (!string.IsNullOrEmpty(ValorDescontoTexto))
+            {
+                var valorLimpo = ValorDescontoTexto.Replace(".", "").Replace(",", ".");
+                dto.ValorDesconto = decimal.Parse(valorLimpo, System.Globalization.CultureInfo.InvariantCulture);
+            }
+        }
+        catch { /* valor padrão 0 se der erro na conversão */ }
 
-        // 1. Mapeia as peças enviadas pelo JavaScript para dentro do DTO
+        // 2. LIMPEZA TOTAL DE ERROS (Força o MVC a ignorar validações automáticas chatas)
+        ModelState.Clear();
+
+        // 3. BUSCA O CLIENTE (Obrigatório para a API salvar)
+        var veiculo = await _veiculosApi.GetById(dto.VeiculoId);
+        if (veiculo != null) dto.ClienteId = veiculo.ClienteId;
+
+        // 4. MONTA AS PEÇAS
         dto.PecasAssociadas = new List<OrdemServicoPecaDto>();
         if (pecaIds != null && quantidades != null)
         {
@@ -65,35 +87,27 @@ public class OrdemServicosController : Controller
             {
                 if (quantidades[i] > 0)
                 {
-                    dto.PecasAssociadas.Add(new OrdemServicoPecaDto
-                    {
-                        PecaId = pecaIds[i],
-                        Quantidade = quantidades[i]
-                    });
+                    dto.PecasAssociadas.Add(new OrdemServicoPecaDto { PecaId = pecaIds[i], Quantidade = quantidades[i] });
                 }
             }
         }
-        ModelState.Remove("ValorTotal");
-        ModelState.Remove("NomeCliente");
-        ModelState.Remove("PlacaVeiculo");
 
-        if (ModelState.IsValid)
+        // 5. ENVIA PARA API
+        var ok = await _api.Create(dto);
+        if (ok)
         {
-            var ok = await _api.Create(dto);
-            if (ok) return RedirectToAction(nameof(Index));
-
-            ModelState.AddModelError("", "Erro ao salvar a Ordem de Serviço na API.");
+            return RedirectToAction(nameof(Index));
         }
 
-        // 🔥 IMPORTANTE: Se deu erro de validação, precisa recarregar as ViewBags
-        // caso contrário, ao voltar para a tela, o foreach das peças vai dar erro de novo!
+        // Se chegou aqui, a API deu erro (BadRequest). Vamos recarregar a tela.
         ViewBag.Pecas = await _pecaApi.GetAll();
-        var vks = await _veiculosApi.GetAll();
-        ViewBag.VeiculoId = new SelectList(vks, "IdVeiculo", "Modelo", dto.VeiculoId);
+        ViewBag.VeiculoId = new SelectList(await _veiculosApi.GetAll(), "IdVeiculo", "Modelo", dto.VeiculoId);
+
+        // Adiciona uma mensagem de erro para você ver na tela o que houve
+        TempData["Erro"] = "A API recusou o salvamento. Verifique se todos os campos estão preenchidos.";
 
         return View(dto);
     }
-
     // 🔹 EDIT (TELA)
     public async Task<IActionResult> Edit(int id)
     {
@@ -112,13 +126,13 @@ public class OrdemServicosController : Controller
     {
         // 1. O código do seu formulário vai preencher pecaIds e quantidades
         // 2. Você precisa converter esses arrays para a lista dentro do DTO:
-        dto.Pecas = new List<OrdemServicoPecaDto>();
+        dto.PecasAssociadas = new List<OrdemServicoPecaDto>();
 
         if (pecaIds != null && quantidades != null)
         {
             for (int i = 0; i < pecaIds.Length; i++)
             {
-                dto.Pecas.Add(new OrdemServicoPecaDto
+                dto.PecasAssociadas.Add(new OrdemServicoPecaDto
                 {
                     PecaId = pecaIds[i],
                     Quantidade = quantidades[i]
@@ -169,5 +183,15 @@ public class OrdemServicosController : Controller
         // Substitua '_pecaApi.GetAll()' pela chamada real que você usa para listar peças
         var todasAsPecas = await _pecaApi.GetAll();
         ViewBag.Pecas = todasAsPecas;
+    }
+
+    public async Task<IActionResult> Relatorio(int id)
+    {
+        // Busca os dados da OS na API
+        var os = await _api.GetById(id);
+
+        if (os == null) return NotFound();
+
+        return View(os);
     }
 }

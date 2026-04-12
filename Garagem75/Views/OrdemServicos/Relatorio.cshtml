@@ -1,4 +1,4 @@
-﻿@model Garagem75.Models.OrdemServico
+﻿@model Garagem75.Shared.Dtos.OrdemServicoDto
 
 @{
     Layout = null;
@@ -12,93 +12,34 @@
     <title>Relatório Técnico - OS @Model.IdOrdemServico</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            color: #222;
-        }
-
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid #444;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-            header img {
-                width: 100px;
-            }
-
-            header h1 {
-                font-size: 24px;
-                margin: 0;
-            }
-
-        .empresa-info {
-            text-align: right;
-            font-size: 13px;
-        }
-
-        .section {
-            margin-bottom: 25px;
-        }
-
-            .section h2 {
-                background: #f2f2f2;
-                padding: 6px;
-                border-left: 4px solid #444;
-                font-size: 16px;
-            }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        th, td {
-            padding: 6px;
-            border-bottom: 1px solid #ccc;
-        }
-
-        th {
-            background: #f9f9f9;
-            text-align: left;
-        }
-
-        .totais {
-            text-align: right;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-
-        .observacoes {
-            margin-top: 15px;
-            font-size: 13px;
-            white-space: pre-wrap;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 12px;
-            margin-top: 50px;
-            border-top: 1px solid #ccc;
-            padding-top: 10px;
-        }
+        body { font-family: Arial, sans-serif; margin: 40px; color: #222; background-color: white; }
+        header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #444; padding-bottom: 10px; margin-bottom: 20px; }
+        header img { width: 120px; height: auto; }
+        header h1 { font-size: 24px; margin: 0; color: #d9534f; }
+        .empresa-info { text-align: right; font-size: 13px; }
+        .section { margin-bottom: 25px; }
+        .section h2 { background: #f2f2f2; padding: 6px; border-left: 4px solid #d9534f; font-size: 16px; margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 8px; border-bottom: 1px solid #ccc; }
+        th { background: #f9f9f9; text-align: left; }
+        .totais { text-align: right; font-size: 14px; margin-top: 10px; line-height: 1.6; }
+        footer { text-align: center; font-size: 12px; margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px; }
+        
+        .btn-container { text-align: center; margin-top: 20px; }
+        .btn { padding: 10px 20px; text-decoration: none; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; margin-left: 10px; }
 
         @@media print {
-            .btn-voltar {
-                display: none;
-            }
+            .btn-voltar, .btn-container { display: none !important; }
+            body { margin: 20px; }
         }
     </style>
 </head>
-
 <body>
     <header>
         <div>
+            @* A logo da oficina *@
             <img src="~/img/logoFooter1.png" alt="Garagem 75" />
         </div>
         <div>
@@ -106,41 +47,32 @@
             <div class="empresa-info">
                 CNPJ: 00.000.000/0001-00<br />
                 Travessa Particular 1, 57 - Itaim Paulista<br />
-                Tel: (11) 964749052<br />
+                Tel: (11) 96474-9052<br />
                 www.garagem75.com.br
             </div>
         </div>
     </header>
 
-    <section class="section">
-        <h2>Dados da Ordem de Serviço</h2>
-        <p><strong>Nº OS:</strong> @Model.IdOrdemServico</p>
-        <p><strong>Data:</strong> @Model.DataServico.ToString("dd/MM/yyyy")</p>
-        <p><strong>Status:</strong> @Model.Status</p>
-        <p><strong>Entrega:</strong> @(Model.DataEntrega.ToString("dd/MM/yyyy") ?? "-")</p>
-    </section>
-
-    @* 🚗 Dados do veículo *@
-    @if (Model.Veiculo != null)
-    {
-        <section class="section">
-            <h2>Dados do Veículo</h2>
-            <p><strong>Marca:</strong> @Model.Veiculo.Fabricante</p>
-            <p><strong>Modelo:</strong> @Model.Veiculo.Modelo</p>
-            <p><strong>Placa:</strong> @Model.Veiculo.Placa</p>
-            <p><strong>Ano:</strong> @Model.Veiculo.Ano</p>
-
-            @* Se quiser incluir o cliente (proprietário) *@
-            @if (Model.Veiculo.Cliente != null)
-            {
-                <p><strong>Proprietário:</strong> @Model.Veiculo.Cliente.Nome</p>
-            }
-        </section>
-    }
+    <div class="row section">
+        <div style="width: 50%; float: left;">
+            <h2>Dados da Ordem de Serviço</h2>
+            <p><strong>Nº OS:</strong> @Model.IdOrdemServico</p>
+            <p><strong>Data de Entrada:</strong> @Model.DataServico.ToString("dd/MM/yyyy")</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Previsão de Entrega:</strong> @Model.DataEntrega.ToString("dd/MM/yyyy")</p>
+        </div>
+        <div style="width: 50%; float: right;">
+            <h2>Dados do Veículo / Cliente</h2>
+            <p><strong>Cliente:</strong> @Model.NomeCliente</p>
+            <p><strong>Veículo:</strong> @Model.VeiculoModelo</p>
+            <p><strong>Placa:</strong> @Model.PlacaVeiculo</p>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
 
     <section class="section">
-        <h2>Serviço</h2>
-        <p>@Model.Descricao</p>
+        <h2>Descrição do Serviço</h2>
+        <p style="white-space: pre-wrap;">@Model.Descricao</p>
     </section>
 
     @if (Model.PecasAssociadas != null && Model.PecasAssociadas.Any())
@@ -152,20 +84,20 @@
                     <tr>
                         <th>Peça</th>
                         <th>Marca</th>
-                        <th>Quantidade</th>
-                        <th>Valor Unitário</th>
-                        <th>Subtotal</th>
+                        <th style="text-align: center;">Qtd</th>
+                        <th style="text-align: right;">Valor Unit.</th>
+                        <th style="text-align: right;">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.PecasAssociadas)
                     {
                         <tr>
-                            <td>@item.Peca.Nome</td>
-                            <td>@item.Peca.Marca</td>
-                            <td>@item.Quantidade</td>
-                            <td>R$ @item.PrecoUnitario.ToString("F2")</td>
-                            <td>R$ @(item.Quantidade * item.PrecoUnitario)</td>
+                            <td>@item.NomePeca</td>
+                            <td>@item.MarcaPeca</td>
+                            <td style="text-align: center;">@item.Quantidade</td>
+                            <td style="text-align: right;">R$ @item.PrecoUnitario.ToString("N2")</td>
+                            <td style="text-align: right;">R$ @((item.Quantidade * item.PrecoUnitario).ToString("N2"))</td>
                         </tr>
                     }
                 </tbody>
@@ -174,22 +106,31 @@
     }
 
     <section class="section">
-        <h2>Totais</h2>
         <div class="totais">
-            <p><strong>Total Peças:</strong> R$ @Model.PecasAssociadas.Sum(p => p.Quantidade * p.PrecoUnitario).ToString("F2")</p>
-            <p><strong>Mão de Obra:</strong> R$ @Model.MaoDeObra.ToString("F2")</p>
-            <p><strong>Desconto:</strong> R$ @Model.ValorDesconto.ToString("F2")</p>
-            <p><strong style="font-size:16px;">TOTAL GERAL:</strong> <strong>R$ @Model.ValorTotal.ToString("F2")</strong></p>
+            @{
+                decimal totalPecas = Model.PecasAssociadas?.Sum(p => p.Quantidade * p.PrecoUnitario) ?? 0;
+            }
+            <p><strong>Total Peças:</strong> R$ @totalPecas.ToString("N2")</p>
+            <p><strong>Mão de Obra:</strong> R$ @Model.MaoDeObra.ToString("N2")</p>
+            @if (Model.ValorDesconto > 0)
+            {
+                <p style="color: red;"><strong>Desconto:</strong> - R$ @Model.ValorDesconto.ToString("N2")</p>
+            }
+            <p style="font-size:18px; border-top: 1px solid #444; display: inline-block; padding-top: 5px;">
+                <strong>TOTAL GERAL: R$ @Model.ValorTotal.ToString("N2")</strong>
+            </p>
         </div>
     </section>
 
     <footer>
         <p>Relatório técnico gerado em @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
-        <p>Assinatura do mecânico: ____________________________</p>
-        <p>Assinatura do cliente: ____________________________</p>
+        <div style="display: flex; justify-content: space-around; margin-top: 40px;">
+            <div style="border-top: 1px solid #000; width: 200px; padding-top: 5px;">Mecânico Responsável</div>
+            <div style="border-top: 1px solid #000; width: 200px; padding-top: 5px;">Assinatura do Cliente</div>
+        </div>
     </footer>
 
-    <div style="text-align:center; margin-top:20px;">
+    <div class="btn-container">
         <button class="btn btn-primary btn-voltar" onclick="window.print()">🖨️ Imprimir Relatório</button>
         <a asp-action="Details" asp-route-id="@Model.IdOrdemServico" class="btn btn-secondary btn-voltar">⬅️ Voltar</a>
     </div>

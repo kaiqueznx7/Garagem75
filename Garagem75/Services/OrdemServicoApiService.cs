@@ -1,14 +1,17 @@
-﻿using System.Net.Http;
+﻿using Garagem75.Shared.Dtos;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Garagem75.Shared.Dtos;
 
 public class OrdemServicoApiService
 {
     private readonly HttpClient _http;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public OrdemServicoApiService(HttpClient http)
+    public OrdemServicoApiService(HttpClient http, IHttpContextAccessor httpContextAccessor)
     {
         _http = http;
+        _httpContextAccessor = httpContextAccessor;
     }
 
 
@@ -28,27 +31,38 @@ public class OrdemServicoApiService
     // 🔹 GET BY ID
     public async Task<OrdemServicoDto?> GetById(int id)
     {
-        return await _http.GetFromJsonAsync<OrdemServicoDto>($"api/ordemservico/{id}");
+        return await _http.GetFromJsonAsync<OrdemServicoDto>($"api/OrdemServico/{id}");
     }
 
     // 🔹 CREATE
     public async Task<bool> Create(OrdemServicoDto dto)
     {
-        var response = await _http.PostAsJsonAsync("api/ordemservico", dto);
-        return response.IsSuccessStatusCode;
+        var token = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response = await _http.PostAsJsonAsync("api/OrdemServico", dto);
+        if (!response.IsSuccessStatusCode)
+        {
+            // Se der erro, isso vai te mostrar EXATAMENTE o que a API não gostou
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Erro na API: {response.StatusCode}");
+            Console.WriteLine($"Detalhes: {errorContent}");
+            return false;
+        }
+
+        return true;
     }
 
     // 🔹 UPDATE
     public async Task<bool> Update(int id, OrdemServicoDto dto)
     {
-        var response = await _http.PutAsJsonAsync($"api/ordemservico/{id}", dto);
+        var response = await _http.PutAsJsonAsync($"api/OrdemServico/{id}", dto);
         return response.IsSuccessStatusCode;
     }
 
     // 🔹 DELETE
     public async Task<bool> Delete(int id)
     {
-        var response = await _http.DeleteAsync($"api/ordemservico/{id}");
+        var response = await _http.DeleteAsync($"api/OrdemServico/{id}");
         return response.IsSuccessStatusCode;
     }
 }

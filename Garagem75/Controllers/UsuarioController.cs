@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 
-[Authorize]
+[Authorize(Roles = "Administrador")]
 
 public class UsuarioController : Controller
     {
@@ -77,6 +77,7 @@ public class UsuarioController : Controller
         // ================= LOGOUT =================
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
