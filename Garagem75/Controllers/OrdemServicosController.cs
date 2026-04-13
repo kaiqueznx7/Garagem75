@@ -112,13 +112,13 @@ public class OrdemServicosController : Controller
     {
         // 1. O código do seu formulário vai preencher pecaIds e quantidades
         // 2. Você precisa converter esses arrays para a lista dentro do DTO:
-        dto.Pecas = new List<OrdemServicoPecaDto>();
+        dto.PecasAssociadas = new List<OrdemServicoPecaDto>();
 
         if (pecaIds != null && quantidades != null)
         {
             for (int i = 0; i < pecaIds.Length; i++)
             {
-                dto.Pecas.Add(new OrdemServicoPecaDto
+                dto.PecasAssociadas.Add(new OrdemServicoPecaDto
                 {
                     PecaId = pecaIds[i],
                     Quantidade = quantidades[i]

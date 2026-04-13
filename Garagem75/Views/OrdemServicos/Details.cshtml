@@ -158,7 +158,7 @@
 
     <hr />
 
-    @if (Model.Pecas != null && Model.Pecas.Any())
+    @if (Model.PecasAssociadas != null && Model.PecasAssociadas.Any())
     {
         <h6 style="text-align:center;">PEÇAS UTILIZADAS</h6>
         <table class="pecas-table">
@@ -170,7 +170,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.Pecas)
+                @foreach (var item in Model.PecasAssociadas)
                 {
                     <tr>
                         <td>@item.NomePeca</td>

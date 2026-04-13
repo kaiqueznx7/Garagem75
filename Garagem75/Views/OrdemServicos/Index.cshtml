@@ -69,10 +69,10 @@
                 </td>
                 <td>
                     @* CORREÇÃO: Usando a lista 'Pecas' que está no seu DTO *@
-                    @if (item.Pecas != null && item.Pecas.Any())
+                    @if (item.PecasAssociadas != null && item.PecasAssociadas.Any())
                     {
                         <ul>
-                            @foreach (var peca in item.Pecas)
+                            @foreach (var peca in item.PecasAssociadas)
                             {
                                 <li>
                                     @* Aqui assumi que seu OrdemServicoPecaDto tem Nome, Quantidade e Valor *@

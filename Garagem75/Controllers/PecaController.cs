@@ -16,46 +16,80 @@ using System.Globalization;
             _api = api;
         }
 
-        // ================= INDEX =================
-        public async Task<IActionResult> Index(string marca, string searchString)
+    // ================= INDEX =================
+
+    public async Task<IActionResult> Index(string marca, string searchString)
+
+    {
+
+        var pecas = await _api.GetAll();
+
+
+
+        var marcas = pecas
+
+        .Select(p => p.Marca)
+
+        .Distinct()
+
+        .OrderBy(m => m)
+
+        .ToList();
+
+
+
+        ViewBag.Marcas = new SelectList(marcas);
+
+
+
+        // Filtro Case-Insensitive (para aceitar minúsculas como você pediu antes)
+
+        if (!string.IsNullOrEmpty(marca))
+
+            pecas = pecas.Where(p => p.Marca == marca).ToList();
+
+
+
+        if (!string.IsNullOrEmpty(searchString))
+
         {
-            var pecas = await _api.GetAll();
 
-            var marcas = pecas
-                .Select(p => p.Marca)
-                .Distinct()
-                .OrderBy(m => m)
-                .ToList();
+            var busca = searchString.ToLower();
 
-            ViewBag.Marcas = new SelectList(marcas);
+            pecas = pecas.Where(p =>
 
-            // Filtro Case-Insensitive (para aceitar minúsculas como você pediu antes)
-            if (!string.IsNullOrEmpty(marca))
-                pecas = pecas.Where(p => p.Marca == marca).ToList();
+            p.Nome.ToLower().Contains(busca) ||
 
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                var busca = searchString.ToLower();
-                pecas = pecas.Where(p =>
-                    p.Nome.ToLower().Contains(busca) ||
-                    p.Fornecedor.ToLower().Contains(busca)
-                ).ToList();
-            }
+            p.Fornecedor.ToLower().Contains(busca)
 
-            return View(pecas);
+            ).ToList();
+
         }
 
-        // ================= DETAILS =================
-        public async Task<IActionResult> Details(int id)
-        {
-            var peca = await _api.GetById(id);
-            if (peca == null) return NotFound();
 
-            return View(peca);
-        }
 
-        // ================= CREATE =================
-        public IActionResult Create() => View(new PecaDto());
+        return View(pecas);
+
+    }
+
+    // ================= DETAILS =================
+
+    public async Task<IActionResult> Details(int id)
+
+    {
+
+        var peca = await _api.GetById(id);
+
+        if (peca == null) return NotFound();
+
+
+
+        return View(peca);
+
+    }
+
+    // ================= CREATE =================
+    public IActionResult Create() => View(new PecaDto());
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -143,4 +177,36 @@ using System.Globalization;
                 }
             }
         }
-    }
+
+    //// Método auxiliar no final do Controller para evitar repetição
+    //private string CorrigirUrlImagem(string urlOriginal, string baseUrl)
+    //{
+    //    if (string.IsNullOrEmpty(urlOriginal)) return "";
+
+    //    // 1. Força a baseUrl a ser HTTPS (o Dev Tunnel exige isso)
+    //    if (baseUrl.StartsWith("http://"))
+    //    {
+    //        baseUrl = baseUrl.Replace("http://", "https://");
+    //    }
+
+    //    // 2. Se a URL do banco contém localhost, trocamos pelo domínio do túnel
+    //    if (urlOriginal.Contains("localhost"))
+    //    {
+    //        try
+    //        {
+    //            var uri = new Uri(urlOriginal);
+    //            // uri.PathAndQuery pega tudo depois da porta, ex: /uploads/pecas/foto.jpg
+    //            return $"{baseUrl}{uri.PathAndQuery}";
+    //        }
+    //        catch { return urlOriginal; }
+    //    }
+
+    //    // 3. Caso a URL já venha sem localhost mas sem HTTPS
+    //    if (urlOriginal.StartsWith("http://"))
+    //    {
+    //        return urlOriginal.Replace("http://", "https://");
+    //    }
+
+    //    return urlOriginal;
+    //}
+}
