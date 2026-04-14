@@ -52,13 +52,36 @@ public class VeiculoController : Controller
     public async Task<IActionResult> Create(VeiculoDto veiculo)
     {
         if (!ModelState.IsValid)
-        { // 🔥 ESSENCIAL: Recarregar a lista de clientes para a View não quebrar!
+        {
             var clientes = await _clienteApi.GetAll();
             ViewData["ClienteId"] = new SelectList(clientes, "Id", "Nome", veiculo.ClienteId);
             return View(veiculo);
         }
 
-        await _api.Create(veiculo);
+        var response = await _api.Create(veiculo);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var conteudo = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var erro = System.Text.Json.JsonSerializer.Deserialize<ErroDto>(conteudo,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (erro?.Mensagem?.Contains("Placa") == true)
+                    ModelState.AddModelError("Placa", erro.Mensagem);
+                else
+                    ModelState.AddModelError("", erro?.Mensagem ?? "Erro ao salvar.");
+            }
+            catch
+            {
+                ModelState.AddModelError("", conteudo);
+            }
+
+            var clientes = await _clienteApi.GetAll();
+            ViewData["ClienteId"] = new SelectList(clientes, "Id", "Nome", veiculo.ClienteId);
+            return View(veiculo);
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -89,16 +112,42 @@ public class VeiculoController : Controller
 
         if (!ModelState.IsValid)
         {
-            // 🔥 ESSENCIAL: Recarregar a lista de clientes para a View não quebrar!
             var clientes = await _clienteApi.GetAll();
             ViewData["ClienteId"] = new SelectList(clientes, "Id", "Nome", veiculo.ClienteId);
-
             return View(veiculo);
         }
 
-        await _api.Update(id, veiculo);
+        var response = await _api.Update(id, veiculo);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var conteudo = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var erro = System.Text.Json.JsonSerializer.Deserialize<ErroDto>(conteudo,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (erro?.Mensagem?.Contains("Placa") == true)
+                    ModelState.AddModelError("Placa", erro.Mensagem);
+                else
+                    ModelState.AddModelError("", erro?.Mensagem ?? "Erro ao salvar.");
+            }
+            catch
+            {
+                ModelState.AddModelError("", conteudo);
+            }
+
+            var clientes = await _clienteApi.GetAll();
+            ViewData["ClienteId"] = new SelectList(clientes, "Id", "Nome", veiculo.ClienteId);
+            return View(veiculo);
+        }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    private class ErroDto
+    {
+        public string Mensagem { get; set; }
     }
 
     // 🔹 DELETE GET

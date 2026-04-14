@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
-    [Authorize(Roles = "Administrador, Mecanico")]
+    [Authorize(Roles = "Administrador, Mecânico")]
     public class ClienteController : Controller
     {
         private readonly ClienteApiService _api;
@@ -36,22 +36,20 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
             return View(new ClienteCadastroDto());
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ClienteCadastroDto model)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(ClienteCadastroDto model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var clienteDto = new ClienteDto
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var clienteDto = new ClienteDto
-            {
-                Nome = model.Cliente.Nome,
-                Cpf = model.Cliente.Cpf,
-                Telefone = model.Cliente.Telefone,
-                Email = model.Cliente.Email,
-
-                // ✅ ISSO VAI FUNCIONAR
-                Enderecos = new List<EnderecoDto>
+            Nome = model.Cliente.Nome,
+            Cpf = model.Cliente.Cpf,
+            Telefone = model.Cliente.Telefone,
+            Email = model.Cliente.Email,
+            Enderecos = new List<EnderecoDto>
         {
             new EnderecoDto
             {
@@ -64,40 +62,100 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
                 Cep = model.Endereco.Cep
             }
         }
+        };
 
-                // ❌ NÃO coloca Veiculo aqui (API não suporta)
-            };
+        var response = await _api.Create(clienteDto);
 
-            await _api.Create(clienteDto);
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        if (!response.IsSuccessStatusCode)
         {
-            var cliente = await _api.GetById(id);
-            Console.WriteLine(cliente == null ? "NULL" : "OK");
-            if (cliente == null)
-                return NotFound();
+            var conteudo = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var erro = System.Text.Json.JsonSerializer.Deserialize<ErroDto>(conteudo,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            return View(cliente);
+                // 👇 Aparece no campo correto da view
+                if (erro?.Mensagem?.Contains("CPF") == true)
+                    ModelState.AddModelError("Cliente.Cpf", erro.Mensagem);
+                else if (erro?.Mensagem?.Contains("mail") == true)
+                    ModelState.AddModelError("Cliente.Email", erro.Mensagem);
+                else
+                    ModelState.AddModelError("", erro?.Mensagem ?? "Erro ao salvar.");
+            }
+            catch
+            {
+                ModelState.AddModelError("", conteudo);
+            }
+
+            return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ClienteDto model)
+        return RedirectToAction(nameof(Index));
+    }
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        // 1. Busca os dados na API
+        var response = await _api.GetById(id);
+
+        // 2. Se a API retornar erro ou não encontrar o cliente
+        if (response == null)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            await _api.Update(model);
-
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
 
-        // ================= DETAILS =================
-        public async Task<IActionResult> Details(int id)
+        // 3. Passa o DTO para a View (isso preenche os campos do formulário)
+        return View(response);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(ClienteDto model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var response = await _api.Update(model);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var conteudo = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var erro = System.Text.Json.JsonSerializer.Deserialize<ErroDto>(conteudo,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (erro?.Mensagem?.Contains("CPF") == true)
+                    ModelState.AddModelError("Cpf", erro.Mensagem);
+                else if (erro?.Mensagem?.Contains("mail") == true)
+                    ModelState.AddModelError("Email", erro.Mensagem);
+                else
+                    ModelState.AddModelError("", erro?.Mensagem ?? "Erro ao salvar.");
+            }
+            catch
+            {
+                ModelState.AddModelError("", conteudo);
+            }
+            // 👇 garante que os endereços não vêm null e a view não quebra
+            if (model.Enderecos == null)
+            {
+                var clienteAtual = await _api.GetById(model.Id);
+                model.Enderecos = clienteAtual?.Enderecos ?? new List<EnderecoDto>();
+            }
+
+            return View(model);
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    private class ErroDto
+    {
+        public string Mensagem { get; set; }
+    }
+
+    // ================= DETAILS =================
+    public async Task<IActionResult> Details(int id)
         {
             var cliente = await _api.GetById(id);
 

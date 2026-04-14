@@ -1,0 +1,51 @@
+﻿@model List<Garagem75.Shared.Dtos.UsuarioDto>
+
+@{
+    ViewData["Title"] = "Usuários Inativos";
+}
+
+<h1>Usuários Inativos</h1>
+<hr />
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">← Voltar para Ativos</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success">
+        Nenhum usuário inativo no momento.
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.IdUsuario</td>
+                    <td>@u.Nome</td>
+                    <td>@u.Email</td>
+                    <td>@u.TipoUsuario?DescricaoTipoUsuario</td>
+                    <td>
+                        <a asp-action="Ativar" asp-route-id="@u.IdUsuario"
+                               class="btn btn-sm btn-success"
+                               onclick="return confirm('Reativar @u.Nome?')">
+                            ✔ Reativar
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

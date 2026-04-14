@@ -88,41 +88,29 @@ namespace Garagem75.Client.Services
         }
 
         // ================= CREATE =================
-        public async Task<bool> Create(UsuarioDto usuario)
+        public async Task<HttpResponseMessage> Create(UsuarioDto usuario)
         {
-            try
-            {
-                // 1. Prepara o cabeçalho com o Token JWT
-                PrepararCabecalho();
-
-                // 2. Faz o POST para a API enviando o objeto DTO
-                var response = await _http.PostAsJsonAsync("api/usuario", usuario);
-
-                // 3. Retorna true se a API criou com sucesso (Status 201 ou 200)
-                return response.IsSuccessStatusCode;
-            }
-            catch (Exception ex)
-            {
-                // Log de erro para ajudar no debug se a rede falhar
-                Console.WriteLine("Erro ao criar usuário: " + ex.Message);
-                return false;
-            }
+            PrepararCabecalho();
+            return await _http.PostAsJsonAsync("api/usuario", usuario);
         }
 
         // ================= UPDATE =================
-        public async Task<bool> Update(UsuarioDto usuario)
+        public async Task<HttpResponseMessage> Update(UsuarioDto usuario)
         {
-            PrepararCabecalho(); // 🔥 ESSENCIAL
-            var response = await _http.PutAsJsonAsync($"api/usuario/{usuario.IdUsuario}", usuario);
-            return response.IsSuccessStatusCode;
+            PrepararCabecalho();
+            return await _http.PutAsJsonAsync($"api/usuario/{usuario.IdUsuario}", usuario);
         }
-
         // ================= DELETE =================
         public async Task<bool> Delete(int id)
         {
             PrepararCabecalho(); // 🔥 ESSENCIAL
             var response = await _http.DeleteAsync($"api/usuario/{id}");
             return response.IsSuccessStatusCode;
+        }
+        public async Task Reativar(int id)
+        {
+            PrepararCabecalho();
+            await _http.PutAsync($"api/usuario/{id}/reativar", null);
         }
     }
 }

@@ -109,6 +109,8 @@
                     <a asp-controller="Cliente" asp-action="Index"><i class="bi bi-person-badge"></i> Clientes</a>
                     <a asp-controller="Peca" asp-action="Index"><i class="bi bi-tools"></i> Estoque de Peças</a>
                     <a asp-controller="Usuario" asp-action="Index"><i class="bi bi-people"></i> Usuários</a>
+                    <a asp-controller="Usuario" asp-action="Inativos"><i class="bi bi-people"></i> Inativos</a>
+
                     <hr style="border-color: #333;" />
                     <form asp-controller="Usuario" asp-action="Logout" method="post" id="logoutForm" class="d-none">
                     @Html.AntiForgeryToken()

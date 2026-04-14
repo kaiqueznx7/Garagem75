@@ -118,51 +118,106 @@ public class UsuarioController : Controller
             return View(new UsuarioDto { Ativo = true });
         }
 
-        // POST: Usuario/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UsuarioDto usuario)
+    // POST: Usuario/Create
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(UsuarioDto usuario)
+    {
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                var tipos = await _tipoApi.GetAll();
-                ViewBag.TipoUsuarioId = new SelectList(tipos, "IdTipoUsuario", "DescricaoTipoUsuario", usuario.TipoUsuarioId);
-                return View(usuario);
-            }
-
-            await _api.Create(usuario);
-            return RedirectToAction(nameof(Index));
+            var tipos = await _tipoApi.GetAll();
+            ViewBag.TipoUsuarioId = new SelectList(tipos, "IdTipoUsuario", "DescricaoTipoUsuario", usuario.TipoUsuarioId);
+            return View(usuario);
         }
 
-        // ================= EDIT =================
+        var response = await _api.Create(usuario);
 
-        public async Task<IActionResult> Edit(int id)
+        if (!response.IsSuccessStatusCode)
+        {
+            var conteudo = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var erro = System.Text.Json.JsonSerializer.Deserialize<ErroDto>(conteudo,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (erro?.Mensagem?.Contains("mail") == true)
+                    ModelState.AddModelError("Email", erro.Mensagem);
+                else
+                    ModelState.AddModelError("", erro?.Mensagem ?? "Erro ao salvar.");
+            }
+            catch
+            {
+                ModelState.AddModelError("", conteudo);
+            }
+
+            var tipos = await _tipoApi.GetAll();
+            ViewBag.TipoUsuarioId = new SelectList(tipos, "IdTipoUsuario", "DescricaoTipoUsuario", usuario.TipoUsuarioId);
+            return View(usuario);
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    // ================= EDIT =================
+
+    public async Task<IActionResult> Edit(int id)
         {
             var usuario = await _api.GetById(id);
 
             if (usuario == null)
                 return NotFound();
+        var tipos = await _tipoApi.GetAll();
+        ViewBag.TipoUsuarioId = new SelectList(tipos, "IdTipoUsuario", "DescricaoTipoUsuario", usuario.TipoUsuarioId);
+
+        return View(usuario);
+        }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, UsuarioDto usuario)
+    {
+        if (id != usuario.IdUsuario)
+            return NotFound();
+
+        if (!ModelState.IsValid)
+            return View(usuario);
+
+        var response = await _api.Update(usuario);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var conteudo = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var erro = System.Text.Json.JsonSerializer.Deserialize<ErroDto>(conteudo,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (erro?.Mensagem?.Contains("mail") == true)
+                    ModelState.AddModelError("Email", erro.Mensagem);
+                else
+                    ModelState.AddModelError("", erro?.Mensagem ?? "Erro ao salvar.");
+            }
+            catch
+            {
+                ModelState.AddModelError("", conteudo);
+            }
+            var tipos = await _tipoApi.GetAll();
+            ViewBag.TipoUsuarioId = new SelectList(tipos, "IdTipoUsuario", "DescricaoTipoUsuario", usuario.TipoUsuarioId);
 
             return View(usuario);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, UsuarioDto usuario)
-        {
-            if (id != usuario.IdUsuario)
-                return NotFound();
+        return RedirectToAction(nameof(Index));
+    }
 
-            if (!ModelState.IsValid)
-                return View(usuario);
+    private class ErroDto
+    {
+        public string Mensagem { get; set; }
+    }
 
-            await _api.Update(usuario);
-            return RedirectToAction(nameof(Index));
-        }
+    // ================= DELETE =================
 
-        // ================= DELETE =================
-
-        [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Delete(int id)
         {
             var usuario = await _api.GetById(id);
@@ -194,22 +249,14 @@ public class UsuarioController : Controller
 
             return View(inativos);
         }
+    [Authorize(Roles = "Administrador")]
+    public async Task<IActionResult> Ativar(int id)
+    {
+        await _api.Reativar(id); // 👈 em vez de buscar e fazer Update
+        return RedirectToAction(nameof(Inativos));
+    }
 
-        [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Ativar(int id)
-        {
-            var usuario = await _api.GetById(id);
-
-            if (usuario == null)
-                return NotFound();
-
-            usuario.Ativo = true;
-            await _api.Update(usuario);
-
-            return RedirectToAction(nameof(Inativos));
-        }
-
-        [AllowAnonymous] // 👈 Obrigatório, senão quem não tem acesso não vê a página!
+    [AllowAnonymous] // 👈 Obrigatório, senão quem não tem acesso não vê a página!
         public IActionResult AcessoNegado()
         {
             return View();
