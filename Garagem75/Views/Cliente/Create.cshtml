@@ -39,17 +39,17 @@
                 </div>
                 <div class="col-md-3 mb-3">
                     <label asp-for="Cliente.Cpf" class="form-label"></label>
-                    <input asp-for="Cliente.Cpf" class="form-control" />
+                    <input asp-for="Cliente.Cpf" class="form-control" maxlength="11"/>
                     <span asp-validation-for="Cliente.Cpf" class="text-danger"></span>
                 </div>
                 <div class="col-md-3 mb-3">
                     <label asp-for="Cliente.Telefone" class="form-label"></label>
-                    <input asp-for="Cliente.Telefone" class="form-control" />
+                    <input asp-for="Cliente.Telefone" class="form-control" maxlength="11" />
                     <span asp-validation-for="Cliente.Telefone" class="text-danger"></span>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label asp-for="Cliente.Email" class="form-label"></label>
-                    <input asp-for="Cliente.Email" class="form-control" />
+                    <input asp-for="Cliente.Email" class="form-control" type="email"/>
                     <span asp-validation-for="Cliente.Email" class="text-danger"></span>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                 </div>
                 <div class="col-md-3 mb-3">
                     <label asp-for="Endereco.Cep" class="form-label"></label>
-                    <input asp-for="Endereco.Cep" class="form-control" />
+                    <input asp-for="Endereco.Cep" class="form-control" maxlength="8"/>
                 </div>
                 
             </div>
