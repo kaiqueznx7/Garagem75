@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+
+namespace Garagem75.Shared.Models;
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+[Table("Veiculo")]
+[Index(nameof(Placa), IsUnique = true)]
+public class Veiculo
+{
+    [Key]
+    public int IdVeiculo { get; set; }
+
+    [Required(ErrorMessage = "Campo Obrigatório!")]
+    [StringLength(30)]
+    public string Fabricante { get; set; }
+
+    [Required(ErrorMessage = "Campo Obrigatório!")]
+    [StringLength(75)]
+    public string Modelo { get; set; }
+
+    [Required(ErrorMessage = "Campo Obrigatório!")]
+    [Range(1900, 2100, ErrorMessage = "Ano inválido!")]
+    public int Ano { get; set; }
+
+    [Required(ErrorMessage = "Campo Obrigatório!")]
+    [StringLength(7)]
+    public string Placa { get; set; }
+
+    [StringLength(30)]
+    public string Cor { get; set; }
+
+    public string? FotoUrl { get; set; }
+
+    // Mapeia a propriedade C# ClienteId para a coluna física IdCliente do SQL Server
+    [Column("IdCliente")]
+    public int? ClienteId { get; set; }
+
+    [ForeignKey("ClienteId")]
+    public virtual Cliente? Cliente { get; set; }
+}

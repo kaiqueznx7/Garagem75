@@ -1,0 +1,296 @@
+﻿@page "/veiculos/novo"
+@page "/veiculos/{id:int}"
+@attribute [Authorize(Roles = "Administrador,Mecanico")]
+@using Garagem75.Shared.Dtos
+@using Microsoft.AspNetCore.Authorization
+
+@inject VeiculoApi Api
+@inject ClienteApi ClienteApi
+@inject NavigationManager Nav
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@700&display=swap');
+
+    .cli-shell {
+        --bg: #0f0f11;
+        --surface: #18181c;
+        --surface2: #222228;
+        --border: rgba(255,255,255,0.07);
+        --accent: #e8ff47;
+        --text: #f0f0f0;
+        --muted: #888888;
+        --radius: 14px;
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 24px;
+        padding-bottom: 100px;
+    }
+
+    .cli-topbar {
+        margin-bottom: 28px;
+    }
+
+    .cli-title {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+    }
+
+        .cli-title span {
+            color: var(--accent);
+        }
+
+    .form-container {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .full-width {
+        grid-column: span 2;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+    .cli-input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+        .cli-input:focus {
+            border-color: var(--accent);
+        }
+
+    .cli-select {
+        appearance: none;
+        cursor: pointer;
+    }
+
+    .cf-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 24px;
+    }
+
+    .cf-btn-salvar {
+        background: var(--accent);
+        color: #0f0f11;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 28px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+    }
+
+        .cf-btn-salvar:hover:not(:disabled) {
+            opacity: 0.88;
+        }
+
+        .cf-btn-salvar:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+    .cf-btn-cancel {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 11px 22px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+        .cf-btn-cancel:hover {
+            background: rgba(255,255,255,0.07);
+        }
+
+    @@media (max-width: 480px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width {
+            grid-column: span 1;
+        }
+    }
+</style>
+
+<div class="cli-shell">
+    <div class="cli-topbar">
+        <div class="cli-title">
+            @(id == 0 ? "Cadastrar Veículo" : "Editar Veículo")<span>.</span>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <EditForm Model="veiculo" OnValidSubmit="Salvar">
+            <DataAnnotationsValidator />
+
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Fabricante</label>
+                    <InputText class="cli-input" @bind-Value="veiculo.Fabricante" placeholder="Ex: Honda" />
+                </div>
+
+                <div class="input-group">
+                    <label>Modelo</label>
+                    <InputText class="cli-input" @bind-Value="veiculo.Modelo" placeholder="Ex: Civic" />
+                </div>
+
+                <div class="input-group">
+                    <label>Ano</label>
+                    <InputNumber class="cli-input" @bind-Value="veiculo.Ano" placeholder="2024" />
+                </div>
+
+                <div class="input-group">
+                    <label>Placa</label>
+                    <InputText class="cli-input" @bind-Value="veiculo.Placa" style="text-transform: uppercase; font-family: 'Space Mono', monospace;" placeholder="ABC1D23" />
+                </div>
+
+                <div class="input-group">
+                    <label>Cor</label>
+                    <InputText class="cli-input" @bind-Value="veiculo.Cor" placeholder="Ex: Preto" />
+                </div>
+
+                <div class="input-group">
+                    <label>Proprietário</label>
+                    <InputSelect class="cli-input cli-select" @bind-Value="veiculo.ClienteId">
+                        <option value="0">Selecione o dono...</option>
+                        @foreach (var c in clientes)
+                        {
+                            <option value="@c.Id">@c.Nome</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(mensagemErro))
+            {
+                <div style="background:#2a1a1a; border:1px solid #f87171; border-radius:10px; padding:12px 18px; color:#f87171; font-size:13px; margin-top:20px;">
+                    ⚠️ @mensagemErro
+                </div>
+            }
+
+            <div class="cf-actions">
+                <button type="submit" class="cf-btn-salvar" disabled="@salvando">
+                    @(salvando ? "Salvando..." : "Salvar Alterações")
+                </button>
+                <button type="button" class="cf-btn-cancel" @onclick="Voltar" disabled="@salvando">Cancelar</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    VeiculoDto veiculo = new();
+    List<ClienteDto> clientes = new();
+    bool salvando = false;
+    string? mensagemErro = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await ClienteApi.GetAll();
+
+        if (id != 0)
+        {
+            var v = await Api.GetById(id);
+            if (v != null)
+                veiculo = v;
+        }
+    }
+
+    async Task Salvar()
+    {
+        if (veiculo.ClienteId <= 0)
+        {
+            mensagemErro = "Por favor, selecione um proprietário para o veículo.";
+            return;
+        }
+
+        salvando = true;
+        mensagemErro = null;
+        HttpResponseMessage response;
+
+        try
+        {
+            if (id == 0)
+            {
+                response = await Api.Create(veiculo);
+            }
+            else
+            {
+                response = await Api.Update(id, veiculo);
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Leitura resiliente que não quebra o formulário
+                try
+                {
+                    var erro = await response.Content.ReadFromJsonAsync<ErroDto>();
+                    mensagemErro = erro?.Mensagem ?? erro?.message ?? "Erro ao salvar veículo na API.";
+                }
+                catch
+                {
+                    var rawError = await response.Content.ReadAsStringAsync();
+                    mensagemErro = !string.IsNullOrWhiteSpace(rawError) ? rawError : "Erro desconhecido no servidor.";
+                }
+
+                salvando = false;
+                return;
+            }
+
+            Nav.NavigateTo("/veiculos");
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro de conexão: {ex.Message}";
+            salvando = false;
+        }
+    }
+
+    public class ErroDto
+    {
+        public string? Mensagem { get; set; }
+        public string? message { get; set; }
+    }
+
+    void Voltar() => Nav.NavigateTo("/veiculos");
+}
